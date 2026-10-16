@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{TITLE}}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --clr-bg: #f4f6fb;
+    --clr-surface: #ffffff;
+    --clr-primary: #1a3a6b;
+    --clr-accent: #2e7dd1;
+    --clr-accent-light: #e8f0fe;
+    --clr-success: #1b8a4e;
+    --clr-success-light: #e6f5ec;
+    --clr-warning: #c27800;
+    --clr-warning-light: #fff7e6;
+    --clr-exercise-bg: #f0f4ff;
+    --clr-exercise-border: #5b8def;
+    --clr-code-bg: #f7f8fa;
+    --clr-text: #1e293b;
+    --clr-text-muted: #64748b;
+    --clr-border: #e2e8f0;
+    --radius: 12px;
+    --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.04);
+  }
+  body {
+    font-family: 'Vazirmatn', Tahoma, Arial, sans-serif;
+    background: var(--clr-bg);
+    color: var(--clr-text);
+    line-height: 1.9;
+    font-size: 16px;
+  }
+  .hero {
+    background: linear-gradient(135deg, #0f2847 0%, #1a4a8a 50%, #2e7dd1 100%);
+    color: #fff;
+    padding: 56px 24px 48px;
+    text-align: center;
+  }
+  .hero h1 { font-size: clamp(1.5rem, 4vw, 2.2rem); font-weight: 900; margin-bottom: 10px; }
+  .hero .subtitle { opacity: .88; max-width: 680px; margin: 0 auto; }
+  .badge, .back {
+    display: inline-block;
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: .85rem;
+    margin-bottom: 14px;
+    color: #fff;
+    text-decoration: none;
+  }
+  .back { margin-left: 8px; }
+  .container { max-width: 860px; margin: 0 auto; padding: 28px 20px 80px; }
+  .section {
+    background: var(--clr-surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 32px;
+    margin-bottom: 28px;
+    border-top: 4px solid var(--clr-accent);
+  }
+  .section h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--clr-primary);
+    font-size: 1.3rem;
+    margin-bottom: 16px;
+  }
+  .section-number {
+    width: 36px; height: 36px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--clr-accent); color: #fff; border-radius: 50%;
+    font-weight: 800;
+  }
+  .eli5, .usage, .example-box, .rules, .note {
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 12px 0 16px;
+  }
+  .eli5 { background: var(--clr-warning-light); border-right: 4px solid var(--clr-warning); }
+  .usage { background: var(--clr-accent-light); border-right: 4px solid var(--clr-accent); }
+  .example-box { background: var(--clr-success-light); border-right: 4px solid var(--clr-success); }
+  .rules { background: var(--clr-code-bg); border: 1px solid var(--clr-border); }
+  .note { background: #fef3c7; border-right: 4px solid #f59e0b; }
+  .exercise {
+    background: var(--clr-exercise-bg);
+    border: 2px solid var(--clr-exercise-border);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    margin-top: 22px;
+    position: relative;
+  }
+  .exercise::before {
+    content: 'تمرین و پاسخ تشریحی';
+    position: absolute;
+    top: -13px; right: 18px;
+    background: var(--clr-exercise-border);
+    color: #fff;
+    font-size: .8rem;
+    font-weight: 700;
+    padding: 2px 14px;
+    border-radius: 12px;
+  }
+  .exercise .q { font-weight: 700; color: var(--clr-primary); margin-bottom: 8px; }
+  .exercise .a { border-top: 1px dashed var(--clr-exercise-border); margin-top: 12px; padding-top: 12px; }
+  mjx-container { direction: ltr !important; }
+  .footer { text-align: center; color: var(--clr-text-muted); font-size: .85rem; padding: 10px 20px 40px; }
+  @media (max-width: 640px) {
+    .section { padding: 22px 16px; }
+  }
+</style>
+</head>
+<body>
+<header class="hero">
+  <a class="back" href="../index.html">بازگشت به کتابخانه</a>
+  <div class="badge">{{SUBJECT}}</div>
+  <h1>{{TITLE}}</h1>
+  <p class="subtitle">{{DESCRIPTION}}</p>
+</header>
+<main class="container">
+  <section class="section" id="s1">
+    <h2><span class="section-number">۱</span> شروع درس</h2>
+    <div class="eli5">
+      <strong>توضیح ساده:</strong>
+      این‌جا مفهوم را با یک جملهٔ خودمانی بنویس تا قبل از فرمول، معنی‌اش روشن شود.
+    </div>
+    <div class="usage">
+      <strong>کاربرد:</strong>
+      این مفهوم کجا به کار می‌آید؟
+    </div>
+    <div class="rules">
+      <h3>قواعد</h3>
+      <p>تعریف یا رابطهٔ اصلی را این‌جا بنویس. فرمول نمایشی:</p>
+      $$\|x\| \ge 0$$
+    </div>
+    <div class="example-box">
+      <strong>مثال:</strong>
+      یک مثال عددی کوتاه این‌جا بیاور.
+    </div>
+    <div class="exercise">
+      <div class="q">سؤال تمرین را این‌جا بنویس.</div>
+      <div class="a">
+        <strong>پاسخ تشریحی:</strong>
+        <p>گام‌های حل را این‌جا اضافه کن.</p>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="footer">
+  <p>{{TITLE}}</p>
+  <p>ساخته‌شده در کتابخانهٔ آنلاین · {{DATE}}</p>
+</footer>
+</body>
+</html>
