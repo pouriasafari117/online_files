@@ -3,766 +3,200 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>راهنمای جامع فصل دوم جبر خطی عددی — نورم و ضرب داخلی</title>
-
-<!-- فونت وزیرمتن برای متن فارسی -->
+<meta name="description" content="کتابخانهٔ آنلاین منبع‌های آموزشی. فایل‌ها را ببین، در تب جدید باز کن، دانلود کن، ویرایش کن یا منبع جدید اضافه کن.">
+<meta name="theme-color" content="#10233f">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self' https://api.github.com https://raw.githubusercontent.com https://fonts.googleapis.com https://fonts.gstatic.com; base-uri 'self'; object-src 'none'">
+<title>کتابخانهٔ آنلاین</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<script src="theme-init.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-<!-- MathJax 3 برای رندر فرمول‌ها -->
-<script>
-window.MathJax = {
-  tex: {
-    inlineMath: [['$', '$'], ['\\(', '\\)']],
-    displayMath: [['$$', '$$'], ['\\[', '\\]']],
-    processEscapes: true
-  },
-  options: {
-    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
-  },
-  startup: {
-    ready: function () {
-      MathJax.startup.defaultReady();
-    }
-  }
-};
-</script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
-
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --clr-bg: #f4f6fb;
-    --clr-surface: #ffffff;
-    --clr-primary: #1a3a6b;
-    --clr-accent: #2e7dd1;
-    --clr-accent-light: #e8f0fe;
-    --clr-success: #1b8a4e;
-    --clr-success-light: #e6f5ec;
-    --clr-warning: #c27800;
-    --clr-warning-light: #fff7e6;
-    --clr-exercise-bg: #f0f4ff;
-    --clr-exercise-border: #5b8def;
-    --clr-code-bg: #f7f8fa;
-    --clr-text: #1e293b;
-    --clr-text-muted: #64748b;
-    --clr-border: #e2e8f0;
-    --radius: 12px;
-    --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.04);
-    --shadow-lg: 0 4px 24px rgba(0,0,0,.08);
-  }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    font-family: 'Vazirmatn', Tahoma, Arial, sans-serif;
-    background: var(--clr-bg);
-    color: var(--clr-text);
-    line-height: 1.9;
-    font-size: 16px;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  .hero {
-    background: linear-gradient(135deg, #0f2847 0%, #1a4a8a 50%, #2e7dd1 100%);
-    color: #fff;
-    padding: 60px 24px 50px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  }
-  .hero h1 {
-    font-size: clamp(1.6rem, 4vw, 2.4rem);
-    font-weight: 900;
-    margin-bottom: 12px;
-    position: relative;
-  }
-  .hero .subtitle {
-    font-size: clamp(0.9rem, 2vw, 1.1rem);
-    opacity: .85;
-    font-weight: 400;
-    position: relative;
-    max-width: 700px;
-    margin: 0 auto;
-    line-height: 2;
-  }
-  .hero .badge {
-    display: inline-block;
-    background: rgba(255,255,255,.15);
-    border: 1px solid rgba(255,255,255,.25);
-    border-radius: 20px;
-    padding: 4px 16px;
-    font-size: .85rem;
-    margin-bottom: 18px;
-    position: relative;
-    backdrop-filter: blur(4px);
-  }
-
-  .container {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 0 20px 80px;
-  }
-
-  .toc {
-    background: var(--clr-surface);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 28px 32px;
-    margin: -30px auto 40px;
-    position: relative;
-    z-index: 2;
-    max-width: 860px;
-  }
-  .toc h2 {
-    font-size: 1.15rem;
-    color: var(--clr-primary);
-    margin-bottom: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .toc ol {
-    padding-right: 22px;
-    columns: 2;
-    column-gap: 32px;
-  }
-  .toc li {
-    margin-bottom: 6px;
-    font-size: .92rem;
-    break-inside: avoid;
-  }
-  .toc a {
-    color: var(--clr-accent);
-    text-decoration: none;
-    transition: color .2s;
-  }
-  .toc a:hover { color: var(--clr-primary); text-decoration: underline; }
-
-  @media (max-width: 600px) {
-    .toc ol { columns: 1; }
-  }
-
-  .section {
-    background: var(--clr-surface);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 32px 32px 28px;
-    margin-bottom: 28px;
-    border-top: 4px solid var(--clr-accent);
-    transition: box-shadow .2s;
-  }
-  .section:hover { box-shadow: var(--shadow-lg); }
-
-  .section-number {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px; height: 36px;
-    background: var(--clr-accent);
-    color: #fff;
-    border-radius: 50%;
-    font-weight: 800;
-    font-size: .95rem;
-    margin-left: 10px;
-    flex-shrink: 0;
-  }
-
-  .section h2 {
-    font-size: 1.3rem;
-    font-weight: 800;
-    color: var(--clr-primary);
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-  }
-
-  .section h3 {
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--clr-primary);
-    margin: 18px 0 8px;
-  }
-
-  .eli5 {
-    background: var(--clr-warning-light);
-    border-right: 4px solid var(--clr-warning);
-    border-radius: 8px;
-    padding: 14px 18px;
-    margin: 12px 0 16px;
-    font-size: .95rem;
-    line-height: 2;
-  }
-  .eli5 strong { color: var(--clr-warning); }
-
-  .usage {
-    background: var(--clr-accent-light);
-    border-right: 4px solid var(--clr-accent);
-    border-radius: 8px;
-    padding: 12px 18px;
-    margin: 8px 0 16px;
-    font-size: .93rem;
-  }
-  .usage strong { color: var(--clr-accent); }
-
-  .rules {
-    background: var(--clr-code-bg);
-    border-radius: 8px;
-    padding: 18px 20px;
-    margin: 12px 0 16px;
-    border: 1px solid var(--clr-border);
-  }
-  .rules ol, .rules ul { padding-right: 22px; }
-  .rules li { margin-bottom: 6px; }
-
-  .example-box {
-    background: var(--clr-success-light);
-    border-right: 4px solid var(--clr-success);
-    border-radius: 8px;
-    padding: 14px 18px;
-    margin: 12px 0 16px;
-  }
-  .example-box strong { color: var(--clr-success); }
-
-  .exercise {
-    background: var(--clr-exercise-bg);
-    border: 2px solid var(--clr-exercise-border);
-    border-radius: var(--radius);
-    padding: 22px 24px;
-    margin: 20px 0 8px;
-    position: relative;
-  }
-  .exercise::before {
-    content: '✏️ تمرین و پاسخ تشریحی';
-    position: absolute;
-    top: -13px;
-    right: 18px;
-    background: var(--clr-exercise-border);
-    color: #fff;
-    font-size: .8rem;
-    font-weight: 700;
-    padding: 2px 14px;
-    border-radius: 12px;
-  }
-  .exercise .q {
-    font-weight: 600;
-    margin-bottom: 10px;
-    color: var(--clr-primary);
-  }
-  .exercise .a {
-    border-top: 1px dashed var(--clr-exercise-border);
-    padding-top: 12px;
-    margin-top: 10px;
-  }
-  .exercise .a-label {
-    font-weight: 700;
-    color: var(--clr-success);
-    margin-bottom: 4px;
-  }
-
-  .note {
-    background: #fef3c7;
-    border-right: 4px solid #f59e0b;
-    border-radius: 8px;
-    padding: 10px 16px;
-    margin: 10px 0;
-    font-size: .93rem;
-  }
-
-  mjx-container { direction: ltr !important; }
-  .MathJax { font-size: 105% !important; }
-
-  .footer {
-    text-align: center;
-    padding: 30px 20px;
-    color: var(--clr-text-muted);
-    font-size: .85rem;
-    line-height: 2;
-  }
-
-  @media (max-width: 640px) {
-    .section { padding: 22px 18px 20px; }
-    .hero { padding: 40px 16px 36px; }
-    .toc { padding: 20px 18px; margin: -20px 12px 28px; }
-    .container { padding: 0 12px 60px; }
-  }
-
-  .section {
-    animation: fadeUp .5s ease both;
-  }
-  .section:nth-child(2) { animation-delay: .05s; }
-  .section:nth-child(3) { animation-delay: .1s; }
-  .section:nth-child(4) { animation-delay: .15s; }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(18px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  ::-webkit-scrollbar { width: 8px; }
-  ::-webkit-scrollbar-track { background: var(--clr-bg); }
-  ::-webkit-scrollbar-thumb { background: #b0bec5; border-radius: 4px; }
-</style>
+<link rel="stylesheet" href="library.css">
 </head>
-
 <body>
-
 <header class="hero">
-  <div class="badge">📘 فصل دوم — تا قضیه ۲.۷</div>
-  <h1>راهنمای جامع جبر خطی عددی</h1>
-  <p class="subtitle">
-    نورم و ضرب داخلی — بر اساس کتاب <strong>جبر خطی عددی و کاربردها</strong>
-    تألیف <strong>دکتر داود خجسته سالکویه</strong><br>
-    به زبان ساده، همراه با مثال و تمرین تشریحی
-  </p>
+  <div class="hero-inner">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none">
+          <path d="M8 12h14.2c2.6 0 4.3 1.7 4.3 4.4V38c-2.2-1.5-4.6-2.2-7.2-2.2H8V12z" fill="#f6edd9"/>
+          <path d="M40 12H25.8c-2.6 0-4.3 1.7-4.3 4.4V38c2.2-1.5 4.6-2.2 7.2-2.2H40V12z" fill="#e0b86a"/>
+        </svg>
+      </div>
+      <div>
+        <p class="eyebrow">ONLINE LIBRARY</p>
+        <h1>کتابخانهٔ آنلاین</h1>
+        <p class="lede">روی هر منبع بزن تا در تب جدید باز شود. با + هم فایل تازه اضافه می‌شود و لازم نیست دستی پوش کنی. راهنمای فصل دوم جبر خطی عددی به قفسهٔ منبع‌ها منتقل شده.</p>
+      </div>
+    </div>
+    <div class="hero-actions">
+      <button id="modeChip" class="mode-chip" type="button"><span class="dot"></span><span>در حال بررسی</span></button>
+      <button id="themeBtn" class="icon-btn" type="button" aria-label="تغییر ظاهر">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg>
+      </button>
+      <button id="addBtn" class="btn-primary" type="button">+ منبع جدید</button>
+    </div>
+  </div>
+  <div class="hero-rule"></div>
 </header>
 
-<nav class="toc container" style="padding-left:32px;padding-right:32px;">
-  <h2>📑 فهرست مطالب</h2>
-  <ol>
-    <li><a href="#s1">ضرب داخلی (Inner Product)</a></li>
-    <li><a href="#s2">نورم برداری و نورم‌های ۱ و ∞</a></li>
-    <li><a href="#s3">نامساوی کوشی-شوارتس</a></li>
-    <li><a href="#s4">نورم القایی، اقلیدسی و فروبنیوس</a></li>
-    <li><a href="#s5">اتحاد متوازی‌الاضلاع</a></li>
-    <li><a href="#s6">نورم‌های ماتریسی و خاصیت ضربی</a></li>
-    <li><a href="#s7">زاویه بین بردارها در $\mathbb{R}^n$</a></li>
-    <li><a href="#s8">نورم طبیعی / القایی ماتریس</a></li>
-    <li><a href="#s9">فرمول نورم‌های طبیعی ۱، ∞ و ۲</a></li>
-    <li><a href="#s10">قضیه ۲.۷: کران شعاع طیفی</a></li>
-  </ol>
-</nav>
+<main class="wrap">
+  <noscript>
+    <div class="noscript">
+      <p>برای کار با کتابخانه جاوااسکریپت لازم است.</p>
+      <p><a href="sources/numerical-linear-algebra-ch2.html" target="_blank" rel="noopener">باز کردن راهنمای فصل دوم جبر خطی عددی</a></p>
+    </div>
+  </noscript>
 
-<main class="container">
-
-<!-- ═══════════════ ۱ ═══════════════ -->
-<section class="section" id="s1">
-  <h2><span class="section-number">۱</span> ضرب داخلی (Inner Product)</h2>
-  <div class="eli5">
-    <strong>💡 توضیح ساده:</strong>
-    ضرب داخلی ماشینی است که دو بردار را می‌گیرد و یک عدد خروجی می‌دهد. این عدد به ما کمک می‌کند تا مفاهیمی مثل «طول بردار»، «فاصله» و «زاویه و عمود بودن» را در فضاهای ریاضی تعمیم دهیم.
-  </div>
-  <div class="usage">
-    <strong>🎯 کاربرد:</strong>
-    محاسبه تشابه بین دو سیگنال یا تصویر، الگوریتم‌های تعامدسازی (مانند گرام-اشمیت)، و حل مسائل حداقل مربعات.
-  </div>
-  <div class="rules">
-    <h3>📐 قواعد</h3>
-    <p>تابع $\langle \cdot, \cdot \rangle: V \times V \to \mathbb{F}$ یک ضرب داخلی است اگر:</p>
-    <ol>
-      <li><strong>مثبت بودن:</strong> $\langle x, x \rangle \ge 0$ و $\langle x, x \rangle = 0 \iff x = 0$.</li>
-      <li><strong>خطی بودن (اسکالر):</strong> $\langle x, \alpha y \rangle = \alpha \langle x, y \rangle$.</li>
-      <li><strong>جمع‌پذیری:</strong> $\langle x, y + z \rangle = \langle x, y \rangle + \langle x, z \rangle$.</li>
-      <li><strong>مزدوج هرمیتی:</strong> $\langle x, y \rangle = \overline{\langle y, x \rangle}$ &ensp;(در فضاهای حقیقی: $\langle x, y \rangle = \langle y, x \rangle$).</li>
-    </ol>
-    <ul style="margin-top:10px;">
-      <li><strong>ضرب داخلی استاندارد بردارها:</strong> در $\mathbb{C}^n$: $\langle x, y \rangle = x^H y$ &ensp;|&ensp; در $\mathbb{R}^n$: $\langle x, y \rangle = x^T y$.</li>
-      <li><strong>ضرب داخلی استاندارد ماتریس‌ها:</strong> در $\mathbb{C}^{m \times n}$: $\langle A, B \rangle = \text{trace}(A^H B)$.</li>
-    </ul>
-  </div>
-  <div class="example-box">
-    <strong>📌 مثال:</strong>
-    برای $x = \begin{pmatrix} 1+2i \\ -2-3i \end{pmatrix}$ و $y = \begin{pmatrix} 2-i \\ 3+4i \end{pmatrix}$ در $\mathbb{C}^2$:
-    $$\langle x, y \rangle = x^H y = (1-2i)(2-i) + (-2+3i)(3+4i) = -18 - 4i$$
-  </div>
-  <div class="exercise">
-    <div class="q">ضرب داخلی ماتریسی $\langle A, B \rangle = \text{trace}(A^T B)$ را برای $A = \begin{pmatrix} 1 & 2 \\ 0 & 3 \end{pmatrix}$ و $B = \begin{pmatrix} 2 & 1 \\ 4 & 5 \end{pmatrix}$ محاسبه کنید.</div>
-    <div class="a">
-      <div class="a-label">✅ پاسخ تشریحی:</div>
-      <p>ابتدا $A^T = \begin{pmatrix} 1 & 0 \\ 2 & 3 \end{pmatrix}$ را محاسبه و سپس ضرب می‌کنیم:</p>
-      $$A^T B = \begin{pmatrix} 1 & 0 \\ 2 & 3 \end{pmatrix} \begin{pmatrix} 2 & 1 \\ 4 & 5 \end{pmatrix} = \begin{pmatrix} 2 & 1 \\ 16 & 17 \end{pmatrix}$$
-      <p>بنابراین:</p>
-      $$\langle A, B \rangle = \text{trace}(A^T B) = 2 + 17 = 19$$
+  <section class="toolbar">
+    <label class="search">
+      <span class="sr">جستجو</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="searchInput" type="search" placeholder="جستجوی عنوان، موضوع یا نام فایل" autocomplete="off">
+    </label>
+    <select id="sortSelect" class="select" aria-label="مرتب‌سازی">
+      <option value="newest">جدیدترین</option>
+      <option value="name">نام</option>
+      <option value="largest">بزرگ‌ترین</option>
+    </select>
+    <div class="stats">
+      <span class="pill" id="statCount">در حال خواندن قفسه‌ها…</span>
     </div>
-  </div>
-</section>
-
-<!-- ═══════════════ ۲ ═══════════════ -->
-<section class="section" id="s2">
-  <h2><span class="section-number">۲</span> نورم برداری و نورم‌های ۱ و بی‌نهایت</h2>
-  <div class="eli5">
-    <strong>💡 توضیح ساده:</strong>
-    نورم متر و خط‌کشی است که «طول» یا «اندازه» یک بردار را نشان می‌دهد تا بفهمیم یک بردار چقدر بزرگ است یا چقدر با صفر فاصله دارد.
-  </div>
-  <div class="usage">
-    <strong>🎯 کاربرد:</strong>
-    سنجش خطای محاسبات عددی، تحلیل پایداری الگوریتم‌ها و اندازه‌گیری فاصله در الگوریتم‌های یادگیری ماشین.
-  </div>
-  <div class="rules">
-    <h3>📐 قواعد</h3>
-    <p>تابع $\| \cdot \|: V \to \mathbb{R}$ یک نورم برداری است اگر برای هر $x, y \in V$ و اسکالر $\alpha$:</p>
-    <ol>
-      <li>$\|x\| \ge 0$ و $\|x\| = 0 \iff x = 0$.</li>
-      <li>$\|\alpha x\| = |\alpha| \cdot \|x\|$.</li>
-      <li><strong>نامساوی مثلث:</strong> $\|x + y\| \le \|x\| + \|y\|$.</li>
-    </ol>
-    <ul style="margin-top:10px;">
-      <li><strong>نورم-۱:</strong> $\|x\|_1 = \displaystyle\sum_{i=1}^n |x_i|$</li>
-      <li><strong>نورم بی‌نهایت:</strong> $\|x\|_\infty = \displaystyle\max_{1 \le i \le n} |x_i|$</li>
-    </ul>
-  </div>
-  <div class="example-box">
-    <strong>📌 مثال:</strong>
-    برای $z = \begin{pmatrix} 3-4i \\ -6+8i \end{pmatrix} \in \mathbb{C}^2$:
-    $$\|z\|_1 = |3-4i| + |-6+8i| = 5 + 10 = 15$$
-    $$\|z\|_\infty = \max\bigl(\{|3-4i|,\; |-6+8i|\}\bigr) = \max(\{5, 10\}) = 10$$
-  </div>
-  <div class="exercise">
-    <div class="q">نورم-۱ و نورم بی‌نهایت بردار $x = \begin{pmatrix} 2 \\ -5 \\ 3 \\ -1 \end{pmatrix}$ را محاسبه کنید.</div>
-    <div class="a">
-      <div class="a-label">✅ پاسخ تشریحی:</div>
-      <ul>
-        <li>$\|x\|_1 = |2| + |-5| + |3| + |-1| = 2 + 5 + 3 + 1 = 11$</li>
-        <li>$\|x\|_\infty = \max\bigl(\{|2|, |-5|, |3|, |-1|\}\bigr) = 5$</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════ ۳ ═══════════════ -->
-<section class="section" id="s3">
-  <h2><span class="section-number">۳</span> نامساوی کوشی-شوارتس (Cauchy–Schwarz)</h2>
-  <div class="eli5">
-    <strong>💡 توضیح ساده:</strong>
-    این نامساوی می‌گوید اندازهٔ ضرب داخلی دو بردار هیچ‌گاه نمی‌تواند از حاصل‌ضرب طول تک‌تک آن بردارها بزرگ‌تر باشد.
-  </div>
-  <div class="usage">
-    <strong>🎯 کاربرد:</strong>
-    اثبات نامساوی مثلث در فضاهای نورم‌دار، اثبات همگرایی الگوریتم‌های عددی و کران‌دار کردن خطای محاسبات.
-  </div>
-  <div class="rules">
-    <h3>📐 قواعد</h3>
-    <p>در هر فضای ضرب داخلی، برای هر دو بردار $x, y \in V$:</p>
-    $$|\langle x, y \rangle| \le \|x\| \, \|y\|$$
-    <p>که در آن $\|x\| = \sqrt{\langle x, x \rangle}$ نورم القا‌شده است.</p>
-    <div class="note">
-      <strong>⚠️ شرط تساوی:</strong> تساوی زمانی و فقط زمانی برقرار است که $x$ و $y$ وابسته خطی باشند ($x = \alpha y$).
-    </div>
-  </div>
-  <div class="example-box">
-    <strong>📌 مثال:</strong>
-    برای بردارهای حقیقی $x, y \in \mathbb{R}^n$ با ضرب داخلی استاندارد:
-    $$\left| \sum_{i=1}^n x_i y_i \right| \le \sqrt{\sum_{i=1}^n x_i^2} \;\cdot\; \sqrt{\sum_{i=1}^n y_i^2}$$
-  </div>
-  <div class="exercise">
-    <div class="q">برقرار بودن نامساوی کوشی-شوارتس را برای $x = \begin{pmatrix} 1 \\ 2 \end{pmatrix}$ و $y = \begin{pmatrix} 3 \\ 4 \end{pmatrix}$ بررسی کنید.</div>
-    <div class="a">
-      <div class="a-label">✅ پاسخ تشریحی:</div>
-      <ul>
-        <li>$\langle x, y \rangle = (1)(3) + (2)(4) = 3 + 8 = 11 \implies |\langle x, y \rangle| = 11$</li>
-        <li>$\|x\|_2 = \sqrt{1^2 + 2^2} = \sqrt{5}$</li>
-        <li>$\|y\|_2 = \sqrt{3^2 + 4^2} = \sqrt{25} = 5$</li>
-        <li>$\|x\|_2 \|y\|_2 = 5\sqrt{5} = \sqrt{125} \approx 11.18$</li>
-      </ul>
-      <p>چون $11 \le 11.18$ است، نامساوی به درستی برقرار است. ✔️</p>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════ ۴ ═══════════════ -->
-<section class="section" id="s4">
-  <h2><span class="section-number">۴</span> نورم القا‌شده، نورم اقلیدسی و نورم فروبنیوس</h2>
-  <div class="eli5">
-    <strong>💡 توضیح ساده:</strong>
-    هر ضرب داخلی مستقیماً یک نورم به ما می‌دهد که به آن «نورم القا‌شده» می‌گویند. برای بردارها این همان طول خط‌کش معمولی (اقلیدسی) و برای ماتریس‌ها «نورم فروبنیوس» است.
-  </div>
-  <div class="usage">
-    <strong>🎯 کاربرد:</strong>
-    محاسبه دقیق فواصل هندسی، اندازه‌گیری انرژی سیگنال‌ها و بهینه‌سازی ماتریسی.
-  </div>
-  <div class="rules">
-    <h3>📐 قواعد</h3>
-    <ol>
-      <li><strong>تعریف عمومی:</strong> $\|x\| = \sqrt{\langle x, x \rangle}$.</li>
-      <li><strong>نورم اقلیدسی (نورم-۲):</strong> $\|x\|_2 = \sqrt{x^H x} = \sqrt{\displaystyle\sum_{i=1}^n |x_i|^2}$.</li>
-      <li><strong>نورم فروبنیوس ماتریس‌ها:</strong> $\|A\|_F = \sqrt{\text{trace}(A^H A)} = \sqrt{\displaystyle\sum_{i=1}^m \sum_{j=1}^n |a_{ij}|^2}$.</li>
-    </ol>
-  </div>
-  <div class="example-box">
-    <strong>📌 مثال:</strong>
-    برای $A = \dfrac{1}{2} \begin{pmatrix} 1+i & 1-i \\ 1-i & 1+i \end{pmatrix}$:
-    $$\|A\|_F = \frac{1}{2}\sqrt{|1+i|^2 + |1-i|^2 + |1-i|^2 + |1+i|^2} = \frac{1}{2}\sqrt{2+2+2+2} = \sqrt{2}$$
-  </div>
-  <div class="exercise">
-    <div class="q">نورم فروبنیوس ماتریس $A = \begin{pmatrix} 2 & -1 \\ 3 & 4 \end{pmatrix}$ را محاسبه کنید.</div>
-    <div class="a">
-      <div class="a-label">✅ پاسخ تشریحی:</div>
-      $$\|A\|_F = \sqrt{2^2 + (-1)^2 + 3^2 + 4^2} = \sqrt{4 + 1 + 9 + 16} = \sqrt{30} \approx 5.477$$
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════ ۵ ═══════════════ -->
-<section class="section" id="s5">
-  <h2><span class="section-number">۵</span> اتحاد متوازی‌الاضلاع (Parallelogram Law)</h2>
-  <div class="eli5">
-    <strong>💡 توضیح ساده:</strong>
-    این اتحاد شرط لازمی است برای اینکه بفهمیم آیا یک نورم دلخواه از یک «ضرب داخلی» سرچشمه گرفته است یا خیر.
-  </div>
-  <div class="usage">
-    <strong>🎯 کاربرد:</strong>
-    تشخیص نوع فضاهای متری و نورم‌دار (فضاهای هیلبرت) و اثبات اینکه برخی نورم‌ها (مثل نورم بی‌نهایت) قابل تولید با هیچ ضرب داخلی‌ای نیستند.
-  </div>
-  <div class="rules">
-    <h3>📐 قواعد</h3>
-    <p>اگر $\|\cdot\|$ توسط یک ضرب داخلی تولید شده باشد، برای هر $x, y \in V$:</p>
-    $$\|x + y\|^2 + \|x - y\|^2 = 2\bigl(\|x\|^2 + \|y\|^2\bigr)$$
-  </div>
-  <div class="example-box">
-    <strong>📌 مثال (نقض برای نورم بی‌نهایت):</strong>
-    با $x = e_1 = \begin{pmatrix} 1 \\ 0 \end{pmatrix}$ و $y = e_2 = \begin{pmatrix} 0 \\ 1 \end{pmatrix}$:
-    $$\|x+y\|_\infty^2 + \|x-y\|_\infty^2 = 1^2 + 1^2 = 2$$
-    $$2\bigl(\|x\|_\infty^2 + \|y\|_\infty^2\bigr) = 2(1+1) = 4 \implies 2 \neq 4$$
-    <p>پس نورم بی‌نهایت توسط هیچ ضرب داخلی‌ای تولید نمی‌شود.</p>
-  </div>
-  <div class="exercise">
-    <div class="q">بررسی کنید آیا نورم-۱ روی $\mathbb{R}^2$ در اتحاد متوازی‌الاضلاع صدق می‌کند؟</div>
-    <div class="a">
-      <div class="a-label">✅ پاسخ تشریحی:</div>
-      <p>با $x = \begin{pmatrix} 1 \\ 0 \end{pmatrix}$ و $y = \begin{pmatrix} 0 \\ 1 \end{pmatrix}$:</p>
-      <ul>
-        <li>$x+y = \begin{pmatrix} 1 \\ 1 \end{pmatrix} \implies \|x+y\|_1 = 2 \implies \|x+y\|_1^2 = 4$</li>
-        <li>$x-y = \begin{pmatrix} 1 \\ -1 \end{pmatrix} \implies \|x-y\|_1 = 2 \implies \|x-y\|_1^2 = 4$</li>
-        <li>سمت چپ: $4 + 4 = 8$</li>
-        <li>سمت راست: $2(1^2 + 1^2) = 4$</li>
-      </ul>
-      <p>چون $8 \neq 4$، نورم-۱ در اتحاد متوازی‌الاضلاع صدق نمی‌کند و از هیچ ضرب داخلی‌ای تولید نمی‌شود. ❌</p>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════ ۶ ═══════════════ -->
-<section class="section" id="s6">
-  <h2><span class="section-number">۶</span> نورم‌های ماتریسی، سازگاری و خاصیت ضربی</h2>
-  <div class="eli5">
-    <strong>💡 توضیح ساده:</strong>
-    نورم ماتریسی اندازه‌ای برای شدت تغییراتی است که یک ماتریس روی بردارها ایجاد می‌کند. برخی نورم‌ها ویژگی «ضربی» دارند که اجازه می‌دهد نورم ضرب دو ماتریس را کنترل کنیم.
-  </div>
-  <div class="usage">
-    <strong>🎯 کاربرد:</strong>
-    تحلیل همگرایی روش‌های تکراری، کنترل خطای گرد کردن و تحلیل پایداری سیستم‌های دینامیکی.
-  </div>
-  <div class="rules">
-    <h3>📐 قواعد</h3>
-    <ol>
-      <li><strong>سازگاری:</strong> $\|Ax\|_w \le \|A\| \cdot \|x\|_v$.</li>
-      <li><strong>خاصیت ضربی (Submultiplicative):</strong> $\|AB\| \le \|A\| \cdot \|B\|$.</li>
-    </ol>
-    <div class="note">
-      <strong>📝 نکته:</strong> نورم فروبنیوس خاصیت ضربی دارد: $\|AB\|_F \le \|A\|_F \|B\|_F$.
-    </div>
-  </div>
-  <div class="example-box">
-    <strong>📌 مثال (نقض خاصیت ضربی برای نورم ماکزیمم درایه‌ای):</strong>
-    <p>نورم $\|A\|_{\max} = \max_{i,j}|a_{ij}|$ خاصیت ضربی <strong>ندارد</strong>.</p>
-    <p>زیرا برای $A = B = \begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}$ داریم $\|A\|_{\max} = 2$، اما:</p>
-    $$AB = \begin{pmatrix} 5 & 4 \\ 4 & 5 \end{pmatrix} \implies \|AB\|_{\max} = 5 > 2 \times 2 = 4$$
-  </div>
-  <div class="exercise">
-    <div class="q">نشان دهید نورم فروبنیوس شرط سازگاری با نورم اقلیدسی بردارها را ارضا می‌کند: $\|Ax\|_2 \le \|A\|_F \|x\|_2$.</div>
-    <div class="a">
-      <div class="a-label">✅ پاسخ تشریحی:</div>
-      <p>با استفاده از نامساوی کوشی-شوارتس برای سطر $i$-ام ماتریس $A$ (یعنی $A_{i\cdot}$):</p>
-      $$|(Ax)_i|^2 = |A_{i\cdot}\, x|^2 \le \|A_{i\cdot}^H\|_2^2 \;\|x\|_2^2 = \left(\sum_{j=1}^n |a_{ij}|^2\right) \|x\|_2^2$$
-      <p>جمع روی تمام سطرهای $i = 1, \dots, m$:</p>
-      $$\|Ax\|_2^2 = \sum_{i=1}^m |(Ax)_i|^2 \le \sum_{i=1}^m \left(\sum_{j=1}^n |a_{ij}|^2\right)\|x\|_2^2 = \|A\|_F^2 \;\|x\|_2^2$$
-      <p>با جزر گرفتن: $\|Ax\|_2 \le \|A\|_F \|x\|_2$. ✔️</p>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════ ۷ ═══════════════ -->
-<section class="section" id="s7">
-  <h2><span class="section-number">۷</span> زاویه بین بردارها در $\mathbb{R}^n$</h2>
-  <div class="eli5">
-    <strong>💡 توضیح ساده:</strong>
-    تعمیم همان زاویه‌ای که در هندسه دبیرستان بین دو خط می‌دیدیم به فضاهای چندبعدی با کمک ضرب داخلی.
-  </div>
-  <div class="usage">
-    <strong>🎯 کاربرد:</strong>
-    سنجش میزان تشابه متون و داده‌ها (Cosine Similarity) در موتورهای جستجو و هوش مصنوعی.
-  </div>
-  <div class="rules">
-    <h3>📐 قواعد</h3>
-    <p>برای دو بردار غیرصفر $x, y \in \mathbb{R}^n$، زاویه $\theta \in [0, \pi]$:</p>
-    $$\cos\theta = \frac{\langle x, y \rangle}{\|x\|_2 \|y\|_2} = \frac{x^T y}{\|x\|_2 \|y\|_2}$$
-    <div class="note">
-      به دلیل نامساوی کوشی-شوارتس، همواره $-1 \le \cos\theta \le 1$ است.
-    </div>
-  </div>
-  <div class="example-box">
-    <strong>📌 مثال:</strong>
-    برای $x = \begin{pmatrix} 1 \\ 0 \end{pmatrix}$ و $y = \begin{pmatrix} 1 \\ 1 \end{pmatrix}$:
-    $$\cos\theta = \frac{1}{\sqrt{1}\cdot\sqrt{2}} = \frac{1}{\sqrt{2}} \implies \theta = 45^\circ = \frac{\pi}{4}$$
-  </div>
-  <div class="exercise">
-    <div class="q">زاویه بین $x = \begin{pmatrix} 1 \\ 1 \\ 0 \end{pmatrix}$ و $y = \begin{pmatrix} 0 \\ 1 \\ 1 \end{pmatrix}$ را به‌دست آورید.</div>
-    <div class="a">
-      <div class="a-label">✅ پاسخ تشریحی:</div>
-      <ul>
-        <li>$x^T y = (1)(0) + (1)(1) + (0)(1) = 1$</li>
-        <li>$\|x\|_2 = \sqrt{1+1+0} = \sqrt{2}$</li>
-        <li>$\|y\|_2 = \sqrt{0+1+1} = \sqrt{2}$</li>
-        <li>$\cos\theta = \dfrac{1}{\sqrt{2}\cdot\sqrt{2}} = \dfrac{1}{2} \implies \theta = 60^\circ = \dfrac{\pi}{3}$</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════ ۸ ═══════════════ -->
-<section class="section" id="s8">
-  <h2><span class="section-number">۸</span> نورم طبیعی / القایی ماتریس (Natural / Induced)</h2>
-  <div class="eli5">
-    <strong>💡 توضیح ساده:</strong>
-    نورم طبیعی ماتریس نشان می‌دهد یک ماتریس در بدترین حالت ممکن یک بردار واحد را چقدر می‌تواند بکشد و بزرگ کند.
-  </div>
-  <div class="usage">
-    <strong>🎯 کاربرد:</strong>
-    دقیق‌ترین ابزار برای سنجش پایداری دستگاه‌های معادلات خطی و محاسبه عدد حالت ماتریس.
-  </div>
-  <div class="rules">
-    <h3>📐 قواعد</h3>
-    <p>برای $A \in \mathbb{C}^{m \times n}$ و نورم برداری $\|\cdot\|$:</p>
-    $$\|A\| = \max_{x \neq 0} \frac{\|Ax\|}{\|x\|} = \max_{\|x\|=1} \|Ax\|$$
-    <h3>خواص کلیدی:</h3>
-    <ol>
-      <li>$\|I\| = 1$ برای ماتریس همانی $I$.</li>
-      <li>همواره با نورم برداری سازگار است: $\|Ax\| \le \|A\|\|x\|$.</li>
-      <li>همواره خاصیت ضربی دارد: $\|AB\| \le \|A\|\|B\|$.</li>
-    </ol>
-  </div>
-  <div class="example-box">
-    <strong>📌 مثال:</strong>
-    نورم فروبنیوس برای $n \ge 2$ <strong>طبیعی نیست</strong>؛ زیرا:
-    $$\|I_n\|_F = \sqrt{n} \neq 1$$
-  </div>
-  <div class="exercise">
-    <div class="q">اثبات کنید برای هر نورم طبیعی ماتریس، $\|I\| = 1$ است.</div>
-    <div class="a">
-      <div class="a-label">✅ پاسخ تشریحی:</div>
-      <p>طبق تعریف نورم طبیعی:</p>
-      $$\|I\| = \max_{\|x\|=1} \|Ix\| = \max_{\|x\|=1} \|x\| = 1 \qquad \blacksquare$$
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════ ۹ ═══════════════ -->
-<section class="section" id="s9">
-  <h2><span class="section-number">۹</span> فرمول محاسباتی نورم‌های طبیعی ۱، ∞ و ۲ (طیفی)</h2>
-  <div class="eli5">
-    <strong>💡 توضیح ساده:</strong>
-    چون محاسبه فرمول حدی $\|A\| = \max_{\|x\|=1}\|Ax\|$ سخت است، فرمول‌های سریع و ساده‌ای بر اساس مجموع سطرها، ستون‌ها و مقادیر ویژه وجود دارد.
-  </div>
-  <div class="usage">
-    <strong>🎯 کاربرد:</strong>
-    محاسبه آنی نورم ماتریس در کدهای کامپیوتر و الگوریتم‌های عددی.
-  </div>
-  <div class="rules">
-    <h3>📐 قواعد</h3>
-    <ol>
-      <li><strong>نورم-۱ ماتریسی</strong> (بزرگ‌ترین مجموع قدر مطلق <em>ستونی</em>):
-        $$\|A\|_1 = \max_{1 \le j \le n} \sum_{i=1}^m |a_{ij}|$$
-      </li>
-      <li><strong>نورم بی‌نهایت ماتریسی</strong> (بزرگ‌ترین مجموع قدر مطلق <em>سطری</em>):
-        $$\|A\|_\infty = \max_{1 \le i \le m} \sum_{j=1}^n |a_{ij}|$$
-      </li>
-      <li><strong>نورم-۲ / طیفی</strong> (Spectral Norm):
-        $$\|A\|_2 = \sqrt{\rho(A^H A)}$$
-        که $\rho(M)$ شعاع طیفی (بزرگ‌ترین قدر مطلق مقدار ویژه $M$) است.
-        <div class="note">
-          <strong>نتیجه ۲.۲:</strong> اگر $A$ هرمیتی باشد ($A^H = A$)، آنگاه $\|A\|_2 = \rho(A)$.
-        </div>
-      </li>
-    </ol>
-  </div>
-  <div class="example-box">
-    <strong>📌 مثال:</strong>
-    برای $A = \begin{pmatrix} 1 & 2 & -1 \\ 0 & 1 & 2 \\ -1 & 1 & -1 \end{pmatrix}$:
-    <ul>
-      <li>مجموع قدر مطلق ستون‌ها: ستون ۱ = $2$، ستون ۲ = $4$، ستون ۳ = $4 \implies \|A\|_1 = 4$</li>
-      <li>مجموع قدر مطلق سطرها: سطر ۱ = $4$، سطر ۲ = $3$، سطر ۳ = $3 \implies \|A\|_\infty = 4$</li>
-    </ul>
-  </div>
-  <div class="exercise">
-    <div class="q">نورم-۱ و نورم بی‌نهایت ماتریس زیر را محاسبه کنید:
-    $$A = \begin{pmatrix} -1 & -2 & 0 & -2 \\ 2 & -1 & 0 & 4 \\ 0 & 0 & 1 & 0 \\ -2 & 0 & 0 & 5 \end{pmatrix}$$</div>
-    <div class="a">
-      <div class="a-label">✅ پاسخ تشریحی:</div>
-      <p><strong>مجموع قدر مطلق ستون‌ها:</strong></p>
-      <ul>
-        <li>ستون ۱: $|-1|+|2|+|0|+|-2| = 5$</li>
-        <li>ستون ۲: $|-2|+|-1|+|0|+|0| = 3$</li>
-        <li>ستون ۳: $|0|+|0|+|1|+|0| = 1$</li>
-        <li>ستون ۴: $|-2|+|4|+|0|+|5| = 11$</li>
-      </ul>
-      <p>$\implies \|A\|_1 = \max(\{5, 3, 1, 11\}) = \boxed{11}$</p>
-      <p><strong>مجموع قدر مطلق سطرها:</strong></p>
-      <ul>
-        <li>سطر ۱: $|-1|+|-2|+|0|+|-2| = 5$</li>
-        <li>سطر ۲: $|2|+|-1|+|0|+|4| = 7$</li>
-        <li>سطر ۳: $|0|+|0|+|1|+|0| = 1$</li>
-        <li>سطر ۴: $|-2|+|0|+|0|+|5| = 7$</li>
-      </ul>
-      <p>$\implies \|A\|_\infty = \max(\{5, 7, 1, 7\}) = \boxed{7}$</p>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════ ۱۰ ═══════════════ -->
-<section class="section" id="s10" style="border-top-color: #c0392b;">
-  <h2><span class="section-number" style="background:#c0392b;">۱۰</span> قضیه ۲.۷: کران شعاع طیفی با نورم طبیعی</h2>
-  <div class="eli5">
-    <strong>💡 توضیح ساده:</strong>
-    این قضیه می‌گوید قدر مطلق هیچ مقدار ویژه‌ای نمی‌تواند از نورم طبیعی ماتریس بزرگ‌تر باشد. به زبان ساده، نورم طبیعی همیشه روی مقادیر ویژه یک سقف و کران بالا می‌گذارد.
-  </div>
-  <div class="usage">
-    <strong>🎯 کاربرد:</strong>
-    بررسی همگرایی سری‌های ماتریسی ($A^k \to 0$) و تحلیل همگرایی روش‌های تکراری حل دستگاه‌ها (ژاکوبی، گاوس-سایدل و SOR).
-  </div>
-  <div class="rules">
-    <h3>📐 قضیه ۲.۷ و نتیجه ۲.۳</h3>
-    <p>اگر $\lambda$ یک مقدار ویژه $A \in \mathbb{C}^{n \times n}$ و $\|\cdot\|$ یک نورم طبیعی دلخواه باشد:</p>
-    $$|\lambda| \le \|A\|$$
-    <p>در نتیجه <strong>شعاع طیفی</strong> $\rho(A) = \max_{\lambda \in \sigma(A)} |\lambda|$ همواره کران‌دار است:</p>
-    $$\boxed{\;\rho(A) \le \|A\|\;}$$
-    <h3>📝 برهان کوتاه:</h3>
-    <p>فرض کنید $(\lambda, x)$ یک زوج ویژه باشد ($x \neq 0$ و $Ax = \lambda x$). از طرفین نورم می‌گیریم:</p>
-    $$\|Ax\| = \|\lambda x\| = |\lambda|\,\|x\|$$
-    <p>از سازگاری نورم طبیعی: $\|Ax\| \le \|A\|\,\|x\|$. پس:</p>
-    $$|\lambda|\,\|x\| \le \|A\|\,\|x\|$$
-    <p>چون $x \neq 0 \implies \|x\| > 0$، با تقسیم بر $\|x\|$:</p>
-    $$|\lambda| \le \|A\| \qquad \blacksquare$$
-  </div>
-  <div class="exercise">
-    <div class="q">برای $A = \begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}$ مقادیر ویژه را حساب کرده و صحت قضیه ۲.۷ را با نورم بی‌نهایت بررسی کنید.</div>
-    <div class="a">
-      <div class="a-label">✅ پاسخ تشریحی:</div>
-      <p><strong>۱) محاسبه مقادیر ویژه:</strong></p>
-      $$\det(A - \lambda I) = (2-\lambda)^2 - 1 = 0 \implies 2-\lambda = \pm 1 \implies \lambda_1 = 3,\;\; \lambda_2 = 1$$
-      <p>شعاع طیفی: $\rho(A) = \max(\{|3|, |1|\}) = 3$</p>
-      <p><strong>۲) محاسبه نورم بی‌نهایت:</strong></p>
-      $$\|A\|_\infty = \max\bigl(\{|2|+|1|,\; |1|+|2|\}\bigr) = 3$$
-      <p><strong>۳) بررسی قضیه ۲.۷:</strong></p>
-      $$\rho(A) = 3 \le \|A\|_\infty = 3 \qquad \checkmark$$
-      <p>رابطه $\rho(A) \le \|A\|$ به زیبایی صدق می‌کند. ✔️</p>
-    </div>
-  </div>
-</section>
-
+  </section>
+  <div id="filters" class="filters"></div>
+  <div id="banner" class="banner" hidden></div>
+  <section id="empty" class="empty" hidden>
+    <div class="empty-art" aria-hidden="true">📗</div>
+    <h2 id="emptyTitle">هنوز منبعی این‌جا نیست</h2>
+    <p id="emptyText">با دکمهٔ + اولین منبع را اضافه کن. لازم نیست دستی فایلی را داخل مخزن پوش کنی.</p>
+    <button id="emptyAdd" class="btn-primary" type="button">+ منبع جدید</button>
+  </section>
+  <section id="grid" class="grid" aria-live="polite"></section>
 </main>
 
 <footer class="footer">
-  <p>📘 راهنمای جامع فصل دوم جبر خطی عددی — نورم و ضرب داخلی</p>
-  <p>بر اساس کتاب <strong>جبر خطی عددی و کاربردها</strong> تألیف <strong>دکتر داود خجسته سالکویه</strong></p>
-  <p style="margin-top:8px;opacity:.7;">از ابتدای فصل تا قضیه ۲.۷</p>
+  <span>کتابخانهٔ منبع‌های آموزشی</span>
+  <span><kbd>+</kbd> منبع جدید · <kbd>/</kbd> جستجو · <a href="https://github.com/pouriasafari117/online_files">مخزن</a> · <a href="https://pouriasafari117.github.io/online_files/">نسخهٔ آنلاین</a></span>
 </footer>
 
+<button id="fab" class="btn-primary fab" type="button" aria-label="منبع جدید">+</button>
+<div id="dropOverlay" class="drop-overlay" hidden>فایل را رها کن تا به کتابخانه اضافه شود</div>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<div id="modalAdd" class="modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="addHeading">
+    <div class="modal-head">
+      <h2 id="addHeading">منبع جدید</h2>
+      <button class="x" type="button" data-close="modalAdd" aria-label="بستن">×</button>
+    </div>
+    <div class="tabs" role="tablist">
+      <button class="tab" id="tabUpload" type="button" role="tab" aria-selected="true">آپلود فایل</button>
+      <button class="tab" id="tabWrite" type="button" role="tab" aria-selected="false">نوشتن منبع</button>
+    </div>
+    <form id="addForm">
+      <div id="uploadPane">
+        <div id="dropzone" class="dropzone">
+          <p>فایل HTML، PDF، تصویر یا یادداشت را این‌جا رها کن</p>
+          <button class="btn" type="button" id="pickFile">انتخاب فایل</button>
+          <input id="fileInput" type="file" hidden>
+        </div>
+        <p id="fileInfo" class="file-info" hidden></p>
+      </div>
+      <div id="writePane" hidden>
+        <div class="formats">
+          <label><input type="radio" name="format" value="lesson" checked> درس HTML</label>
+          <label><input type="radio" name="format" value="md"> یادداشت</label>
+          <label><input type="radio" name="format" value="txt"> متن ساده</label>
+        </div>
+        <p class="help">قالب درس هم‌سبک با راهنمای جبر خطی است و فرمول را هم نشان می‌دهد. بعد از ساختن، همان‌جا قابل ویرایش است.</p>
+      </div>
+      <label class="field"><span>عنوان</span><input id="addTitle" type="text" maxlength="180" placeholder="مثلاً فصل سوم، حل دستگاه‌ها"></label>
+      <label class="field"><span>موضوع</span><input id="addSubject" type="text" maxlength="80" placeholder="مثلاً جبر خطی عددی"></label>
+      <label class="field"><span>توضیح کوتاه</span><textarea id="addDescription" rows="3" maxlength="600" placeholder="این منبع دربارهٔ چیست؟"></textarea></label>
+      <div class="modal-foot">
+        <button id="addSubmit" class="btn-primary" type="submit">افزودن به کتابخانه</button>
+        <button class="btn" type="button" data-close="modalAdd">انصراف</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="modalEdit" class="modal" hidden>
+  <div class="modal-card wide" role="dialog" aria-modal="true" aria-labelledby="editHeading">
+    <div class="modal-head">
+      <h2 id="editHeading">ویرایش منبع</h2>
+      <button class="x" type="button" data-close="modalEdit" aria-label="بستن">×</button>
+    </div>
+    <form id="editForm">
+      <div class="split">
+        <label class="field grow"><span>عنوان</span><input id="editTitle" type="text" maxlength="180"></label>
+        <label class="field grow"><span>موضوع</span><input id="editSubject" type="text" maxlength="80"></label>
+      </div>
+      <label class="field"><span>توضیح</span><textarea id="editDescription" rows="2" maxlength="600"></textarea></label>
+      <label class="field"><span>نام فایل</span><input id="editFilename" type="text" maxlength="140" dir="ltr" spellcheck="false"></label>
+      <p id="filenameHelp" class="help"></p>
+      <label class="check"><input id="editFeatured" type="checkbox"> این منبع بالای کتابخانه برجسته شود</label>
+      <div id="editBinaryNote" class="help binary-note" hidden>این فایل دودویی است. عنوان و توضیح را می‌توانی عوض کنی، یا فایل را با همان پسوند جایگزین کنی.</div>
+      <label id="replaceRow" class="field"><span>جایگزینی فایل</span><input id="editReplace" type="file"></label>
+      <div class="editor-tools">
+        <button id="editDirBtn" class="btn" type="button">راست‌چین</button>
+        <button id="editWrapBtn" class="btn" type="button">شکستن خط</button>
+        <button id="editPreview" class="btn" type="button">پیش‌نمایش در تب جدید</button>
+        <span id="editCount" class="help"></span>
+      </div>
+      <textarea id="editContent" spellcheck="false" hidden></textarea>
+      <div class="modal-foot">
+        <button id="editSave" class="btn-primary" type="submit">ذخیره</button>
+        <button id="editDelete" class="btn-danger" type="button">حذف منبع</button>
+        <button class="btn" type="button" data-close="modalEdit">بستن</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="modalSettings" class="modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settingsHeading">
+    <div class="modal-head">
+      <h2 id="settingsHeading">اتصال به گیت‌هاب</h2>
+      <button class="x" type="button" data-close="modalSettings" aria-label="بستن">×</button>
+    </div>
+    <div id="settingsLocal" hidden>
+      <p>این نسخه به سرور محلی وصل است. با + فایل مستقیم داخل پوشهٔ <span dir="ltr">sources</span> ذخیره می‌شود و لازم نیست دستی پوش کنی.</p>
+      <p class="help">برای اجرای دوباره: <span dir="ltr">python3 server.py</span></p>
+    </div>
+    <div id="settingsGitHub">
+      <p id="tokenStatus" class="help">فهرست منبع‌ها از مخزن عمومی خوانده می‌شود. برای افزودن و ویرایش، یک بار توکن را وارد کن تا ذخیره مستقیم در مخزن انجام شود.</p>
+      <div class="settings-copy">
+        <ol>
+          <li>یک توکن با دسترسی نوشتن روی همین مخزن بساز. ساده‌ترین راه: <a href="https://github.com/settings/tokens/new?scopes=public_repo&description=Online%20Library" target="_blank" rel="noopener">توکن کلاسیک public_repo</a>.</li>
+          <li>اگر توکن ریزدانه می‌خواهی، فقط مخزن <span dir="ltr">online_files</span> و دسترسی Contents: Read and write را بده: <a href="https://github.com/settings/personal-access-tokens/new?name=Online%20Library&description=Library%20panel&contents=write" target="_blank" rel="noopener">ساخت توکن</a>.</li>
+          <li>توکن را پایین بچسبان. فقط در همین مرورگر می‌ماند و داخل مخزن ذخیره نمی‌شود.</li>
+        </ol>
+      </div>
+      <div class="token-row">
+        <input id="tokenInput" type="password" autocomplete="off" spellcheck="false" placeholder="ghp_… یا github_pat_…">
+        <button id="tokenToggle" class="btn" type="button">نمایش</button>
+      </div>
+      <div class="modal-foot">
+        <button id="tokenSave" class="btn-primary" type="button">ذخیره و اتصال</button>
+        <button id="tokenForget" class="btn-danger" type="button">فراموش کردن توکن</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modalConfirm" class="modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <h2 id="confirmTitle">مطمئنی؟</h2>
+    <p id="confirmText"></p>
+    <div class="modal-foot">
+      <button id="confirmOk" class="btn-danger" type="button">حذف</button>
+      <button id="confirmCancel" class="btn" type="button">انصراف</button>
+    </div>
+  </div>
+</div>
+
+<script src="library.js" defer></script>
 </body>
 </html>
