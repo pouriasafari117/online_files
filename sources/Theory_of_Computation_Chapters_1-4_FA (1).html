@@ -1,0 +1,182 @@
+<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><script>window.MathJax={tex:{inlineMath:[["\\(","\\)"],["$","$"]],displayMath:[["\\[","\\]"],["$$","$$"]],processEscapes:true},options:{skipHtmlTags:["script","noscript","style","textarea","pre","code"]}};</script><script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script><title>نظریه محاسبه‌پذیری — فصل‌های ۱ تا ۴</title><link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><style>
+:root {
+  --bg:#0C1021; --bg2:#131929; --bg3:#1B2438; --border:#263047;
+  --text:#CDD5E0; --dim:#7A8A9E;
+  --ch1:#4ADE80; --ch2:#FB923C; --ch3:#818CF8; --ch4:#F472B6;
+  --later:#E879F9; --int:#22D3EE; --ex:#34D399; --fm:#94A3B8;
+  --warn:#F87171; --gold:#FBBF24;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Vazirmatn','Tahoma',serif;font-size:16px;line-height:1.8;display:flex;min-height:100vh}
+nav.sb{width:210px;min-width:210px;background:var(--bg2);border-left:1px solid var(--border);position:fixed;top:0;right:0;height:100vh;overflow-y:auto;padding:1.25rem 0;z-index:10}
+nav.sb .st{font-family:'Space Grotesk',sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);padding:0 1rem 1rem;border-bottom:1px solid var(--border);margin-bottom:.75rem;display:block}
+nav.sb .ch{font-family:'Space Grotesk',sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;padding:.85rem 1rem .15rem;display:block}
+.c1{color:var(--ch1)}.c2{color:var(--ch2)}.c3{color:var(--ch3)}.c4{color:var(--ch4)}
+nav.sb a{display:block;padding:.28rem 1rem;font-family:'Space Grotesk',sans-serif;font-size:.76rem;color:var(--dim);text-decoration:none;border-right:2px solid transparent;transition:all .12s}
+nav.sb a:hover{color:var(--text);border-color:var(--text)}
+nav.sb a.a1:hover{color:var(--ch1);border-color:var(--ch1)}
+nav.sb a.a2:hover{color:var(--ch2);border-color:var(--ch2)}
+nav.sb a.a3:hover{color:var(--ch3);border-color:var(--ch3)}
+nav.sb a.a4:hover{color:var(--ch4);border-color:var(--ch4)}
+main{margin-right:210px;padding:3rem 4rem 6rem;max-width:900px;width:100%}
+.hero{border-bottom:1px solid var(--border);margin-bottom:3rem;padding-bottom:2rem}
+.hero h1{font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:700;color:white;line-height:1.15;margin-bottom:.5rem}
+.hero .sub{font-family:'Space Grotesk',sans-serif;font-size:.82rem;color:var(--dim);letter-spacing:.04em}
+.chap{margin-top:3.5rem}
+.badge{display:inline-block;font-family:'Space Grotesk',sans-serif;font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:.22rem .7rem;border-radius:999px;margin-bottom:.7rem}
+.b1{background:rgba(74,222,128,.1);color:var(--ch1);border:1px solid rgba(74,222,128,.25)}
+.b2{background:rgba(251,146,60,.1);color:var(--ch2);border:1px solid rgba(251,146,60,.25)}
+.b3{background:rgba(129,140,248,.1);color:var(--ch3);border:1px solid rgba(129,140,248,.25)}
+.b4{background:rgba(244,114,182,.1);color:var(--ch4);border:1px solid rgba(244,114,182,.25)}
+.ct{font-family:'Space Grotesk',sans-serif;font-size:1.55rem;font-weight:700;color:white;margin-bottom:.45rem}
+h2{font-family:'Space Grotesk',sans-serif;font-size:1.12rem;font-weight:600;color:white;margin-top:2.5rem;margin-bottom:.7rem}
+h3{font-family:'Space Grotesk',sans-serif;font-size:.82rem;font-weight:600;color:#8A9AB4;margin-top:1.5rem;margin-bottom:.45rem;text-transform:uppercase;letter-spacing:.09em}
+p{margin-bottom:1rem;max-width:68ch}
+ul,ol{margin-left:1.4rem;margin-bottom:1rem;max-width:66ch}
+li{margin-bottom:.35rem}
+.box{border-radius:8px;padding:1rem 1.2rem;margin:1.1rem 0;border-left:3px solid}
+.box .lbl{font-family:'Space Grotesk',sans-serif;font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;margin-bottom:.35rem;display:block}
+.int{background:rgba(34,211,238,.06);border-color:var(--int)}.int .lbl{color:var(--int)}
+.fm{background:rgba(148,163,184,.06);border-color:var(--fm)}.fm .lbl{color:var(--fm)}
+.ex{background:rgba(52,211,153,.06);border-color:var(--ex)}.ex .lbl{color:var(--ex)}
+.lat{background:rgba(232,121,249,.06);border-color:var(--later)}.lat .lbl{color:var(--later)}
+.thm{background:rgba(251,191,36,.06);border-color:var(--gold)}.thm .lbl{color:var(--gold)}
+.wrn{background:rgba(248,113,113,.06);border-color:var(--warn)}.wrn .lbl{color:var(--warn)}
+/* Mathematical notation must stay left-to-right inside the Persian RTL page. */
+.fb{direction:ltr;text-align:left;unicode-bidi:isolate;}
+.fb, .fb *{direction:ltr;unicode-bidi:isolate;}
+.MathJax, mjx-container{direction:ltr!important;unicode-bidi:isolate;}
+mjx-container[display="true"]{display:block;max-width:100%;overflow-x:auto;overflow-y:hidden;text-align:center!important;margin:.8em 0!important;}
+code{font-family:'JetBrains Mono',monospace;font-size:.84em;background:var(--bg3);padding:.12em .4em;border-radius:4px;color:#E2E8F0}
+.fb{font-family:'JetBrains Mono',monospace;font-size:.8rem;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:.9rem 0;line-height:2;overflow-x:auto;color:#B0BFCF;white-space:pre}
+.fb .kw{color:var(--ch3);font-weight:500}
+.fb .ac{color:var(--ch1)}
+.fb .cm{color:var(--dim);font-style:italic}
+.hier{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1.5rem 2rem;margin:1.5rem 0;text-align:center;font-family:'Space Grotesk',sans-serif}
+.tier{display:inline-block;font-size:.85rem;font-weight:500;padding:.45rem 1.2rem;border-radius:6px;margin:.25rem}
+.t1{background:rgba(74,222,128,.08);color:var(--ch1);border:1px solid rgba(74,222,128,.2)}
+.t2{background:rgba(251,146,60,.08);color:var(--ch2);border:1px solid rgba(251,146,60,.2)}
+.t3{background:rgba(129,140,248,.08);color:var(--ch3);border:1px solid rgba(129,140,248,.2)}
+.t4{background:rgba(248,113,113,.08);color:var(--warn);border:1px solid rgba(248,113,113,.2)}
+.t5{background:rgba(251,191,36,.08);color:var(--gold);border:1px solid rgba(251,191,36,.2)}
+.arr{color:var(--dim);font-size:1.1rem;display:block;margin:.1rem 0}
+hr{border:none;border-top:1px solid var(--border);margin:2.5rem 0}
+strong{color:white;font-weight:600}
+em{color:#B8C8DC;font-style:italic}
+table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.87rem}
+th{font-family:'Space Grotesk',sans-serif;font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);padding:.5rem .75rem;border-bottom:1px solid var(--border);text-align:left}
+td{padding:.5rem .75rem;border-bottom:1px solid rgba(38,48,71,.5);vertical-align:top;line-height:1.5}
+tr:last-child td{border-bottom:none}
+td:first-child{font-weight:500;color:white}
+.cmp th:nth-child(2){color:var(--ch1)}.cmp th:nth-child(3){color:var(--ch2)}.cmp th:nth-child(4){color:var(--ch3)}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+@media(max-width:700px){nav.sb{display:none}main{margin-right:0;padding:1.5rem 1.25rem 4rem}}
+
+body{direction:rtl} nav.sb .ch,nav.sb .st{text-align:right} nav.sb a{text-align:right} main{margin-left:0} .box{border-left:0;border-right:3px solid} ul,ol{margin-right:1.4rem;margin-left:0} .fb{direction:ltr;text-align:left} table{direction:rtl} th{text-align:right} @media(max-width:700px){main{margin-right:0}}
+</style></head><body>
+<nav class="sb"><span class="st">نظریه محاسبه‌پذیری</span>
+<span class="ch c1">فصل ۱ · زبان‌های منظم</span><a href="#grand" class="a1">تصویر کلی</a><a href="#langs" class="a1">الفبا و زبان</a><a href="#dfa" class="a1">ماشین DFA</a><a href="#nfa" class="a1">ماشین NFA</a><a href="#regex" class="a1">عبارت منظم</a><a href="#closure1" class="a1">بستارها</a><a href="#pump1" class="a1">لم پمپاژ</a>
+<span class="ch c2">فصل ۲ · زبان‌های مستقل از متن</span><a href="#cfg" class="a2">گرامر CFG</a><a href="#cnf" class="a2">فرم نرمال چامسکی</a><a href="#pda" class="a2">ماشین پشته‌ای PDA</a><a href="#pump2" class="a2">لم پمپاژ CFL</a><a href="#closure2" class="a2">بستارهای CFL</a>
+<span class="ch c3">فصل ۳ · ماشین تورینگ</span><a href="#tm" class="a3">ماشین تورینگ</a><a href="#variants" class="a3">گونه‌های ماشین تورینگ</a><a href="#ctt" class="a3">تز چرچ–تورینگ</a>
+<span class="ch c4">فصل ۴ · تصمیم‌پذیری</span><a href="#encodings" class="a4">کدگذاری و ماشین همگانی</a><a href="#decidable" class="a4">مسائل تصمیم‌پذیر</a><a href="#atm" class="a4">مسئله A_TM</a><a href="#diag" class="a4">قطری‌سازی</a><a href="#recog" class="a4">بازشناختنی یا تصمیم‌پذیر</a><a href="#summary" class="a3">جمع‌بندی</a><a href="#practice" class="a4">تمرین‌ها و روش حل</a></nav>
+<main><div class="hero"><div style="font-size:.68rem;font-weight:600;letter-spacing:.1em;color:var(--dim);margin-bottom:.7rem">بر اساس کتاب سیپسر: مقدمه‌ای بر نظریه محاسبه</div><h1>فصل‌های ۱ تا ۴<br>جزوه، شهود و راهنمای حل مسئله</h1><p class="sub">تمرکز بر فهم شهودی، تعریف‌های دقیق، اثبات‌ها و روش فکر کردن در مسائل</p></div>
+<section id="grand"><h2>🗺️ تصویر کلی: این درس درباره چیست؟</h2><p>پرسش مرکزی درس این است: <strong>کامپیوتر چه چیزهایی را می‌تواند محاسبه کند و چه مسائلی اصولاً الگوریتم ندارند؟</strong></p><div class="box int"><span class="lbl">💡 ایده اصلی</span>در هر فصل، مدلی محاسباتی می‌سازیم و می‌پرسیم چه زبان‌هایی را می‌تواند تشخیص دهد. هر مدل حافظه و توانایی بیشتری دارد.</div><div class="hier"><div style="font-size:.72rem;color:var(--dim);margin-bottom:.75rem">افزایش قدرت محاسباتی ↑</div><div class="tier t4">مسائل تصمیم‌ناپذیر — الگوریتمی برای حلشان وجود ندارد</div><div class="arr">↑</div><div class="tier t3">ماشین تورینگ — مدل عمومی محاسبه</div><div class="arr">↑</div><div class="tier t2">CFG / PDA — زبان‌های مستقل از متن</div><div class="arr">↑</div><div class="tier t1">DFA / NFA / عبارت منظم — زبان‌های منظم</div></div><p>هر فصل یک مدل معرفی می‌کند، محدودیت‌هایش را بررسی می‌کند و نشان می‌دهد چند روش متفاوت ممکن است دقیقاً یک کلاس زبان را توصیف کنند.</p></section><hr>
+<div class="chap"><span class="badge b1">فصل ۱</span><div class="ct">زبان‌های منظم</div><p>مدل‌هایی با حافظه محدود؛ برای تشخیص الگوها عالی‌اند، اما شمارش نامحدود از توانشان خارج است.</p></div>
+<section id="langs"><h2>واژگان پایه: رشته، الفبا و زبان</h2><ul><li><strong>الفبا</strong> \(\Sigma\): مجموعه‌ای متناهی از نمادها، مثل \(\{0,1\}\).</li><li><strong>رشته</strong>: دنباله‌ای متناهی از نمادهای الفبا. رشته تهی را با \(\varepsilon\) نشان می‌دهیم.</li><li><strong>زبان</strong>: هر مجموعه‌ای از رشته‌ها؛ ممکن است متناهی یا نامتناهی باشد.</li></ul><div class="box int"><span class="lbl">💡 چرا این تعریف مهم است؟</span>هر مسئله را می‌توان به پرسش عضویت تبدیل کرد: آیا رشتهٔ ورودی \(w\) عضو زبان \(L\) است؟ مثلاً آیا رشته، نمایش دودویی یک عدد اول است؟ آیا کد از نظر نحوی معتبر است؟</div></section>
+<section id="dfa"><h2>ماشین متناهی قطعی (DFA)</h2><div class="box int"><span class="lbl">💡 شهود</span>ماشینی که ورودی را از چپ به راست می‌خواند و فقط حالت فعلی را به خاطر می‌سپارد. در پایان، اگر در حالت پذیرش باشد ورودی را می‌پذیرد. حافظه‌اش محدود به تعداد متناهی حالت است.</div><div class="box fm"><span class="lbl">📐 تعریف رسمی</span>DFA پنج‌تایی \((Q,\Sigma,\delta,q_0,F)\) است:<div class="fb">Q   = مجموعه متناهی حالت‌ها
+Σ   = الفبای ورودی
+δ   : Q × Σ → Q     تابع انتقال کامل
+q₀  ∈ Q              حالت آغاز
+F   ⊆ Q              مجموعه حالت‌های پذیرش</div><strong>نکته:</strong> برای هر حالت و هر نماد ورودی، دقیقاً یک انتقال تعریف شده است.</div><div class="box ex"><span class="lbl">✏️ مثال: تعداد زوج صفرها</span><div class="fb">حالت‌ها: even (پذیرش)، odd
+شروع: even
+
+δ(even,0)=odd     δ(even,1)=even
+δ(odd,0)=even     δ(odd,1)=odd
+
+ورودی 0110:
+even → odd → odd → odd → even  ✓</div>هر صفر زوجیت را عوض می‌کند؛ یک، حالت را تغییر نمی‌دهد. ماشین تعداد دقیق صفرها را نمی‌داند، فقط زوج یا فرد بودن را می‌داند.</div><div class="box wrn"><span class="lbl">⚠️ محدودیت</span>DFA نمی‌تواند زبان \(\{0^n1^n\mid n\geq0\}\) را تشخیص دهد؛ برای این کار باید تعداد صفرها را تا هر مقدار دلخواه به خاطر بسپارد، اما تعداد حالت‌هایش محدود است.</div></section>
+<section id="nfa"><h2>ماشین متناهی غیرقطعی (NFA)</h2><div class="box int"><span class="lbl">💡 شهود</span>NFA می‌تواند از یک حالت چند مسیر را دنبال کند؛ ورودی پذیرفته می‌شود اگر دست‌کم یک مسیر پذیرش داشته باشد. همچنین ممکن است با انتقال \(\varepsilon\) بدون مصرف نماد ورودی جابه‌جا شود.</div><div class="box fm"><span class="lbl">📐 تعریف</span><div class="fb">δ : Q × Σε → P(Q)</div>برخلاف DFA، انتقال می‌تواند مجموعه‌ای از حالت‌های بعدی را برگرداند.</div><div class="box thm"><span class="lbl">⭐ قضیه مهم</span>هر NFA را می‌توان به DFA معادل تبدیل کرد. هر حالت DFA نمایندهٔ مجموعه‌ای از حالت‌های ممکن NFA است؛ اگر NFA دارای \(n\) حالت باشد، DFA حاصل حداکثر \(2^n\) حالت دارد. بنابراین NFA و DFA دقیقاً زبان‌های یکسانی را می‌پذیرند.</div></section>
+<section id="regex"><h2>عبارت‌های منظم (Regular Expressions)</h2><p>به‌جای رسم ماشین، الگوی رشته‌ها را با عملگرهای جبری توصیف می‌کنیم.</p><div class="fb">R₁ ∪ R₂   اجتماع: یکی از دو الگو
+R₁R₂      الحاق: ابتدا رشته‌ای از R₁ و سپس R₂
+R*        ستاره کلینی: صفر یا چند تکرار
+ε         رشته تهی
+∅         زبان تهی</div><div class="box ex"><span class="lbl">✏️ نمونه‌ها</span><div class="fb">0*1*       صفرهای دلخواه و سپس یک‌های دلخواه
+(0∪1)*01   همه رشته‌های دودویی پایان‌یافته به 01
+(0∪1)*     همه رشته‌های دودویی
+0(10)*1    01، 0101، 010101، ...</div></div><div class="box thm"><span class="lbl">⭐ هم‌ارزی</span>عبارت منظم، NFA و DFA سه روش برای توصیف دقیقاً یک کلاس‌اند: زبان‌های منظم.</div></section>
+<section id="closure1"><h2>ویژگی‌های بستار زبان‌های منظم</h2><p>زبان‌های منظم تحت اجتماع، الحاق، ستاره، متمم، اشتراک، وارون‌سازی و تفاضل بسته‌اند؛ یعنی انجام این عمل‌ها روی زبان‌های منظم، زبانی منظم می‌دهد.</p><div class="box int"><span class="lbl">💡 متمم گرفتن</span>برای DFA کامل، کافی است حالت‌های پذیرش و ناپذیرش را جابه‌جا کنیم. همین سادگی برای PDA و ماشین تورینگ به این شکل برقرار نیست.</div></section>
+<section id="pump1"><h2>لم پمپاژ: اثبات نامنظم بودن</h2><div class="box int"><span class="lbl">💡 شهود</span>اگر DFA تعداد محدودی حالت داشته باشد و رشته‌ای به‌اندازه کافی بلند بخواند، ناچار یک حالت را دوبار می‌بیند. پس مسیری حلقه‌ای وجود دارد که می‌توان آن را تکرار کرد.</div><div class="box fm"><span class="lbl">📐 بیان لم</span>اگر \(L\) منظم باشد، عددی \(p\) وجود دارد که هر \(w\in L\) با \(|w|\geq p\) را بتوان به \(w=xyz\) شکست، به‌طوری‌که:<div class="fb">1. |xy| ≤ p
+2. |y| ≥ 1
+3. برای هر i ≥ 0: xyⁱz ∈ L</div></div><h3>روش اثبات با تناقض</h3><div class="fb">۱) فرض کن L منظم است.
+۲) طول پمپاژ را p بگیر.
+۳) رشته w را هوشمندانه انتخاب کن.
+۴) برای هر تجزیه مجاز w=xyz، بخشی y را پیدا کن
+   که تکرارش زبان را خراب کند.
+۵) تناقض؛ پس L منظم نیست.</div><div class="box ex"><span class="lbl">✏️ مثال کلاسیک</span><div class="fb">L = {0ⁿ1ⁿ | n ≥ 0}
+w = 0ᵖ1ᵖ
+
+چون |xy|≤p، بخش y فقط از صفرهاست؛
+پس y=0ᵏ و k≥1.
+با i=2:
+xy²z = 0ᵖ⁺ᵏ1ᵖ ∉ L
+تعداد صفرها و یک‌ها برابر نیست؛ تناقض.</div></div><div class="box wrn"><span class="lbl">⚠️ اشتباه رایج</span>نباید فقط یک تجزیهٔ خاص را رد کنی؛ باید نشان دهی برای <strong>هر تجزیهٔ مجاز</strong>، انتخابی از \(i\) وجود دارد که رشتهٔ پمپاژشده را از زبان خارج کند.</div></section><hr>
+<div class="chap"><span class="badge b2">فصل ۲</span><div class="ct">زبان‌های مستقل از متن</div><p>افزودن پشته، حافظه‌ای مناسب برای ساختارهای تودرتو مثل پرانتزها فراهم می‌کند.</p></div>
+<section id="cfg"><h2>گرامر مستقل از متن (CFG)</h2><div class="box int"><span class="lbl">💡 چرا به CFG نیاز داریم؟</span>برای ساختارهایی مثل پرانتزهای متوازن یا رشته‌هایی با تعداد برابر صفر و یک، به قواعد بازنویسی نیاز داریم؛ DFA حافظهٔ کافی ندارد.</div><div class="box fm"><span class="lbl">📐 تعریف رسمی</span>گرامر CFG چهار‌تایی \((V,\Sigma,R,S)\) است:<div class="fb">V = متغیرها / نمادهای غیرپایانی
+Σ = نمادهای پایانی
+R = قواعد تولید
+S = نماد آغاز</div>از \(S\) شروع می‌کنیم و متغیرها را با سمت راست قواعد جایگزین می‌کنیم تا فقط نمادهای پایانی باقی بمانند.</div><div class="box ex"><span class="lbl">✏️ تولید 0ⁿ1ⁿ</span><div class="fb">S → 0S1 | ε
+S → 0S1 → 00S11 → 000S111 → 000111</div>در هر مرحله یک صفر به چپ و یک یک به راست اضافه می‌شود؛ پس تعدادشان برابر می‌ماند.</div><div class="box ex"><span class="lbl">✏️ گرامر عبارت حسابی</span><div class="fb">E → E + T | T
+T → T × F | F
+F → (E) | a</div>این ساختار تقدم ضرب نسبت به جمع را نمایش می‌دهد.</div><p><strong>درخت تجزیه:</strong> درختی که نحوهٔ تولید رشته را نشان می‌دهد. گرامر مبهم است اگر رشته‌ای دست‌کم دو درخت تجزیه متفاوت داشته باشد.</p></section>
+<section id="cnf"><h2>فرم نرمال چامسکی (CNF)</h2><p>در CNF قواعد معمولاً شکل \(A\to BC\) یا \(A\to a\) دارند؛ قاعدهٔ \(S\to\varepsilon\) نیز در صورت نیاز مجاز است.</p><div class="box int"><span class="lbl">💡 فایده</span>ساختار درخت‌ها منظم‌تر می‌شود و الگوریتم CYK برای بررسی عضویت در زبان در زمان \(O(n^3)\) قابل استفاده است.</div></section>
+<section id="pda"><h2>ماشین پشته‌ای (PDA)</h2><div class="box int"><span class="lbl">💡 شهود</span>PDA شبیه NFA است، اما یک پشتهٔ آخرین‌ورودی، اولین‌خروجی دارد. می‌تواند نمادها را روی پشته بگذارد و از بالای آن بردارد؛ برای ساختارهای تودرتو مناسب است.</div><div class="box ex"><span class="lbl">✏️ زبان 0ⁿ1ⁿ</span><div class="fb">هنگام خواندن هر 0، یک نشانگر روی پشته بگذار.
+هنگام خواندن هر 1، یک نشانگر بردار.
+پذیرش: ورودی تمام شده و نشانگرها مصرف شده‌اند.</div></div><div class="box ex"><span class="lbl">✏️ پرانتزهای متوازن</span><div class="fb">با دیدن '(' آن را روی پشته بگذار.
+با دیدن ')' یک '(' بردار؛ اگر چیزی برای برداشتن نبود رد کن.
+پایان ورودی: پشته باید خالی باشد.</div></div><div class="box thm"><span class="lbl">⭐ هم‌ارزی CFG و PDA</span>گرامرهای مستقل از متن و ماشین‌های پشته‌ای دقیقاً کلاس زبان‌های مستقل از متن را توصیف می‌کنند. PDA قطعی از PDA غیرقطعی ضعیف‌تر است؛ برای نمونه، تشخیص همهٔ پالیندروم‌ها نیازمند حدس زدن نقطهٔ میانی است.</div></section>
+<section id="pump2"><h2>لم پمپاژ برای زبان‌های مستقل از متن</h2><div class="box fm"><span class="lbl">📐 بیان لم</span>اگر \(L\) مستقل از متن باشد، برای رشتهٔ بلند \(w\in L\)، تجزیه‌ای \(w=uvxyz\) وجود دارد که:<div class="fb">1. |vy| ≥ 1
+2. |vxy| ≤ p
+3. برای هر i ≥ 0: uvⁱxyⁱz ∈ L</div>برخلاف لم منظم، اینجا دو بخش \(v\) و \(y\) هم‌زمان پمپاژ می‌شوند.</div><div class="box ex"><span class="lbl">✏️ نمونه: aⁿbⁿcⁿ مستقل از متن نیست</span><div class="fb">فرض کن L مستقل از متن است و w=aᵖbᵖcᵖ را بگیر.
+چون |vxy|≤p، این بخش نمی‌تواند هم‌زمان
+شامل a و b و c باشد.
+با پمپاژ، تعداد دست‌کم یکی از نمادها تغییر می‌کند
+ولی تعداد نوع دیگر ثابت می‌ماند؛ تناقض.</div></div><div class="box wrn"><span class="lbl">⚠️ دقت در اثبات</span>در لم CFL هم باید همهٔ تجزیه‌های مجاز را پوشش دهی؛ فقط گفتن اینکه «تعدادها تغییر می‌کنند» کافی نیست، باید نشان دهی هر حالت ممکن به تناقض می‌رسد.</div></section>
+<section id="closure2"><h2>بستارهای CFL</h2><p>زبان‌های مستقل از متن تحت اجتماع، الحاق و ستاره بسته‌اند؛ اما تحت اشتراک با یک CFL دلخواه یا متمم بسته نیستند. بااین‌حال، اشتراک CFL با یک زبان منظم همچنان CFL است.</p><div class="box ex"><span class="lbl">✏️ ایدهٔ مثال نقض</span>اگر دو زبان CFL را طوری انتخاب کنیم که اشتراکشان \(\{a^nb^nc^n\}\) باشد، چون زبان حاصل CFL نیست، کلاس CFL تحت اشتراک عمومی بسته نیست.</div></section><hr>
+<div class="chap"><span class="badge b3">فصل ۳</span><div class="ct">ماشین تورینگ و تز چرچ–تورینگ</div></div>
+<section id="tm"><h2>ماشین تورینگ (TM)</h2><div class="box int"><span class="lbl">💡 جهش اصلی</span>ماشین تورینگ نواری نامتناهی دارد که می‌تواند از آن بخواند و روی آن بنویسد. سرِ نوار به چپ یا راست حرکت می‌کند. نوار هم ورودی است و هم حافظهٔ کاری نامحدود.</div><div class="box fm"><span class="lbl">📐 تعریف</span><div class="fb">M = (Q, Σ, Γ, δ, q₀, q_accept, q_reject)
+Q = حالت‌ها
+Σ = الفبای ورودی
+Γ = الفبای نوار، شامل نماد سفید ⊔
+δ = انتقال: حالت و نماد → حالت جدید، نماد نوشته‌شده، حرکت L/R</div></div><div class="box wrn"><span class="lbl">⚠️ سه سرنوشت ورودی</span><div class="fb">پذیرش: ماشین به q_accept می‌رسد.
+رد: ماشین به q_reject می‌رسد.
+حلقه: ماشین برای همیشه اجرا می‌شود.</div>ماشینی که روی همهٔ ورودی‌ها متوقف شود و پاسخ بدهد، <strong>تصمیم‌گیر</strong> است.</div><div class="box fm"><span class="lbl">📐 دو تعریف مهم</span><strong>بازشناختنی تورینگ:</strong> همهٔ رشته‌های زبان را می‌پذیرد، اما برای رشته‌های خارج زبان ممکن است تا ابد اجرا شود.<br><strong>تصمیم‌پذیر:</strong> برای هر ورودی متوقف می‌شود؛ اعضا را می‌پذیرد و غیرعضوها را رد می‌کند.</div><div class="box ex"><span class="lbl">✏️ الگوریتم نمونه برای {w#w}</span>بررسی کن علامت # وجود داشته باشد؛ سپس نمادهای سمت چپ را یکی‌یکی علامت بزن و با نماد متناظر سمت راست مقایسه کن. هر ناسازگاری را رد کن؛ در پایان، اگر هر دو سمت دقیقاً تطبیق داشتند، بپذیر.</div></section>
+<section id="variants"><h2>گونه‌های ماشین تورینگ</h2><h3>ماشین چندنواره</h3><p>هر نوار سر خواندن/نوشتن خودش را دارد. راحت‌تر برنامه‌ریزی می‌شود، اما از نظر قدرت محاسباتی با ماشین تک‌نواره هم‌ارز است.</p><h3>ماشین تورینگ غیرقطعی</h3><p>در هر مرحله چند شاخه ممکن دارد و اگر دست‌کم یک شاخه بپذیرد، ورودی پذیرفته می‌شود. ماشین قطعی می‌تواند آن را شبیه‌سازی کند، هرچند ممکن است زمان بیشتری لازم داشته باشد.</p><div class="box thm"><span class="lbl">⭐ ارتباط با P و NP</span>در محاسبهٔ بدون محدودیت زمانی، غیرقطعی بودن قدرت تشخیص زبان‌ها را افزایش نمی‌دهد؛ اما ممکن است زمان شبیه‌سازی نمایی شود. پرسش اینکه آیا هر مسئلهٔ NP راه‌حل قطعی چندجمله‌ای دارد، همان مسئلهٔ باز \(P\) در برابر \(NP\) است.</div><h3>شمارندهٔ زبان (Enumerator)</h3><p>ماشینی با خروجی چاپی که رشته‌های زبان را یکی‌یکی چاپ می‌کند. زبان تورینگ‌بازشناختنی است اگر و تنها اگر شمارنده‌ای وجود داشته باشد که اعضای آن را چاپ کند.</p></section>
+<section id="ctt"><h2>تز چرچ–تورینگ</h2><div class="box thm"><span class="lbl">⭐ تز، نه قضیه</span>هر مدل معقول محاسبه را می‌توان از نظر محاسبه‌پذیری با ماشین تورینگ شبیه‌سازی کرد.</div><p>این گزاره قضیهٔ ریاضی به معنای دقیق نیست، چون «مدل معقول محاسبه» تعریف صوری کاملی ندارد. شواهد گسترده نشان می‌دهند مدل‌های رایج محاسبه از نظر محاسبه‌پذیری با ماشین تورینگ هم‌ارزند. بنابراین اگر ثابت کنیم هیچ ماشین تورینگی مسئله‌ای را حل نمی‌کند، نتیجه می‌گیریم هیچ الگوریتم معمولی‌ای نیز آن را حل نمی‌کند.</p></section><hr>
+<div class="chap"><span class="badge b4">فصل ۴</span><div class="ct">تصمیم‌پذیری</div><p>حتی قدرتمندترین مدل استاندارد محاسبه هم محدودیت دارد؛ بعضی مسائل هیچ الگوریتمی ندارند.</p></div>
+<section id="encodings"><h2>ایدهٔ کلیدی: ماشین‌ها به‌صورت رشته</h2><div class="box int"><span class="lbl">💡 جهش مفهومی</span>می‌توان توصیف یک ماشین تورینگ را به شکل رشته‌ای مانند \(\langle M\rangle\) کدگذاری کرد. پس یک ماشین می‌تواند توصیف ماشین دیگری را به‌عنوان ورودی دریافت کند و شبیه‌سازی‌اش کند.</div><h3>ماشین تورینگ همگانی (UTM)</h3><div class="box thm"><span class="lbl">⭐ ماشین همگانی</span>ماشین \(U\) روی ورودی \(\langle M,w\rangle\)، اجرای ماشین \(M\) روی رشتهٔ \(w\) را شبیه‌سازی می‌کند. زبان \(A_{TM}=\{\langle M,w\rangle\mid M \text{ رشته } w \text{ را می‌پذیرد}\}\) بازشناختنی است؛ اما تصمیم‌پذیر نیست.</div><p>اگر \(M\) روی \(w\) بی‌نهایت اجرا شود، شبیه‌ساز نیز ممکن است بی‌نهایت اجرا شود. صرفاً منتظر ماندن نمی‌تواند همیشه مشخص کند که ماشین بالاخره متوقف خواهد شد یا نه.</p></section>
+<section id="decidable"><h2>مسائل تصمیم‌پذیر دربارهٔ زبان‌های منظم و CFL</h2><div class="box fm"><span class="lbl">📐 مسائل استاندارد DFA</span><div class="fb">A_DFA = {⟨M,w⟩ | DFA M رشته w را می‌پذیرد}
+روش: شبیه‌سازی M روی w؛ در پایان پاسخ معلوم است.
+
+E_DFA = {⟨M⟩ | L(M)=∅}
+روش: از حالت آغاز، حالت‌های قابل‌دسترسی را پیدا کن؛
+اگر هیچ حالت پذیرشی قابل‌دسترسی نباشد، زبان تهی است.
+
+EQ_DFA = {⟨M₁,M₂⟩ | L(M₁)=L(M₂)}
+روش: زبان اختلاف را بررسی کن؛ اگر هیچ رشته‌ای در اختلاف
+نیست، دو زبان برابرند.</div></div><div class="box fm"><span class="lbl">📐 مسائل CFG</span>عضویت رشته در زبان CFG با الگوریتمی مانند CYK تصمیم‌پذیر است. تهی بودن زبان CFG نیز با بررسی اینکه آیا نماد آغاز می‌تواند رشته‌ای از نمادهای پایانی تولید کند تصمیم‌پذیر است.</div></section>
+<section id="atm"><h2>مسئلهٔ \(A_{TM}\): آیا ماشین ورودی را می‌پذیرد؟</h2><p>\(A_{TM}\) بازشناختنی است: ماشین همگانی، ماشین ورودی را شبیه‌سازی می‌کند و اگر بپذیرد، می‌پذیرد. اما اگر ماشین ورودی رد کند یا حلقه بزند، شبیه‌سازی به‌تنهایی همیشه جواب نهایی نمی‌دهد.</p><div class="box wrn"><span class="lbl">⚠️ نتیجهٔ اساسی</span>هیچ تصمیم‌گیری‌ای وجود ندارد که برای هر زوج \(\langle M,w\rangle\) درست و در زمان متناهی تعیین کند آیا \(M\) ورودی \(w\) را می‌پذیرد یا نه.</div></section>
+<section id="diag"><h2>قطری‌سازی و اثبات تصمیم‌ناپذیری</h2><div class="box int"><span class="lbl">💡 ایده</span>فرض کن تصمیم‌گیری کامل برای پذیرش ماشین‌ها وجود دارد. ماشینی بساز که با خروجی آن تصمیم‌گیر عمداً رفتار مخالف انجام دهد؛ وقتی توصیف خودش را به خودش بدهیم، به تناقض می‌رسیم.</div><div class="fb">۱) فرض کن H تصمیم می‌گیرد آیا M ورودی w را می‌پذیرد.
+۲) ماشین D روی ورودی ⟨M⟩، H را روی ⟨M,⟨M⟩⟩ اجرا می‌کند.
+۳) اگر H بگوید M می‌پذیرد، D رد می‌کند/حلقه می‌زند.
+۴) اگر H بگوید M نمی‌پذیرد، D می‌پذیرد.
+۵) اجرای D روی ⟨D⟩ تناقض ایجاد می‌کند.
+پس H وجود ندارد.</div></section>
+<section id="recog"><h2>بازشناختنی در برابر تصمیم‌پذیر</h2><table><thead><tr><th>ویژگی</th><th>تصمیم‌پذیر</th><th>بازشناختنی</th></tr></thead><tbody><tr><td>رشتهٔ عضو</td><td>می‌پذیرد و متوقف می‌شود</td><td>می‌پذیرد</td></tr><tr><td>رشتهٔ غیرعضو</td><td>رد می‌کند و متوقف می‌شود</td><td>ممکن است رد کند یا حلقه بزند</td></tr><tr><td>تضمین توقف</td><td>برای همهٔ ورودی‌ها</td><td>فقط اعضا الزاماً پذیرفته می‌شوند</td></tr></tbody></table><div class="box thm"><span class="lbl">⭐ قضیهٔ مهم</span>یک زبان تصمیم‌پذیر است اگر و تنها اگر خودش و متممش هر دو بازشناختنی باشند.</div></section>
+<section id="summary"><h2>جمع‌بندی چهار فصل</h2><div class="hier"><div class="tier t1">DFA / NFA / Regex: حافظهٔ متناهی</div><div class="arr">↓ افزودن پشته</div><div class="tier t2">CFG / PDA: ساختارهای تودرتو</div><div class="arr">↓ نوار خواندن و نوشتن</div><div class="tier t3">ماشین تورینگ: مدل عمومی محاسبه</div><div class="arr">↓ پرسش از محدودیت‌ها</div><div class="tier t4">تصمیم‌ناپذیری: مسائلی بدون الگوریتم عمومی</div></div><p>نکتهٔ پیونددهنده: در هر فصل، مدل محاسباتی را می‌شناسیم، زبان‌هایی را که می‌پذیرد بررسی می‌کنیم و با اثبات، مرز توانایی‌هایش را مشخص می‌کنیم.</p></section>
+<section id="practice"><h2>تمرین‌ها + روش فکر کردن و حل مسئله</h2><p>پیشنهاد: اول خودت حل کن، بعد راهنمای کوتاه هر سؤال را ببین. هدف فقط جواب نیست؛ باید بتوانی دلیل درستی راه‌حل را توضیح بدهی.</p>
+<h3>تمرین‌های فصل ۱</h3><div class="box ex"><span class="lbl">تمرین ۱ — طراحی DFA</span>یک DFA روی الفبای \(\{0,1\}\) طراحی کن که رشته‌هایی با تعداد فردِ ۱ را بپذیرد.<p><strong>روش حل:</strong> از خودت بپرس چه اطلاعاتی از گذشته برای تصمیم نهایی لازم است. فقط زوج/فرد بودن تعداد ۱ها مهم است؛ پس دو حالت بساز و با خواندن ۱ بینشان جابه‌جا شو، با خواندن ۰ در همان حالت بمان.</p></div><div class="box ex"><span class="lbl">تمرین ۲ — عبارت منظم</span>عبارتی بنویس که همهٔ رشته‌های دودویی‌ای را بپذیرد که با 1 شروع می‌شوند و با 0 تمام می‌شوند.<p><strong>راهنمایی:</strong> نماد اول را ثابت کن، وسط را با \((0\cup1)^*\) آزاد بگذار و نماد آخر را ثابت کن. برای رشته‌های کوتاه بررسی کن که ابتدا و انتها با شرط سازگار باشند.</p></div><div class="box ex"><span class="lbl">تمرین ۳ — لم پمپاژ</span>با لم پمپاژ ثابت کن \(L=\{0^n1^n\mid n\geq0\}\) منظم نیست.<p><strong>روش حل:</strong> فرض منظم بودن، انتخاب \(0^p1^p\)، استفاده از \(|xy|\leq p\) برای محدود کردن \(y\) به صفرها، و سپس پمپاژ با \(i=0\) یا \(i=2\). هر دو تعداد صفر و یک را نابرابر می‌کنند.</p></div>
+<h3>تمرین‌های فصل ۲</h3><div class="box ex"><span class="lbl">تمرین ۴ — ساخت CFG</span>گرامری برای پرانتزهای متوازن بساز.<p><strong>راهنمایی:</strong> هر رشتهٔ متوازن یا تهی است، یا یک پرانتز باز، یک رشتهٔ متوازن، یک پرانتز بسته و سپس احتمالاً رشتهٔ متوازن دیگری دارد. یک قاعدهٔ رایج: \(S\to(S)S\mid\varepsilon\).</p></div><div class="box ex"><span class="lbl">تمرین ۵ — تشخیص با PDA</span>توضیح بده PDA چگونه \(0^n1^n\) را می‌پذیرد.<p><strong>روش حل:</strong> دو فاز مشخص کن: ابتدا فقط صفرها را بخوان و برای هرکدام یک نشانگر push کن؛ سپس فقط یک‌ها را بخوان و برای هرکدام pop کن. ورودی نامنظم یا عدم تطابق شمارش باید رد شود.</p></div><div class="box ex"><span class="lbl">تمرین ۶ — لم CFL</span>ایدهٔ اثبات کن که \(\{a^nb^nc^n\mid n\geq0\}\) مستقل از متن نیست.<p><strong>روش حل:</strong> رشتهٔ \(a^pb^pc^p\) را انتخاب کن. چون بخش میانی پمپاژ طول حداکثر \(p\) دارد، نمی‌تواند هر سه بلوک را پوشش دهد. با پمپاژ، دست‌کم یکی از تعدادها تغییر می‌کند بدون اینکه هر سه برابر بمانند؛ در اثبات رسمی تمام جایگاه‌های ممکن را دسته‌بندی کن.</p></div>
+<h3>تمرین‌های فصل ۳ و ۴</h3><div class="box ex"><span class="lbl">تمرین ۷ — طراحی الگوریتم ماشین تورینگ</span>الگوریتمی سطح بالا برای تشخیص رشته‌های \(w\#w\) بنویس.<p><strong>روش حل:</strong> نمادها را یکی‌یکی علامت بزن؛ نماد بعدی سمت چپ را با نماد متناظر سمت راست مقایسه کن؛ در ناسازگاری رد کن؛ در پایان بررسی کن هیچ نماد اضافه‌ای نمانده باشد.</p></div><div class="box ex"><span class="lbl">تمرین ۸ — تصمیم‌پذیری</span>چرا مسئلهٔ «آیا DFA رشتهٔ \(w\) را می‌پذیرد؟» تصمیم‌پذیر است؟<p><strong>روش حل:</strong> ماشین قطعی و تعداد حالت‌های محدود دارد؛ ورودی متناهی است؛ شبیه‌سازی پس از خواندن همهٔ نمادها تمام می‌شود و پاسخ پذیرش/رد مشخص است.</p></div><div class="box ex"><span class="lbl">تمرین ۹ — تصمیم‌ناپذیری</span>فرق «بازشناختنی» و «تصمیم‌پذیر» را با مثال \(A_{TM}\) توضیح بده.<p><strong>راهنمایی:</strong> شبیه‌سازی اگر ماشین را در حالت پذیرش ببیند جواب بله را تأیید می‌کند؛ ولی اگر ماشین حلقه بزند، شبیه‌سازی هم ممکن است تا ابد ادامه یابد. تصمیم‌گیر باید برای همهٔ ورودی‌ها متوقف شود.</p></div><div class="box ex"><span class="lbl">تمرین ۱۰ — استدلال قطری</span>در اثبات تصمیم‌ناپذیری \(A_{TM}\)، چرا اجرای ماشین ساخته‌شده روی توصیف خودش تناقض ایجاد می‌کند؟<p><strong>راهنمایی:</strong> ماشین جدید عمداً نتیجهٔ پیش‌بینی‌کننده را وارونه می‌کند؛ اگر پیش‌بینی کند می‌پذیرد، ماشین نمی‌پذیرد و برعکس. با ورودی خودارجاع، هر دو پاسخ با تعریف ماشین ناسازگار می‌شوند.</p></div>
+<h3>الگوی عمومی حل مسائل این درس</h3><div class="box int"><span class="lbl">🧠 چک‌لیست</span><ol><li><strong>زبان را دقیق بنویس.</strong> رشته‌های عضو چه ساختاری دارند؟ چند مثال عضو و غیرعضو بساز.</li><li><strong>نیاز حافظه را تشخیص بده.</strong> فقط زوج/فرد؟ DFA. شمارش تودرتو؟ PDA/CFG. نوشتن و رفت‌وبرگشت نامحدود؟ TM.</li><li><strong>برای طراحی، اطلاعات ضروری را نگه دار.</strong> هر حالت باید یک وضعیت معنادار از اطلاعات لازم باشد، نه شرح تمام گذشته.</li><li><strong>برای اثبات نامنظم بودن،</strong> لم پمپاژ را با انتخاب رشته‌ای به‌کار ببر که بخش پمپاژ ناچار در قسمت حساس قرار گیرد.</li><li><strong>برای CFL،</strong> یادت باشد دو بخش پمپاژ می‌شوند و باید حالت‌های ممکن را کامل بررسی کنی.</li><li><strong>برای تصمیم‌پذیری،</strong> الگوریتم مشخصی بده و توضیح بده چرا روی هر ورودی متوقف می‌شود.</li><li><strong>برای تصمیم‌ناپذیری،</strong> از فرض وجود تصمیم‌گیر شروع کن و آن را به تناقض یا مسئلهٔ شناخته‌شده تبدیل کن.</li><li><strong>اثبات را با مثال قاطی نکن.</strong> مثال برای فهم است؛ اثبات باید تمام ورودی‌ها یا تمام تجزیه‌های مجاز را پوشش دهد.</li></ol></div><div class="box thm"><span class="lbl">⭐ یک نکتهٔ طلایی</span>در مسائل طراحی بپرس «حداقل چه چیزی را باید به خاطر بسپارم؟»؛ در مسائل اثبات بپرس «کدام ویژگی ناگزیر در تمام حالت‌های ممکن برقرار است؟» این دو سؤال، بخش بزرگی از راه‌حل را روشن می‌کنند.</div></section>
+<div style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);font-size:.73rem;color:var(--dim);text-align:center">بر پایهٔ کتاب «مقدمه‌ای بر نظریهٔ محاسبه» اثر سیپسر · جزوهٔ آموزشی با تأکید بر شهود و ارتباط مفاهیم</div></main></body></html>
