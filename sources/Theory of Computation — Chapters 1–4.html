@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Theory of Computation — Chapters 1–4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0C1021; --bg2:#131929; --bg3:#1B2438; --border:#263047;
+  --text:#CDD5E0; --dim:#7A8A9E;
+  --ch1:#4ADE80; --ch2:#FB923C; --ch3:#818CF8; --ch4:#F472B6;
+  --later:#E879F9; --int:#22D3EE; --ex:#34D399; --fm:#94A3B8;
+  --warn:#F87171; --gold:#FBBF24;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Lora',Georgia,serif;font-size:16px;line-height:1.8;display:flex;min-height:100vh}
+nav.sb{width:210px;min-width:210px;background:var(--bg2);border-right:1px solid var(--border);position:fixed;top:0;left:0;height:100vh;overflow-y:auto;padding:1.25rem 0;z-index:10}
+nav.sb .st{font-family:'Space Grotesk',sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);padding:0 1rem 1rem;border-bottom:1px solid var(--border);margin-bottom:.75rem;display:block}
+nav.sb .ch{font-family:'Space Grotesk',sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;padding:.85rem 1rem .15rem;display:block}
+.c1{color:var(--ch1)}.c2{color:var(--ch2)}.c3{color:var(--ch3)}.c4{color:var(--ch4)}
+nav.sb a{display:block;padding:.28rem 1rem;font-family:'Space Grotesk',sans-serif;font-size:.76rem;color:var(--dim);text-decoration:none;border-left:2px solid transparent;transition:all .12s}
+nav.sb a:hover{color:var(--text);border-color:var(--text)}
+nav.sb a.a1:hover{color:var(--ch1);border-color:var(--ch1)}
+nav.sb a.a2:hover{color:var(--ch2);border-color:var(--ch2)}
+nav.sb a.a3:hover{color:var(--ch3);border-color:var(--ch3)}
+nav.sb a.a4:hover{color:var(--ch4);border-color:var(--ch4)}
+main{margin-left:210px;padding:3rem 4rem 6rem;max-width:900px;width:100%}
+.hero{border-bottom:1px solid var(--border);margin-bottom:3rem;padding-bottom:2rem}
+.hero h1{font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:700;color:white;line-height:1.15;margin-bottom:.5rem}
+.hero .sub{font-family:'Space Grotesk',sans-serif;font-size:.82rem;color:var(--dim);letter-spacing:.04em}
+.chap{margin-top:3.5rem}
+.badge{display:inline-block;font-family:'Space Grotesk',sans-serif;font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:.22rem .7rem;border-radius:999px;margin-bottom:.7rem}
+.b1{background:rgba(74,222,128,.1);color:var(--ch1);border:1px solid rgba(74,222,128,.25)}
+.b2{background:rgba(251,146,60,.1);color:var(--ch2);border:1px solid rgba(251,146,60,.25)}
+.b3{background:rgba(129,140,248,.1);color:var(--ch3);border:1px solid rgba(129,140,248,.25)}
+.b4{background:rgba(244,114,182,.1);color:var(--ch4);border:1px solid rgba(244,114,182,.25)}
+.ct{font-family:'Space Grotesk',sans-serif;font-size:1.55rem;font-weight:700;color:white;margin-bottom:.45rem}
+h2{font-family:'Space Grotesk',sans-serif;font-size:1.12rem;font-weight:600;color:white;margin-top:2.5rem;margin-bottom:.7rem}
+h3{font-family:'Space Grotesk',sans-serif;font-size:.82rem;font-weight:600;color:#8A9AB4;margin-top:1.5rem;margin-bottom:.45rem;text-transform:uppercase;letter-spacing:.09em}
+p{margin-bottom:1rem;max-width:68ch}
+ul,ol{margin-left:1.4rem;margin-bottom:1rem;max-width:66ch}
+li{margin-bottom:.35rem}
+.box{border-radius:8px;padding:1rem 1.2rem;margin:1.1rem 0;border-left:3px solid}
+.box .lbl{font-family:'Space Grotesk',sans-serif;font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;margin-bottom:.35rem;display:block}
+.int{background:rgba(34,211,238,.06);border-color:var(--int)}.int .lbl{color:var(--int)}
+.fm{background:rgba(148,163,184,.06);border-color:var(--fm)}.fm .lbl{color:var(--fm)}
+.ex{background:rgba(52,211,153,.06);border-color:var(--ex)}.ex .lbl{color:var(--ex)}
+.lat{background:rgba(232,121,249,.06);border-color:var(--later)}.lat .lbl{color:var(--later)}
+.thm{background:rgba(251,191,36,.06);border-color:var(--gold)}.thm .lbl{color:var(--gold)}
+.wrn{background:rgba(248,113,113,.06);border-color:var(--warn)}.wrn .lbl{color:var(--warn)}
+code{font-family:'JetBrains Mono',monospace;font-size:.84em;background:var(--bg3);padding:.12em .4em;border-radius:4px;color:#E2E8F0}
+.fb{font-family:'JetBrains Mono',monospace;font-size:.8rem;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;margin:.9rem 0;line-height:2;overflow-x:auto;color:#B0BFCF;white-space:pre}
+.fb .kw{color:var(--ch3);font-weight:500}
+.fb .ac{color:var(--ch1)}
+.fb .cm{color:var(--dim);font-style:italic}
+.hier{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1.5rem 2rem;margin:1.5rem 0;text-align:center;font-family:'Space Grotesk',sans-serif}
+.tier{display:inline-block;font-size:.85rem;font-weight:500;padding:.45rem 1.2rem;border-radius:6px;margin:.25rem}
+.t1{background:rgba(74,222,128,.08);color:var(--ch1);border:1px solid rgba(74,222,128,.2)}
+.t2{background:rgba(251,146,60,.08);color:var(--ch2);border:1px solid rgba(251,146,60,.2)}
+.t3{background:rgba(129,140,248,.08);color:var(--ch3);border:1px solid rgba(129,140,248,.2)}
+.t4{background:rgba(248,113,113,.08);color:var(--warn);border:1px solid rgba(248,113,113,.2)}
+.t5{background:rgba(251,191,36,.08);color:var(--gold);border:1px solid rgba(251,191,36,.2)}
+.arr{color:var(--dim);font-size:1.1rem;display:block;margin:.1rem 0}
+hr{border:none;border-top:1px solid var(--border);margin:2.5rem 0}
+strong{color:white;font-weight:600}
+em{color:#B8C8DC;font-style:italic}
+table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.87rem}
+th{font-family:'Space Grotesk',sans-serif;font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);padding:.5rem .75rem;border-bottom:1px solid var(--border);text-align:left}
+td{padding:.5rem .75rem;border-bottom:1px solid rgba(38,48,71,.5);vertical-align:top;line-height:1.5}
+tr:last-child td{border-bottom:none}
+td:first-child{font-weight:500;color:white}
+.cmp th:nth-child(2){color:var(--ch1)}.cmp th:nth-child(3){color:var(--ch2)}.cmp th:nth-child(4){color:var(--ch3)}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+@media(max-width:700px){nav.sb{display:none}main{margin-left:0;padding:1.5rem 1.25rem 4rem}}
+</style>
+</head>
+<body>
+
+<nav class="sb">
+  <span class="st">Theory of Computation</span>
+  <span class="ch c1">Chapter 1 · Regular</span>
+  <a href="#grand" class="a1">Grand Picture</a>
+  <a href="#langs" class="a1">Languages &amp; Setup</a>
+  <a href="#dfa" class="a1">DFA</a>
+  <a href="#nfa" class="a1">NFA</a>
+  <a href="#regex" class="a1">Regular Expressions</a>
+  <a href="#closure1" class="a1">Closure Properties</a>
+  <a href="#pump1" class="a1">Pumping Lemma</a>
+  <span class="ch c2">Chapter 2 · Context-Free</span>
+  <a href="#cfg" class="a2">Context-Free Grammars</a>
+  <a href="#cnf" class="a2">Chomsky Normal Form</a>
+  <a href="#pda" class="a2">Pushdown Automata</a>
+  <a href="#pump2" class="a2">CFL Pumping Lemma</a>
+  <a href="#closure2" class="a2">Closure Properties</a>
+  <span class="ch c3">Chapter 3 · Turing</span>
+  <a href="#tm" class="a3">Turing Machines</a>
+  <a href="#variants" class="a3">TM Variants</a>
+  <a href="#ctt" class="a3">Church-Turing Thesis</a>
+  <span class="ch c4">Chapter 4 · Decidability</span>
+  <a href="#encodings" class="a4">Encodings &amp; UTM</a>
+  <a href="#dec-regular" class="a4">Decidable (Regular)</a>
+  <a href="#dec-cfl" class="a4">Decidable (CFLs)</a>
+  <a href="#atm" class="a4">A_TM — The Big One</a>
+  <a href="#diag" class="a4">Diagonalization</a>
+  <a href="#recog-vs-dec" class="a4">Recognizable vs. Decidable</a>
+  <a href="#landscape" class="a4">The Landscape</a>
+  <a href="#summary" class="a3">Grand Summary</a>
+</nav>
+
+<main>
+<div class="hero">
+  <div style="font-family:'Space Grotesk',sans-serif;font-size:.68rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:.7rem">Sipser — Introduction to the Theory of Computation</div>
+  <h1>Chapters 1–4<br>Lecture Notes &amp; Intuition Guide</h1>
+  <p class="sub">Emphasis on intuition, understanding, problem-solving, and why each concept matters</p>
+</div>
+
+<!-- GRAND PICTURE -->
+<section id="grand">
+<h2 style="font-size:1.2rem">🗺️ The Grand Picture: What Is This Course About?</h2>
+<p>Before anything else — understand the <strong>central question</strong> of the entire course:</p>
+<div class="box int"><span class="lbl">💡 The Question</span>
+<strong>What can computers compute? And — crucially — what is forever beyond their reach?</strong></div>
+<p>This seems philosophical, but it has precise mathematical answers. We build a <em>hierarchy of computational models</em>, each strictly more powerful than the last. Each chapter is one rung on this ladder:</p>
+<div class="hier">
+  <div style="font-size:.72rem;color:var(--dim);margin-bottom:.75rem;font-family:'Space Grotesk',sans-serif">Computational Power ↑</div>
+  <div class="tier t5">P vs. NP — Efficiently solvable? (Ch. 7)</div><div class="arr">↑</div>
+  <div class="tier t4">Undecidable Problems — no algorithm exists (Ch. 4–5)</div><div class="arr">↑</div>
+  <div class="tier t3">Turing Machines → Everything Computable (Ch. 3)</div><div class="arr">↑ strictly more powerful</div>
+  <div class="tier t2">CFG / PDA → Context-Free Languages (Ch. 2)</div><div class="arr">↑ strictly more powerful</div>
+  <div class="tier t1">DFA / NFA / Regex → Regular Languages (Ch. 1)</div>
+</div>
+<p>Each chapter: (1) introduces a model, (2) proves what it can and cannot do, (3) shows that multiple completely different formalisms describe the <em>same class</em>. That last point — convergence — is a deep signal that these classes are mathematically "natural."</p>
+<div class="box lat"><span class="lbl">🔮 Why Chapters 1–3 Matter for Everything Else</span>
+The intuition, proof techniques (especially the pumping lemma), and equivalence results here are the scaffolding for all of Ch. 4–7. Chapter 4's undecidability proofs are pumping-lemma reasoning at a higher level. Chapter 7's P vs. NP question is directly the Ch. 1 question "does nondeterminism add power?" — still open for the time-bounded setting.</div>
+</section>
+
+<hr>
+
+<!-- CHAPTER 1 -->
+<div class="chap" id="chap1">
+  <span class="badge b1">Chapter 1</span>
+  <div class="ct">Regular Languages</div>
+  <p>The simplest machines. No memory. Just pattern recognition — yet surprisingly expressive.</p>
+</div>
+
+<section id="langs">
+<h2>The Vocabulary: Strings, Alphabets, Languages</h2>
+<p>Every computational problem in this course is phrased as a <em>membership question</em>. Here is why: <strong>every problem can be encoded as "does this input string belong to some set L?"</strong></p>
+<ul>
+  <li>An <strong>alphabet</strong> Σ is any finite set of symbols: {0,1} or {a,…,z}</li>
+  <li>A <strong>string</strong> is a finite sequence of symbols from Σ. The empty string is <code>ε</code></li>
+  <li>A <strong>language</strong> is any set of strings — finite or infinite, simple or complex</li>
+</ul>
+<div class="box int"><span class="lbl">💡 Why This Framing?</span>
+"Is this number prime?" → does its binary encoding belong to {binary representations of primes}?<br>
+"Is this program valid C?" → does it belong to {syntactically correct C programs}?<br>
+"Is this email spam?" → does it belong to {spam emails}?<br><br>
+Every problem becomes: <strong>is this string in this language?</strong> The question "what kind of machine do we need?" is the same as "how hard is this language to recognize?"</div>
+</section>
+
+<section id="dfa">
+<h2>Deterministic Finite Automata (DFA)</h2>
+<div class="box int"><span class="lbl">💡 Intuition</span>
+Imagine the <strong>simplest possible computer</strong>: reads the input left-to-right, one symbol at a time, maintaining a single "state." When done, it accepts or rejects based solely on that state. It has <em>no memory</em> beyond what state it is currently in. A turnstile (locked/unlocked), a traffic light (red/yellow/green), a vending machine (tracking coins inserted) — all are DFAs.</div>
+
+<div class="box fm"><span class="lbl">📐 Formal Definition</span>
+A DFA is a 5-tuple <code>(Q, Σ, δ, q₀, F)</code>:
+<div class="fb"><span class="kw">Q</span>   = finite set of states
+<span class="kw">Σ</span>   = finite input alphabet
+<span class="kw">δ</span>   : Q × Σ → Q   <span class="cm">// total function: (state, symbol) → next state</span>
+<span class="kw">q₀</span>  ∈ Q            <span class="cm">// start state</span>
+<span class="kw">F</span>   ⊆ Q            <span class="cm">// set of accept states (enter one of these → accept)</span></div>
+<strong>Key:</strong> δ is <em>total</em> — defined for every (state, symbol) pair. No undefined transitions. Pure determinism: one input, one path, one outcome.</div>
+
+<div class="box ex"><span class="lbl">✏️ Example — Binary Strings with an Even Number of 0s</span>
+<div class="fb">States:  q<sub>even</sub> (accept), q<sub>odd</sub>    Start: q<sub>even</sub>
+
+<span class="kw">δ:</span>  q<sub>even</sub> —0→ q<sub>odd</sub>      q<sub>even</sub> —1→ q<sub>even</sub>
+     q<sub>odd</sub>  —0→ q<sub>even</sub>     q<sub>odd</sub>  —1→ q<sub>odd</sub>
+
+<span class="cm">// Run on "0110":</span>
+q<sub>even</sub> →⁰ q<sub>odd</sub> →¹ q<sub>odd</sub> →¹ q<sub>odd</sub> →⁰ q<sub>even</sub>  ✓  ACCEPT</div>
+Only 2 states needed! The machine tracks parity of 0s — it has no idea how many total 0s it saw, only whether that count is even or odd.</div>
+
+<div class="box wrn"><span class="lbl">⚠️ The Key Limitation</span>
+Finite states = finite memory. A DFA <strong>cannot</strong> count to an arbitrary number. It cannot recognize {0ⁿ1ⁿ | n≥0} because remembering "how many 0s did I see?" requires arbitrarily large counts — impossible with finitely many states. This will be proved rigorously with the pumping lemma.</div>
+
+<div class="box lat"><span class="lbl">🔮 Used Later In...</span>
+<strong>Compilers:</strong> the lexer (tokenizer) is a DFA — every keyword, identifier, and number in source code is recognized this way. <strong>grep/awk/Python re:</strong> your regex patterns compile to DFAs under the hood. <strong>All future models:</strong> DFA states and transitions are the template — PDAs, TMs, and all variants generalize this exact structure.</div>
+</section>
+
+<section id="nfa">
+<h2>Nondeterministic Finite Automata (NFA)</h2>
+
+<div class="box int"><span class="lbl">💡 Two Mental Models for Nondeterminism</span>
+<strong>Model 1 — Parallel Universes:</strong> When there are multiple choices, the NFA clones itself and explores all paths simultaneously. It accepts if <em>any</em> clone accepts.<br><br>
+<strong>Model 2 — Lucky Guesser:</strong> The NFA always "guesses" the right transition. If there exists <em>any</em> accepting path through the input, the NFA finds it.<br><br>
+<strong>Extra power:</strong> NFAs can also take <em>ε-transitions</em> — jump to another state without consuming any input symbol at all.</div>
+
+<div class="box fm"><span class="lbl">📐 Formal Definition</span>
+Same 5-tuple as DFA, but the transition function changes:
+<div class="fb"><span class="kw">δ</span> : Q × Σ<sub>ε</sub> → <span class="ac">𝒫(Q)</span>   <span class="cm">// maps to a SET of next states; ε-transitions allowed</span>
+
+Accepts if: at least one active state when input ends is in F</div></div>
+
+<div class="box ex"><span class="lbl">✏️ Example — All Binary Strings Ending in "01"</span>
+<div class="fb">States: q₁ (start), q₂, q₃ (accept)
+
+δ(q₁, 0) = {q₁, q₂}   <span class="cm">// stay, OR "guess" this 0 starts the final "01"</span>
+δ(q₁, 1) = {q₁}
+δ(q₂, 1) = {q₃}
+δ(q₂, 0) = ∅    δ(q₃, _) = ∅
+
+<span class="cm">// Run on "1001":</span>
+{q₁} →¹ {q₁} →⁰ {q₁,q₂} →⁰ {q₁,q₂} →¹ {q₁,q₃}
+                                            q₃ ∈ F →  ✓ ACCEPT</div>
+Notice: if the "guess" is wrong (q₂ dies on a 0), the NFA just loses that branch — other branches survive.</div>
+
+<div class="box thm"><span class="lbl">⭐ Key Theorem — NFA = DFA (Subset Construction)</span>
+<strong>Every NFA can be converted to an equivalent DFA.</strong><br><br>
+<strong>The trick:</strong> Each DFA state tracks a <em>set</em> of NFA states (all the states the NFA could currently be in). If the NFA has n states, the DFA has at most 2ⁿ states (the power set of Q).<br><br>
+<strong>Consequence:</strong> NFAs and DFAs recognize <em>exactly the same class</em> of languages. NFAs are far more convenient to design — but give no extra computational power. This is the first of many "different formalisms, same class" results.</div>
+
+<div class="box lat"><span class="lbl">🔮 Used Later In...</span>
+<strong>Chapter 7 (P vs. NP):</strong> Here, nondeterminism gives no extra <em>power</em> (NFA=DFA). In Chapter 7, we ask the same question for polynomial-time TMs — and the answer is unknown. That's P vs. NP. This chapter is where your intuition about nondeterminism is built. <strong>Regex engines:</strong> The conversion regex → NFA → DFA is the theoretical foundation of every pattern-matching engine ever written.</div>
+</section>
+
+<section id="regex">
+<h2>Regular Expressions</h2>
+
+<div class="box int"><span class="lbl">💡 Intuition</span>
+Instead of drawing a machine with states and transitions, <em>describe</em> what strings look like using algebraic notation. Regular expressions are built from three operations on sets of strings:</div>
+
+<div class="fb"><span class="kw">Union:</span>          R₁ ∪ R₂  — strings in R₁ OR in R₂
+<span class="kw">Concatenation:</span>  R₁ ∘ R₂  — a string from R₁ followed by a string from R₂
+<span class="kw">Kleene Star:</span>    R*       — zero or more repetitions of strings from R
+
+Base cases: each symbol a ∈ Σ;  ε (empty string);  ∅ (empty language)</div>
+
+<div class="box ex"><span class="lbl">✏️ Examples</span>
+<div class="fb"><span class="ac">0*1*</span>          → {ε, 0, 1, 00, 01, 11, 001, 011, 111, ...}
+<span class="ac">(0∪1)*01</span>      → all binary strings ending in "01"    (matches our NFA!)
+<span class="ac">(0∪1)* = Σ*</span>  → ALL binary strings
+<span class="ac">0(10)*1</span>       → strings that alternate, starting with 0 and ending with 1:
+                 {01, 0101, 010101, ...}</div></div>
+
+<div class="box thm"><span class="lbl">⭐ Key Theorem — Three Formalisms, One Class</span>
+<strong>Regular Expression ↔ NFA ↔ DFA</strong> — all three define exactly the same class of languages (the regular languages).<br><br>
+Proof sketch: (1) Each regex operation corresponds to an NFA construction (union: two NFAs with new start state; concatenation: chain ε-transitions; star: loop back with ε). (2) Every DFA can be converted back to a regex via GNFA elimination. The fact that three completely different perspectives converge on the exact same class is a strong signal this is a fundamental, natural class.</div>
+
+<div class="box lat"><span class="lbl">🔮 Used Later In...</span>
+<strong>Everywhere in practice:</strong> Python re, grep, sed, awk are all implementations of this theory. The equivalence theorem is <em>why they work</em>. <strong>Chapter 2:</strong> CFGs play the role of "regex for CFLs" — the algebraic-vs-machine equivalence theme repeats throughout the book, each time at a higher power level.</div>
+</section>
+
+<section id="closure1">
+<h2>Closure Properties of Regular Languages</h2>
+<p>Regular languages are closed under: <strong>union, concatenation, star, complement, intersection, reversal, difference</strong>. "Closed under X" means: if L₁ and L₂ are regular, then L₁ X L₂ is also regular.</p>
+
+<div class="box int"><span class="lbl">💡 Why Closure Under Complement is Surprisingly Easy</span>
+To complement a DFA: simply swap accept ↔ reject states. That's it. Every state that used to accept now rejects, and vice versa. The DFA runs identically — just the verdict flips. This simplicity is special to DFAs; it does <em>not</em> work so cleanly for PDAs or TMs.</div>
+
+<div class="box wrn"><span class="lbl">⚠️ Contrast with Chapter 2</span>
+CFLs are <strong>NOT</strong> closed under intersection or complement. This asymmetry is important — it means you can't always combine two CFL constraints into one CFL recognizer. Regular languages' closure under everything makes them very algebraically well-behaved.</div>
+
+<div class="box lat"><span class="lbl">🔮 Used Later In...</span>
+<strong>Chapter 4:</strong> Proving decidable and recognizable languages are closed under various operations — same technique, same style of proof. <strong>Proofs:</strong> Intersecting an unknown language with a known regular language (to simplify it) is a common proof technique. If the result is non-regular, the original must be too.</div>
+</section>
+
+<section id="pump1">
+<h2>The Pumping Lemma — Proving Nonregularity</h2>
+
+<div class="box int"><span class="lbl">💡 The Core Idea — Pigeonhole Gives You a Loop</span>
+A DFA has n states total. Feed it a string longer than n characters. By the <strong>Pigeonhole Principle</strong>, it must visit some state <em>twice</em>. That means there's a <em>loop</em> in the computation path. You can traverse that loop any number of times (0, 1, 2, 3, …) and the DFA will still end up in the same state — so it still accepts. <strong>This is pumping: repeating the loop.</strong></div>
+
+<div class="box fm"><span class="lbl">📐 Pumping Lemma for Regular Languages</span>
+If L is regular, ∃ pumping length p such that any w ∈ L with |w| ≥ p<br>
+can be written as <code>w = xyz</code> satisfying:
+<div class="fb"><span class="kw">1.</span>  |xy| ≤ p         <span class="cm">// the loop occurs in the first p characters</span>
+<span class="kw">2.</span>  |y| ≥ 1          <span class="cm">// the pumped part is non-empty (there IS a loop)</span>
+<span class="kw">3.</span>  ∀ i ≥ 0: xy^i z ∈ L  <span class="cm">// pumping y any number of times stays in L</span></div></div>
+
+<h3>The Recipe — How to Use It (Proof by Contradiction)</h3>
+<div class="fb"><span class="kw">Step 1:</span>  Assume L IS regular (for contradiction)
+<span class="kw">Step 2:</span>  Let p be the pumping length guaranteed to exist
+<span class="kw">Step 3:</span>  <span class="ac">YOU</span> choose a string w ∈ L with |w| ≥ p  ← <em>choose cleverly!</em>
+<span class="kw">Step 4:</span>  For <span class="ac">ANY</span> split w = xyz satisfying conditions 1 and 2 (adversary's choice),
+          find some i ≥ 0 such that xy^i z ∉ L
+<span class="kw">Step 5:</span>  This contradicts condition 3  →  L is not regular  ✓</div>
+
+<div class="box int"><span class="lbl">💡 Think of it as a Game</span>
+You: choose w. Adversary: choose x, y, z (trying to make pumping valid). You: find an i that breaks it. If you can <em>always</em> find such an i regardless of the adversary's split, you win — L is not regular.<br><br>
+The adversary is constrained: |xy| ≤ p and |y| ≥ 1. Your strategy: choose w so that ANY legal split forces y into a "sensitive" part of the string where pumping disturbs the structure.</div>
+
+<div class="box ex"><span class="lbl">✏️ Classic Example — {0ⁿ1ⁿ | n ≥ 0} is NOT Regular</span>
+<div class="fb"><span class="cm">// Assume regular with pumping length p</span>
+Choose: w = 0ᵖ1ᵖ   <span class="cm">// |w| = 2p ≥ p; and w ∈ L</span>
+
+Any legal split w = xyz with |xy| ≤ p and |y| ≥ 1:
+  → xy lies entirely within the first p characters (all 0s!)
+  → y = 0ᵏ for some k ≥ 1   <span class="cm">// y is some block of 0s</span>
+
+Choose i = 2:
+  xy²z = 0^(p+k) 1ᵖ   <span class="cm">// p+k zeros, but only p ones → not in L</span>
+  Contradiction!  ✓  {0ⁿ1ⁿ} is not regular</div>
+<strong>Why choose 0ᵖ1ᵖ?</strong> Because the |xy| ≤ p constraint forces y to land entirely in the 0-block. The adversary has no room to stretch y across the boundary. So pumping y always breaks the 0-1 balance.</div>
+
+<div class="box ex"><span class="lbl">✏️ Another Example — {w | w has equal numbers of 0s and 1s}</span>
+<div class="fb">Choose: w = 0ᵖ1ᵖ ∈ L   <span class="cm">// same string works!</span>
+y must be 0ᵏ for some k ≥ 1 (same reasoning)
+Pump i=2: 0^(p+k)1ᵖ → more 0s than 1s → not in L  Contradiction ✓</div></div>
+
+<div class="box lat"><span class="lbl">🔮 Used Later In...</span>
+<strong>Chapter 2:</strong> The CFL pumping lemma uses identical structure (Pigeonhole on computation → find a loop → pump), but on parse trees with <em>two</em> pumped sections. <strong>Chapters 4–5:</strong> The "assume it's computable, derive a contradiction" structure is the essence of every undecidability proof. <strong>Mindset:</strong> Thinking rigorously about what a model <em>cannot</em> do is as important as knowing what it can — this mindset carries through the entire course.</div>
+</section>
+
+<hr>
+
+<!-- CHAPTER 2 -->
+<div class="chap" id="chap2">
+  <span class="badge b2">Chapter 2</span>
+  <div class="ct">Context-Free Languages</div>
+  <p>One more piece of memory — a stack — opens up a whole new class. Enough for programming language syntax, not enough for semantic analysis.</p>
+</div>
+
+<section id="cfg">
+<h2>Context-Free Grammars (CFG)</h2>
+
+<div class="box int"><span class="lbl">💡 Why We Need This — What DFAs Cannot Handle</span>
+We just proved DFAs can't recognize {0ⁿ1ⁿ}. But matching "n things with n corresponding things" is fundamental: matching parentheses in code, begin/end blocks, opening/closing HTML tags, recursive function call nesting. We need a new idea. The insight: <strong>rewriting rules</strong> — describe structure, not process.</div>
+
+<div class="box fm"><span class="lbl">📐 Formal Definition — CFG</span>
+A CFG is a 4-tuple <code>(V, Σ, R, S)</code>:
+<div class="fb"><span class="kw">V</span>   = finite set of <span class="ac">variables</span> (non-terminals) — e.g., S, A, EXPR
+<span class="kw">Σ</span>   = finite set of <span class="ac">terminals</span> — the actual output symbols
+<span class="kw">R</span>   = set of <span class="ac">production rules</span>: each is A → w  (A ∈ V, w ∈ (V ∪ Σ)*)
+<span class="kw">S</span>   ∈ V = <span class="ac">start variable</span>
+
+To derive a string: start with S, repeatedly apply rules (replace any
+variable with the right-hand side of some rule), until only terminals remain.</div></div>
+
+<div class="box ex"><span class="lbl">✏️ Example — {0ⁿ1ⁿ} via CFG</span>
+<div class="fb">Rules:  S → 0S1   |   S → ε
+
+Deriving "000111":
+  S → 0S1 → 00S11 → 000S111 → 000ε111 = <span class="ac">000111</span>  ✓
+
+The grammar "wraps" a new 0 on the left and 1 on the right at each step,
+guaranteeing equal counts. Something a DFA simply cannot do.</div>
+<strong>The context-free in "context-free":</strong> you can replace variable A with w <em>regardless of what surrounds A</em>. Context doesn't constrain the replacement — only the variable itself does.</div>
+
+<div class="box ex"><span class="lbl">✏️ Grammar for Arithmetic Expressions</span>
+<div class="fb">E → E + T  |  T
+T → T × F  |  F
+F → ( E )  |  a
+
+This grammar generates expressions like a, a+a, a×a, (a+a)×a, ...
+It enforces <span class="ac">operator precedence</span>: × binds tighter than + because T is
+"deeper" in the grammar than E.</div></div>
+
+<h3>Parse Trees and Ambiguity</h3>
+<p>A <strong>parse tree</strong> represents a derivation as a tree: root = S, internal nodes = variables, leaves (read left-to-right) = the derived string. A grammar is <strong>ambiguous</strong> if some string has two different parse trees.</p>
+<div class="box wrn"><span class="lbl">⚠️ Ambiguity — A Real Problem in Compilers</span>
+In a compiler, two parse trees = two different interpretations of the same code. <code>2 + 3 × 4</code> should mean 14 (not 20) — but an ambiguous grammar makes both valid. Languages like C and Java are carefully designed with unambiguous grammars. Remarkably, <strong>determining whether a given CFG is ambiguous is undecidable</strong> (Ch. 5).</div>
+
+<div class="box lat"><span class="lbl">🔮 Used Later In...</span>
+<strong>Compilers:</strong> Every programming language syntax is defined by a CFG. The parser (phase 2 of compilation, converting tokens into a parse tree) is built directly from it. ANTLR, yacc, bison — all are CFG-based parser generators. <strong>Chapter 4:</strong> Problems about CFGs (is this language empty? finite?) are decidable building blocks. <strong>Chapter 5:</strong> CFG ambiguity is a canonical undecidable problem proved via reduction.</div>
+</section>
+
+<section id="cnf">
+<h2>Chomsky Normal Form (CNF)</h2>
+<p>Every CFG can be converted to an equivalent CFG in <strong>Chomsky Normal Form</strong>: every production rule is either <code>A → BC</code> (two variables) or <code>A → a</code> (one terminal). Only the start variable may derive ε via <code>S → ε</code>.</p>
+
+<div class="box int"><span class="lbl">💡 Why CNF — It Makes Trees Predictable</span>
+In CNF, every parse tree for a string of length n has <em>exactly 2n−1 internal nodes</em>. This makes the tree's size predictable and bounded. This clean structure enables two critical results:<br><br>
+<strong>1. CYK Algorithm:</strong> Dynamic programming parser for any CFL in O(n³) time — requires CNF to guarantee a clean recurrence.<br>
+<strong>2. CFL Pumping Lemma:</strong> A parse tree in CNF that is "tall enough" must have a repeated variable (Pigeonhole) — that repeated variable is the source of pumping.</div>
+
+<div class="box lat"><span class="lbl">🔮 Used Later In...</span>
+Directly in the proof of the CFL pumping lemma (this chapter). The CYK algorithm appears in NLP parsers and some compiler tools. The conversion technique (eliminating ε-rules, unit rules, long rules) is standard preprocessing in formal language tools.</div>
+</section>
+
+<section id="pda">
+<h2>Pushdown Automata (PDA)</h2>
+
+<div class="box int"><span class="lbl">💡 Intuition — NFA with a Stack</span>
+Take an NFA. Add a <strong>stack</strong>: an unbounded last-in-first-out memory. At each step, the machine can read (or not) the next input symbol, pop the stack top, and push any string onto the stack.<br><br>
+<strong>Why a stack?</strong> Context-free languages have <em>nested recursive structure</em>. A stack is the perfect tool: push when entering a nested layer, pop when leaving. The stack remembers an <em>unbounded</em> amount of information — but only in LIFO order. This is the one key memory primitive CFLs need.</div>
+
+<div class="box fm"><span class="lbl">📐 Formal Definition — PDA</span>
+A PDA is a 6-tuple <code>(Q, Σ, Γ, δ, q₀, F)</code>:
+<div class="fb"><span class="kw">Γ</span>  = stack alphabet (may differ from input alphabet Σ)
+<span class="kw">δ</span>  : Q × Σ<sub>ε</sub> × Γ<sub>ε</sub> → 𝒫(Q × Γ<sub>ε</sub>)
+       ↑read input?  ↑pop stack?    ↑(new state, push onto stack)
+
+PDAs are nondeterministic by definition.</div></div>
+
+<div class="box ex"><span class="lbl">✏️ Example — {0ⁿ1ⁿ} via PDA</span>
+<div class="fb"><span class="ac">Phase 1</span> (reading 0s): push a marker onto the stack for each 0 read
+<span class="ac">Phase 2</span> (reading 1s): pop one marker for each 1 read
+
+Accept if: input exhausted AND stack is empty simultaneously
+Reject if: try to pop from empty stack, or input left with stack empty, etc.
+
+The stack acts as an <span class="ac">unbounded counter</span> — something a DFA's finite states cannot do!</div></div>
+
+<div class="box ex"><span class="lbl">✏️ Example — Balanced Parentheses</span>
+<div class="fb">On '(': push '(' onto stack
+On ')': if stack is non-empty, pop; else reject
+At end: if stack empty → ACCEPT; else → REJECT
+
+Works for any nesting depth — the stack "remembers" every unclosed '('</div></div>
+
+<div class="box thm"><span class="lbl">⭐ Key Theorem — CFG = PDA</span>
+Context-free grammars and pushdown automata are equivalent — they recognize exactly the same class of languages (the context-free languages).<br><br>
+<strong>CFG → PDA:</strong> Build a PDA that "simulates" a leftmost derivation. The stack holds the remaining portion of the current sentential form (yet to be derived). At each step: if the top is a variable, nondeterministically apply a grammar rule; if the top is a terminal, verify it matches the next input symbol.<br><br>
+<strong>PDA → CFG:</strong> Each pair of states (the state before pushing, the state after popping) defines a grammar variable. The resulting grammar encodes the PDA's behavior.</div>
+
+<div class="box wrn"><span class="lbl">⚠️ Deterministic PDAs are Strictly Weaker</span>
+Unlike DFAs vs. NFAs (where they're equivalent), <em>deterministic PDAs cannot recognize all CFLs</em>. For example, palindromes over {a,b} require nondeterminism to "guess" the midpoint. This asymmetry matters: DPDAs correspond to languages parseable without backtracking (LR/LL parsing). Full CFLs may require nondeterminism.</div>
+
+<div class="box lat"><span class="lbl">🔮 Used Later In...</span>
+<strong>Compilers:</strong> LR(k) and LL(k) parsers — the engines behind yacc, bison, ANTLR, and every production parser — are deterministic PDAs. The parser in your compiler is literally this theory in action. <strong>Chapter 3:</strong> Turing Machines are the next step: replace the stack with an <em>infinite read/write tape</em>. The progression DFA → PDA → TM is all about what kind of memory you add and how you access it.</div>
+</section>
+
+<section id="pump2">
+<h2>The Pumping Lemma for CFLs</h2>
+
+<div class="box int"><span class="lbl">💡 Intuition — Pigeonhole on Parse Trees</span>
+A CFG has |V| variables. A parse tree in CNF for a string of length n has height at least log₂(n). When n is large enough (n > 2^|V|), some variable must appear <em>twice</em> on some root-to-leaf path (Pigeonhole). A repeated variable means the parse tree contains a "loop" — a subtree structure that can be repeated (pumped) any number of times. Because the loop appears between two copies of the same variable, you pump <em>two</em> sections simultaneously (one on each "side" of the nested structure).</div>
+
+<div class="box fm"><span class="lbl">📐 CFL Pumping Lemma — Statement</span>
+If L is a CFL, ∃ pumping length p such that any w ∈ L with |w| ≥ p<br>
+can be written as <code>w = uvxyz</code> where:
+<div class="fb"><span class="kw">1.</span>  |vy| ≥ 1         <span class="cm">// at least one of the two pumped sections is non-empty</span>
+<span class="kw">2.</span>  |vxy| ≤ p        <span class="cm">// the middle portion is bounded</span>
+<span class="kw">3.</span>  ∀ i ≥ 0: uv^i xy^i z ∈ L  <span class="cm">// pump BOTH v and y together</span></div>
+Notice: you pump <strong>two substrings simultaneously</strong> (v and y), not one. This reflects the two "sides" of the loop in the parse tree. The regular pumping lemma is a special case with one pumped section.</div>
+
+<div class="box ex"><span class="lbl">✏️ Classic Example — {aⁿbⁿcⁿ | n ≥ 0} is NOT a CFL</span>
+<div class="fb"><span class="cm">// Assume CFL with pumping length p</span>
+Choose: w = aᵖbᵖcᵖ   <span class="cm">// |w| = 3p ≥ p; w ∈ L</span>
+
+Any legal split w = uvxyz with |vxy| ≤ p and |vy| ≥ 1:
+  → vxy spans at most p consecutive characters
+  → So vxy can contain at most 2 distinct symbol types
+
+Case 1: vxy ⊆ aᵖbᵖ (contains only a's and/or b's)
+  Pump i=2: more a's and/or b's, same number of c's → not in L ✗
+
+Case 2: vxy ⊆ bᵖcᵖ (contains only b's and/or c's)  
+  Pump i=2: more b's and/or c's, same number of a's → not in L ✗
+
+Either way: contradiction ✓  {aⁿbⁿcⁿ} is not a CFL</div>
+<strong>Why this language matters:</strong> It's the simplest "three-way counting" language. Compilers check many constraints simultaneously (type safety, scope rules, arity) — these are fundamentally beyond CFL expressibility and require a separate semantic analysis phase.</div>
+
+<div class="box ex"><span class="lbl">✏️ Another Example — {ww | w ∈ {a,b}*} is NOT a CFL</span>
+<div class="fb">Choose: w = aᵖbᵖaᵖbᵖ
+Any split uvxyz with |vxy| ≤ p must lie within one "quadrant"
+Pumping disturbs the pattern in that region but not the others
+→ the two halves of ww diverge → not in L  Contradiction ✓</div></div>
+
+<div class="box lat"><span class="lbl">🔮 Used Later In...</span>
+<strong>Chapters 4–5:</strong> The proof structure (find a loop via Pigeonhole, pump to derive contradiction) is the template for diagonalization and reduction arguments in undecidability. <strong>Compilers:</strong> Understanding CFL limitations explains why compilers need a semantic analysis phase beyond parsing — type checking and scoping are not context-free problems.</div>
+</section>
+
+<section id="closure2">
+<h2>Closure Properties of CFLs</h2>
+<p>CFLs are closed under: <strong>union, concatenation, Kleene star</strong>.<br>
+CFLs are <strong>NOT</strong> closed under: <strong>intersection</strong> or <strong>complement</strong>.</p>
+
+<div class="box ex"><span class="lbl">✏️ Key Counterexample — Intersection</span>
+<div class="fb">L₁ = {aⁿbⁿcᵐ | n,m ≥ 0}  ← CFL  (count a's matched to b's)
+L₂ = {aᵐbⁿcⁿ | n,m ≥ 0}  ← CFL  (count b's matched to c's)
+
+L₁ ∩ L₂ = {aⁿbⁿcⁿ | n ≥ 0}  ← NOT a CFL  (proved above!)
+
+Two individually easy problems → their intersection is hard.</div></div>
+
+<div class="box wrn"><span class="lbl">⚠️ But CFL ∩ Regular = CFL</span>
+Even though CFLs aren't closed under CFL∩CFL intersection, they ARE closed under intersection with a <strong>regular</strong> language. (Run the PDA and DFA in parallel.) This is a useful tool in proofs and in compiler design: you can filter a CFL with regex constraints and stay in the CFL class.</div>
+
+<div class="box lat"><span class="lbl">🔮 Used Later In...</span>
+<strong>Chapter 4:</strong> Decidable languages ARE closed under intersection and complement — a key difference that gives decidable languages much better algebraic structure. The contrast between CFL closure properties and decidable language closure properties is important when categorizing problems by complexity.</div>
+</section>
+
+<hr>
+
+<!-- CHAPTER 3 -->
+<div class="chap" id="chap3">
+  <span class="badge b3">Chapter 3</span>
+  <div class="ct">The Church-Turing Thesis</div>
+  <p>The ceiling of computation. The theoretical model of what a "computer" actually is.</p>
+</div>
+
+<section id="tm">
+<h2>Turing Machines</h2>
+
+<div class="box int"><span class="lbl">💡 The Big Leap From PDAs</span>
+A DFA: read-only, left-to-right. A PDA: adds a LIFO stack. A <strong>Turing Machine</strong>: replaces the stack with an <em>infinite read/write tape</em>. The head can move <em>left or right</em> and read or write at any position. This gives three new powers:<br><br>
+1. <strong>Unlimited memory</strong> — the tape is infinite<br>
+2. <strong>Read AND write</strong> — it can modify what's already there<br>
+3. <strong>Random access</strong> — the head can go left to revisit earlier tape positions<br><br>
+The tape serves as both the input medium <em>and</em> unlimited working memory. This is why TMs can compute anything a real computer can.</div>
+
+<div class="box fm"><span class="lbl">📐 Formal Definition — Turing Machine</span>
+A TM is a 7-tuple <code>(Q, Σ, Γ, δ, q₀, q_accept, q_reject)</code>:
+<div class="fb"><span class="kw">Q</span>           = finite set of states
+<span class="kw">Σ</span>           = input alphabet (does NOT contain blank ⊔)
+<span class="kw">Γ</span>           = tape alphabet:  Σ ⊆ Γ,  ⊔ ∈ Γ
+<span class="kw">δ</span>           : Q × Γ → Q × Γ × {L, R}
+                ↑ state+tape symbol → new state, write symbol, move L or R
+<span class="kw">q₀</span>          ∈ Q  = start state
+<span class="kw">q_accept</span>    ∈ Q  = unique accept state (enter this → halt and accept)
+<span class="kw">q_reject</span>    ∈ Q  = unique reject state (enter this → halt and reject)
+                       q_accept ≠ q_reject</div></div>
+
+<div class="box wrn"><span class="lbl">⚠️ Three Possible Fates — This is the Heart of Chapter 4</span>
+On any input, a TM can do one of exactly three things:
+<div class="fb"><span class="ac">ACCEPT:</span>   enters q_accept     → w is in the language
+<span class="ac">REJECT:</span>   enters q_reject     → w is not in the language  
+<span class="ac">LOOP:</span>     runs forever        → never decides either way</div>
+A TM that <em>always</em> halts (never loops) is called a <strong>decider</strong>. Not all TMs are deciders. Identifying which languages have deciders vs. only recognizers is the central topic of Chapter 4.</div>
+
+<div class="box fm"><span class="lbl">📐 Two Critical Definitions</span>
+<div class="fb"><span class="kw">Turing-recognizable</span> (recursively enumerable):
+  L is recognized by some TM — it accepts all strings in L,
+  but may loop forever on strings NOT in L.
+
+<span class="kw">Turing-decidable</span> (recursive):
+  L is decided by some TM that <span class="ac">always halts</span> —
+  it accepts strings in L and rejects strings NOT in L.
+
+  Decidable ⊂ Recognizable   (Chapter 4 shows this inclusion is strict)</div></div>
+
+<div class="box ex"><span class="lbl">✏️ Example — {w#w | w ∈ {0,1}*}</span>
+<div class="fb">Algorithm (high-level description):
+  1. If input contains no #, reject.
+  2. Zig-zag: mark the first unmarked symbol on the left of #.
+             Cross to the right of # and find the corresponding position.
+             If symbols match, mark both; else reject.
+  3. Repeat until all left-side symbols are marked.
+  4. If all right-side symbols are also marked → ACCEPT; else REJECT.
+
+Key: the TM head moves left AND right repeatedly. It crosses the string
+multiple times, using marked symbols as "memory" on the tape itself.
+A DFA or PDA could never do this systematic cross-referencing.</div></div>
+
+<div class="box lat"><span class="lbl">🔮 Used Later In...</span>
+<strong>All of Chapters 4–7.</strong> Every concept from here on is built on TMs. <strong>Chapter 4:</strong> A TM can be given another TM's description as input and simulate it — this gives us the Universal TM, which directly leads to the Halting Problem proof. <strong>Chapter 7:</strong> TMs with polynomial time bounds become the definition of P and NP.</div>
+</section>
+
+<section id="variants">
+<h2>Variants of Turing Machines</h2>
+<p>Many natural extensions of the basic TM exist. The profound result: <em>they are all equivalent in power</em>. This strongly supports the Church-Turing Thesis.</p>
+
+<h3>Multitape TMs</h3>
+<div class="box fm"><span class="lbl">📐 k-Tape TM</span>
+Has k tapes, each with its own independent read/write head. Much more convenient to program: dedicate one tape to input, one to output, one to scratch work.
+<div class="fb"><span class="kw">Theorem:</span> Every k-tape TM can be simulated by a 1-tape TM.
+Idea: interleave all k tapes onto one tape (separated by markers); simulate each head.
+Cost: t steps on k-tape TM → O(t²) steps on 1-tape TM. <span class="cm">Polynomial slowdown.</span></div></div>
+<div class="box lat"><span class="lbl">🔮 Used Later In...</span>
+<strong>Chapter 7:</strong> The polynomial slowdown means k-tape TMs don't change the class P. If an algorithm runs in polynomial time on a k-tape TM, it runs in polynomial time on a 1-tape TM (just with a larger polynomial). Polynomial-time results are robust to this kind of engineering convenience.</div>
+
+<h3>Nondeterministic TMs (NTM)</h3>
+<div class="box fm"><span class="lbl">📐 Nondeterministic TM</span>
+At each step, can branch into multiple possible next states. Accepts if ANY branch accepts.
+<div class="fb"><span class="kw">Theorem:</span> Every NTM can be simulated by a deterministic TM.
+Idea: breadth-first search through all computation branches (use 3 tapes).
+Cost: t steps on NTM → potentially <span class="ac">exponential</span> steps on DTM.</div></div>
+<div class="box thm"><span class="lbl">⭐ This is the P vs. NP Seed 🌱</span>
+For <em>unrestricted</em> TMs: nondeterminism adds no power (NTM = DTM). They recognize the same languages. But the simulation may take exponentially more time.<br><br>
+For <em>polynomial-time</em> TMs:<br>
+&nbsp;&nbsp;&bull; <strong>P</strong> = languages decidable in polynomial time by a <em>deterministic</em> TM<br>
+&nbsp;&nbsp;&bull; <strong>NP</strong> = languages decidable in polynomial time by a <em>nondeterministic</em> TM<br><br>
+The question: <strong>can the exponential simulation blowup be avoided for all NP problems?</strong> That is P vs. NP — the biggest open problem in all of computer science.</div>
+
+<h3>Enumerators</h3>
+<p>A TM with an attached "printer." It runs indefinitely, printing strings one by one. A language is Turing-recognizable <em>if and only if</em> some enumerator enumerates it. This gives an intuitive picture of "recursively enumerable": you can <em>list</em> all strings in L (even if the list is infinite), but you might wait forever for a particular string to appear — or never know if it won't.</p>
+</section>
+
+<section id="ctt">
+<h2>The Church-Turing Thesis</h2>
+
+<div class="box thm"><span class="lbl">⭐ The Thesis (This Is Not a Theorem)</span>
+<strong>Every reasonable model of computation is equivalent to a Turing Machine.</strong></div>
+
+<div class="box int"><span class="lbl">💡 Why It's a Thesis and Not a Theorem</span>
+"Reasonable" and "computation" are informal, intuitive notions — you can't formally prove a claim about them. The evidence is overwhelming: lambda calculus (Church, 1936), recursive functions (Kleene), register machines, RAM models, actual CPUs, cellular automata, DNA computing, quantum computing (for decision problems)... all have been proven equivalent to TMs. In 80+ years nobody has found a more powerful "reasonable" model.<br><br>
+So we <em>accept the thesis</em> as a definition of "computation."</div>
+
+<p>The thesis allows us to say: <strong>"An algorithm exists if and only if a Turing Machine for it exists."</strong> When Chapter 4 proves a problem is TM-undecidable, the Church-Turing Thesis lets us conclude it is unsolvable by <em>any possible algorithm</em> — in any programming language, on any hardware. Without this thesis, results would only apply to TMs specifically.</p>
+
+<p>Practically, the thesis justifies <strong>high-level TM descriptions</strong>: instead of specifying every state and transition, we describe algorithms naturally ("on input G: run BFS, check connectivity..."). Any clearly implementable algorithm corresponds to a valid TM.</p>
+
+<div class="box lat"><span class="lbl">🔮 Used Later In...</span>
+<strong>Every result in Chapters 4–7</strong> that says "no algorithm exists" or "this is computable" implicitly relies on this thesis. It is the bedrock. Without it, computability and complexity theory would be a statement about one specific formalism (TMs) rather than computation itself.</div>
+</section>
+
+<hr>
+
+<!-- CHAPTER 4 -->
+<div class="chap" id="chap4">
+  <span class="badge b4">Chapter 4</span>
+  <div class="ct">Decidability</div>
+  <p>We now have the most powerful computational model imaginable. So: what <em>can't</em> it do? Chapter 4 answers this — and the answer is shocking.</p>
+</div>
+
+<section id="encodings">
+<h2>The Enabling Idea: Machines as Strings</h2>
+
+<div class="box int"><span class="lbl">💡 The Key Conceptual Leap</span>
+Everything in Chapter 4 rests on one idea: <strong>a Turing Machine can be encoded as a string</strong>. Once a TM is just a string, you can feed it as <em>input</em> to another TM. Machines can reason about other machines. This "self-reference" is the door to both powerful results <em>and</em> paradox.<br><br>
+Think of it this way: a Python program is just a text file. You can write a Python program that reads another Python program as input and analyzes it. TMs are exactly the same — except we now have theorems about what such analysis can and cannot do.</div>
+
+<p>We write <code>⟨M⟩</code> for the string encoding of TM M, and <code>⟨M, w⟩</code> for the encoding of the pair (TM M, input string w). The exact encoding doesn't matter much — only that it exists and is reasonable. From here on, TMs take other TMs as inputs routinely.</p>
+
+<h3>The Universal Turing Machine (UTM)</h3>
+
+<div class="box thm"><span class="lbl">⭐ The Universal TM</span>
+There exists a TM <strong>U</strong> such that on input <code>⟨M, w⟩</code>, U simulates M running on w — and accepts iff M would accept w.<br><br>
+U is the theoretical ancestor of every stored-program computer. The idea that a machine can interpret another machine's description as data, and execute it, is the foundation of modern computing. Every CPU you have ever used is a physical implementation of this idea.<br><br>
+<strong>Consequence:</strong> The language A_TM = {⟨M, w⟩ | M is a TM and M accepts w} is <em>Turing-recognizable</em> — the UTM recognizes it. But is it <em>decidable</em>? That is the central question of this chapter.</div>
+
+<div class="box lat"><span class="lbl">🔮 Connection Back to Ch. 3</span>
+In Chapter 3 we introduced TMs and their three outcomes: accept, reject, loop. The UTM exposes the problem: when U simulates M on w, if M loops forever, U also loops forever. U cannot simply "wait and see" whether M will halt — it must wait indefinitely. This is why the UTM only <em>recognizes</em> A_TM but does not <em>decide</em> it.</div>
+</section>
+
+<section id="dec-regular">
+<h2>Decidable Problems About Regular Languages</h2>
+
+<p>Before hitting the impossible, let's see what IS decidable. Starting with the simplest class: DFAs.</p>
+
+<div class="box fm"><span class="lbl">📐 Three Decidable Problems</span>
+<div class="fb"><span class="kw">A_DFA</span> = {⟨M, w⟩ | M is a DFA and M accepts w}          <span class="cm">DECIDABLE</span>
+<span class="kw">E_DFA</span> = {⟨M⟩    | M is a DFA and L(M) = ∅}             <span class="cm">DECIDABLE</span>
+<span class="kw">EQ_DFA</span> = {⟨M₁,M₂⟩ | M₁,M₂ are DFAs and L(M₁) = L(M₂)} <span class="cm">DECIDABLE</span></div></div>
+
+<div class="box ex"><span class="lbl">✏️ Why A_DFA is Decidable — Run It and Wait</span>
+<div class="fb">Decider for A_DFA:
+  On input ⟨M, w⟩:
+  1. Simulate M on w
+  2. If M ends in an accept state → ACCEPT
+     If M ends in a non-accept state → REJECT
+
+Why this works: M is a DFA. DFAs <span class="ac">always halt</span> (they read input left-to-right, one step per symbol). So our decider always halts too. Simple — but notice this uses nothing special about DFAs other than the fact that they always halt.</div></div>
+
+<div class="box ex"><span class="lbl">✏️ Why E_DFA is Decidable — Graph Reachability</span>
+<div class="fb">Decider for E_DFA:
+  On input ⟨M⟩:
+  1. Mark the start state q₀
+  2. Mark any state reachable (by any symbol) from a marked state
+  3. Repeat until no new states get marked
+  4. If any accept state is marked → REJECT  (language is non-empty)
+     If no accept state is marked → ACCEPT  (language is empty)
+
+Intuition: L(M) = ∅ iff no accept state is reachable from q₀.
+This is just a <span class="ac">graph reachability</span> problem — classic BFS/DFS on the DFA's state graph.</div></div>
+
+<div class="box ex"><span class="lbl">✏️ Why EQ_DFA is Decidable — Symmetric Difference</span>
+<div class="fb">Key insight: L(M₁) = L(M₂)  iff  L(M₁) △ L(M₂) = ∅
+where △ is symmetric difference: (L₁ \ L₂) ∪ (L₂ \ L₁)
+
+Decider for EQ_DFA:
+  1. Construct DFA C recognizing L(M₁) △ L(M₂)
+     (regular languages closed under complement, union, intersection → can do this)
+  2. Run the E_DFA decider on ⟨C⟩
+  3. If L(C) = ∅ → ACCEPT   (the two languages are identical)
+     else → REJECT
+
+<span class="cm">This uses closure properties of regular languages (Chapter 1) as a tool!</span></div></div>
+
+<div class="box lat"><span class="lbl">🔮 Why This Section Matters</span>
+These proofs establish the <em>pattern</em> for all decidability proofs: describe an algorithm, argue it always halts, argue it is correct. The tools come from earlier chapters (closure properties, graph reachability, CFG algorithms). Chapter 4 is where everything you learned in Ch. 1–3 becomes ammunition for new proofs.</div>
+</section>
+
+<section id="dec-cfl">
+<h2>Decidable Problems About Context-Free Languages</h2>
+
+<div class="box fm"><span class="lbl">📐 Two Key Decidable Problems</span>
+<div class="fb"><span class="kw">A_CFG</span> = {⟨G, w⟩ | G is a CFG and G generates w}   <span class="cm">DECIDABLE</span>
+<span class="kw">E_CFG</span>  = {⟨G⟩    | G is a CFG and L(G) = ∅}          <span class="cm">DECIDABLE</span></div></div>
+
+<div class="box ex"><span class="lbl">✏️ Why A_CFG is Decidable — CYK Algorithm</span>
+<div class="fb">Decider for A_CFG:
+  On input ⟨G, w⟩:
+  1. Convert G to Chomsky Normal Form (CNF)
+  2. Run the CYK parsing algorithm on w
+
+CYK is dynamic programming on substrings:
+  Can variable A derive substring w[i..j]?
+  Base: A → a iff w[i] = a
+  Step: A → BC iff ∃ split k: B derives w[i..k] AND C derives w[k+1..j]
+  
+Answer: G generates w  iff  S derives w[1..|w|]
+
+Runtime: O(n³ · |G|) — always halts, always correct. ✓
+
+<span class="cm">Why CNF matters: without it, derivations could be infinite (via A → A).</span></div></div>
+
+<div class="box ex"><span class="lbl">✏️ Why E_CFG is Decidable — Mark Variables That Generate Terminals</span>
+<div class="fb">Decider for E_CFG:
+  On input ⟨G⟩:
+  1. Mark every terminal symbol a ∈ Σ as "generatable"
+  2. If rule A → w and every symbol in w is marked → mark A
+  3. Repeat until no new variables get marked
+  4. If S is marked → REJECT  (L(G) ≠ ∅)
+     If S is not marked → ACCEPT  (L(G) = ∅)
+
+Intuition: we propagate "can generate a terminal string" bottom-up
+through the grammar rules. If S can eventually generate a string, L(G) ≠ ∅.</div></div>
+
+<div class="box thm"><span class="lbl">⭐ Corollary — Every CFL is Decidable</span>
+Since A_CFG is decidable, for any specific CFL L generated by grammar G:<br>
+Given input w, run the A_CFG decider on ⟨G, w⟩. It always halts. Therefore every CFL has a decider.<br><br>
+<strong>The hierarchy of decidability so far:</strong><br>
+Regular ⊆ Context-Free ⊆ Decidable ⊆ Turing-Recognizable</div>
+
+<div class="box wrn"><span class="lbl">⚠️ EQ_CFG is Undecidable</span>
+Unlike EQ_DFA, the problem of testing whether two CFGs generate the same language is <strong>undecidable</strong>. Proved in Chapter 5 via reduction from A_TM. The closure-under-complement trick doesn't work here — because CFLs are NOT closed under complement. The asymmetry between Ch. 1 and Ch. 2 closure properties comes back to bite us.</div>
+
+<div class="box lat"><span class="lbl">🔮 Why This Matters</span>
+The decidability of A_CFG is used in compiler verification. The undecidability of EQ_CFG means you cannot, in general, automatically check whether two grammars (say, two versions of a programming language specification) define the same language. This has real software engineering implications.</div>
+</section>
+
+<section id="atm">
+<h2>A_TM — The Central Undecidable Language</h2>
+
+<div class="box int"><span class="lbl">💡 Setup — Why A_TM is the Key</span>
+Everything so far has been decidable: DFA acceptance, DFA emptiness, CFG generation. Now we ask the natural next question: what about TM acceptance?<br><br>
+<strong>A_TM = {⟨M, w⟩ | M is a TM and M accepts w}</strong><br><br>
+We already know A_TM is Turing-recognizable (the UTM recognizes it — simulate M on w, accept if M does). The question is: is A_TM <em>decidable</em>? Can we always get a definite yes/no answer?<br><br>
+The answer is <strong>NO</strong> — and this is one of the most important theorems in all of mathematics.</div>
+
+<div class="box thm"><span class="lbl">⭐ Theorem — A_TM is Undecidable</span>
+There is no Turing Machine that decides A_TM. No algorithm can, in general, determine whether an arbitrary TM accepts an arbitrary input.<br><br>
+This is equivalent to the <strong>Halting Problem</strong>: no algorithm can determine whether an arbitrary TM halts on an arbitrary input. (A_TM and H_TM are equivalent via simple reductions.)</div>
+
+<div class="box wrn"><span class="lbl">⚠️ What This Actually Means</span>
+This is not a limitation of current computers, programming languages, or mathematical techniques. It is a fundamental, absolute mathematical result: <em>no possible algorithm</em> — running on any computer, in any language, with unlimited time and memory — can solve this problem in general. It is mathematically impossible, as firmly as it is impossible to trisect an arbitrary angle with ruler and compass.</div>
+</section>
+
+<section id="diag">
+<h2>The Diagonalization Proof</h2>
+
+<div class="box int"><span class="lbl">💡 Where This Idea Comes From — Cantor (1874)</span>
+Georg Cantor proved that the real numbers are "more infinite" than the natural numbers — you cannot list all real numbers in a sequence. His trick: suppose you had such a list. Construct a new real number that <em>differs from the n-th number in the n-th decimal digit</em>, for every n. This new number cannot be anywhere on the list. Contradiction.<br><br>
+Turing applied the same idea to computation: construct a TM that <em>does the opposite of what any alleged decider would do</em> on its own description. Contradiction.</div>
+
+<div class="box fm"><span class="lbl">📐 The Proof — Step by Step</span>
+<div class="fb"><span class="cm">// Assume for contradiction that A_TM is decidable.</span>
+<span class="cm">// Let H be a TM that decides A_TM:</span>
+
+H(⟨M, w⟩) = ACCEPT   if M accepts w
+H(⟨M, w⟩) = REJECT   if M does not accept w   <span class="cm">(always halts)</span>
+
+<span class="cm">// Construct a new TM D using H as a subroutine:</span>
+
+D(⟨M⟩):
+  Run H on ⟨M, ⟨M⟩⟩            <span class="cm">// ask: "does M accept its own description?"</span>
+  If H accepts  → <span class="ac">REJECT</span>      <span class="cm">// D does the opposite</span>
+  If H rejects  → <span class="ac">ACCEPT</span>      <span class="cm">// D does the opposite</span>
+
+<span class="cm">// Now ask: what does D do on input ⟨D⟩?</span>
+
+D(⟨D⟩) accepts  iff  H(⟨D, ⟨D⟩⟩) rejects
+               iff  D does NOT accept ⟨D⟩
+
+D(⟨D⟩) accepts  iff  D(⟨D⟩) does not accept  ← CONTRADICTION
+
+<span class="cm">// Therefore H cannot exist. A_TM is undecidable. ∎</span></div></div>
+
+<div class="box int"><span class="lbl">💡 The Diagonal Visualized</span>
+Imagine a table: rows are all TMs M₁, M₂, M₃, …; columns are all TM descriptions ⟨M₁⟩, ⟨M₂⟩, ⟨M₃⟩, …; cell (i, j) = "does Mᵢ accept ⟨Mⱼ⟩?" (✓ or ✗).<br><br>
+H would let us fill in this table perfectly. D reads the <em>diagonal</em> — cell (i,i) = "does Mᵢ accept its own description?" — and <em>flips every entry</em>. D's behavior cannot match any row in the table (it differs from row i in column i). But D is itself a TM, so it must appear as some row. Contradiction.<br><br>
+This is identical to how Cantor's new real number differs from every number in the list. The structure is exactly the same.</div>
+
+<div class="box int"><span class="lbl">💡 The Liar's Paradox Connection</span>
+The contradiction has the flavor of the ancient Liar's Paradox: "This sentence is false." If it's true, it's false. If it's false, it's true. D is designed to create this paradox for computation: D accepts its own description iff it rejects its own description. The lesson: <em>self-reference, when combined with the ability to simulate, creates unavoidable paradoxes that mark the limits of computability</em>.</div>
+
+<div class="box lat"><span class="lbl">🔮 Used Later In...</span>
+<strong>Chapter 5 (Reductions):</strong> The direct proof via diagonalization only works for A_TM. For the dozens of other undecidable problems (halting problem on a blank tape, Post Correspondence Problem, CFG equivalence, etc.), we use <em>reductions</em>: show that if you could solve problem X, you could solve A_TM — but we know you can't solve A_TM, so you can't solve X either. Reductions are the main proof technique of Ch. 5. | <strong>Rice's Theorem:</strong> A powerful generalization that says any non-trivial property of TMs' <em>languages</em> is undecidable. Covers infinitely many problems in one theorem.</div>
+</section>
+
+<section id="recog-vs-dec">
+<h2>Recognizable vs. Co-Recognizable vs. Decidable</h2>
+
+<h3>A New Definition</h3>
+<p>A language L is <strong>co-Turing-recognizable</strong> if its complement L̄ is Turing-recognizable. This gives us a three-way classification for languages.</p>
+
+<div class="box thm"><span class="lbl">⭐ Key Theorem — The Characterization of Decidability</span>
+A language L is <strong>decidable</strong> if and only if L is both Turing-recognizable <em>and</em> co-Turing-recognizable.
+<div class="fb"><span class="kw">Proof (→):</span>
+  If L is decidable, then the decider accepts L and rejects L̄.
+  Reversing accept/reject gives a decider for L̄.
+  So L is recognizable (by the decider) and L̄ is recognizable (by the reversed decider). ✓
+
+<span class="kw">Proof (←):</span>
+  Suppose TM M₁ recognizes L, and TM M₂ recognizes L̄.
+  Build a decider for L: on input w, run M₁ and M₂ in <span class="ac">parallel</span>
+  (interleave their steps). Eventually one must accept:
+    - If M₁ accepts → w ∈ L → ACCEPT
+    - If M₂ accepts → w ∈ L̄ → REJECT
+  This always halts because every w is in either L or L̄. ✓</div></div>
+
+<div class="box int"><span class="lbl">💡 Why the Parallel Simulation Works</span>
+The key insight in the (←) direction: we don't run M₁ to completion, then run M₂. We interleave them — run one step of M₁, then one step of M₂, then one step of M₁, etc. This way, if either one accepts (at any point), we catch it immediately. And since w must be in L or L̄ (not both), eventually <em>one</em> of the two recognizers must accept. The decider never loops.</div>
+
+<div class="box thm"><span class="lbl">⭐ Corollary — The Complement of A_TM is NOT Turing-Recognizable</span>
+<div class="fb">Proof:
+  A_TM is Turing-recognizable (the UTM recognizes it).
+  A_TM is NOT decidable (proved above by diagonalization).
+
+  If A̅_TM were also recognizable, then by the theorem above:
+    A_TM is recognizable AND A̅_TM is recognizable
+    → A_TM would be decidable.       ← Contradiction!
+
+  Therefore A̅_TM is NOT Turing-recognizable. ∎</div>
+This means: no TM can even <em>enumerate</em> all the ⟨M,w⟩ pairs where M does NOT accept w. The non-accepting pairs are, in a precise sense, "more unrecognizable" than the accepting ones.</div>
+</section>
+
+<section id="landscape">
+<h2>The Decidability Landscape</h2>
+
+<div class="hier">
+<div style="font-size:.72rem;color:var(--dim);margin-bottom:.85rem;font-family:'Space Grotesk',sans-serif">All Languages (from decidable inward)</div>
+<div class="tier" style="background:rgba(248,113,113,.08);color:var(--warn);border:1px solid rgba(248,113,113,.2);display:block;margin:.3rem 0;text-align:left;padding:.6rem 1.2rem">
+  <strong style="color:var(--warn)">Not even Turing-Recognizable:</strong> Ā_TM (complement of A_TM), EQ_TM, Halting problem on empty tape complement…
+</div>
+<div class="arr">↑ (some of these)</div>
+<div class="tier" style="background:rgba(244,114,182,.08);color:var(--ch4);border:1px solid rgba(244,114,182,.2);display:block;margin:.3rem 0;text-align:left;padding:.6rem 1.2rem">
+  <strong style="color:var(--ch4)">Turing-Recognizable but NOT Decidable:</strong> A_TM, H_TM (Halting Problem), EQ_CFG complement…
+</div>
+<div class="arr">↑ strictly contained in</div>
+<div class="tier t3" style="display:block;margin:.3rem 0;text-align:left;padding:.6rem 1.2rem">
+  <strong>Decidable (Turing-decidable):</strong> A_DFA, E_DFA, EQ_DFA, A_CFG, E_CFG, and all regular and context-free languages
+</div>
+<div class="arr">↑ strictly contained in</div>
+<div class="tier t2" style="display:block;margin:.3rem 0;text-align:left;padding:.6rem 1.2rem">
+  <strong>Context-Free Languages</strong> (Ch. 2) — all decidable
+</div>
+<div class="arr">↑ strictly contained in</div>
+<div class="tier t1" style="display:block;margin:.3rem 0;text-align:left;padding:.6rem 1.2rem">
+  <strong>Regular Languages</strong> (Ch. 1) — all decidable
+</div>
+</div>
+
+<div class="box thm"><span class="lbl">⭐ The Big Picture Summary for Chapter 4</span>
+<strong>What Chapter 4 establishes:</strong>
+<ul style="margin-top:.5rem">
+  <li>The boundary between decidable and undecidable is real and provable</li>
+  <li>Simple problems about DFAs and CFGs are decidable (using Ch. 1–3 results as tools)</li>
+  <li>The fundamental problem of TM acceptance (A_TM) is undecidable — proved by diagonalization</li>
+  <li>Decidability = recognizable + co-recognizable (the parallel simulation theorem)</li>
+  <li>A_TM is recognizable; its complement is not even recognizable</li>
+</ul></div>
+
+<div class="box lat"><span class="lbl">🔮 What Comes in Chapter 5</span>
+Chapter 5 introduces <strong>reductions</strong>: the main tool for proving that specific problems are undecidable. Instead of re-doing a diagonalization argument for every new problem, you show: "if I could solve problem X, I could solve A_TM — but I can't solve A_TM, so I can't solve X." This lets us cascade the undecidability of A_TM to hundreds of natural problems. Rice's Theorem alone makes every non-trivial semantic property of TMs undecidable in a single sweep.</div>
+</section>
+
+<hr>
+
+<!-- GRAND SUMMARY -->
+<section id="summary">
+<h2 style="margin-top:0;font-size:1.2rem">📊 Grand Summary — Chapters 1–4</h2>
+
+<p style="color:var(--dim);font-size:.88rem;max-width:68ch">Each row compares the same dimension across all four chapters. Read vertically to see the progression; read horizontally to compare how each chapter handles the same issue.</p>
+
+<div style="overflow-x:auto;margin:1.5rem 0">
+<table style="min-width:700px" class="cmp">
+  <thead><tr>
+    <th>Aspect</th>
+    <th>Ch 1 · Regular</th>
+    <th>Ch 2 · Context-Free</th>
+    <th>Ch 3 · Turing</th>
+    <th style="color:var(--ch4)">Ch 4 · Decidability</th>
+  </tr></thead>
+  <tbody>
+  <tr>
+    <td>Central Question</td>
+    <td>What can a memoryless machine recognize?</td>
+    <td>What can a stack-memory machine recognize?</td>
+    <td>What can any machine compute?</td>
+    <td style="color:var(--ch4)">Which of those things can be <em>decided</em> vs. only <em>recognized</em>?</td>
+  </tr>
+  <tr>
+    <td>Machine / Model</td>
+    <td>DFA / NFA</td>
+    <td>PDA (NFA + stack)</td>
+    <td>TM (infinite R/W tape)</td>
+    <td style="color:var(--ch4)">TM as input to another TM; UTM</td>
+  </tr>
+  <tr>
+    <td>Algebraic Form</td>
+    <td>Regular Expression</td>
+    <td>Context-Free Grammar</td>
+    <td>— (algorithms in prose)</td>
+    <td style="color:var(--ch4)">— (encodings ⟨M, w⟩)</td>
+  </tr>
+  <tr>
+    <td>Memory</td>
+    <td>None (just states)</td>
+    <td>Stack (LIFO, unbounded)</td>
+    <td>Infinite R/W tape</td>
+    <td style="color:var(--ch4)">Infinite tape + self-reference</td>
+  </tr>
+  <tr>
+    <td>Canonical "yes" language</td>
+    <td>Strings ending in "01"</td>
+    <td>{0ⁿ1ⁿ | n≥0}</td>
+    <td>{w#w | w ∈ {0,1}*}</td>
+    <td style="color:var(--ch4)">A_DFA, A_CFG (decidable); A_TM (recognizable only)</td>
+  </tr>
+  <tr>
+    <td>Canonical "impossible" language</td>
+    <td>{0ⁿ1ⁿ} — not regular</td>
+    <td>{aⁿbⁿcⁿ} — not CFL</td>
+    <td>— (TMs compute everything computable)</td>
+    <td style="color:var(--ch4)">A_TM — not decidable; Ā_TM — not even recognizable</td>
+  </tr>
+  <tr>
+    <td>Proof of limitation</td>
+    <td>Pumping Lemma (one section)</td>
+    <td>CFL Pumping Lemma (two sections)</td>
+    <td>— (Church-Turing: no known limitation)</td>
+    <td style="color:var(--ch4)">Diagonalization; later: reductions (Ch. 5)</td>
+  </tr>
+  <tr>
+    <td>Closed under ∩ ?</td>
+    <td>Yes</td>
+    <td>No (CFL ∩ CFL ≠ always CFL)</td>
+    <td>Yes (decidable); No (recognizable)</td>
+    <td style="color:var(--ch4)">Decidable: Yes. Recognizable: Yes. Co-recognizable: Yes.</td>
+  </tr>
+  <tr>
+    <td>Closed under complement?</td>
+    <td>Yes (swap accept/reject)</td>
+    <td>No</td>
+    <td>Decidable: Yes. Recognizable: No.</td>
+    <td style="color:var(--ch4)">Key theorem: decidable iff recognizable + co-recognizable</td>
+  </tr>
+  <tr>
+    <td>Nondeterminism?</td>
+    <td>No extra power (NFA = DFA)</td>
+    <td>Adds power (DPDA ⊊ PDA)</td>
+    <td>No extra power (NTM = DTM); open for poly-time</td>
+    <td style="color:var(--ch4)">Not the focus; parallel simulation is the key technique</td>
+  </tr>
+  </tbody>
+</table>
+</div>
+
+<h3>The Four-Chapter Decidability Hierarchy</h3>
+<div class="hier" style="text-align:left;padding:1.25rem 1.5rem">
+  <div style="font-family:'Space Grotesk',sans-serif;font-size:.72rem;color:var(--dim);margin-bottom:1rem">Every class is strictly contained in the next:</div>
+  <div style="font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:2.2;color:var(--text)">
+    <span style="color:var(--warn)">Not Turing-Recognizable</span> (e.g., Ā_TM, complement of Halting Problem)<br>
+    &nbsp;&nbsp;⊋ <span style="color:var(--ch4)">Recognizable but Undecidable</span> (e.g., A_TM, H_TM)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;⊋ <span style="color:var(--ch3)">Decidable</span> (e.g., A_DFA, A_CFG, E_DFA, E_CFG)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⊋ <span style="color:var(--ch2)">Context-Free Languages</span> (all decidable via A_CFG)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⊋ <span style="color:var(--ch1)">Regular Languages</span> (all decidable via A_DFA)
+  </div>
+</div>
+
+<h3>Concept Connections Across All Four Chapters</h3>
+<table>
+  <thead><tr><th>Concept Introduced</th><th>Used / Reappears In</th></tr></thead>
+  <tbody>
+  <tr><td>DFA states and δ function</td><td>Template for PDA, TM, all future models; A_DFA decidability (Ch. 4)</td></tr>
+  <tr><td>NFA / Nondeterminism</td><td>NTM (Ch. 3); parallel simulation trick in decidability proofs (Ch. 4); NP (Ch. 7)</td></tr>
+  <tr><td>Closure under complement (regular)</td><td>EQ_DFA decidability (Ch. 4); recognizable vs. decidable theorem (Ch. 4)</td></tr>
+  <tr><td>Regular pumping lemma</td><td>CFL pumping lemma (Ch. 2); proof-by-contradiction mindset for Ch. 4–5</td></tr>
+  <tr><td>CFG / CYK algorithm</td><td>A_CFG decidability (Ch. 4): CYK is the decider</td></tr>
+  <tr><td>E_CFG decidability (variable marking)</td><td>Template for "mark reachable/generatable states" proofs throughout Ch. 4–5</td></tr>
+  <tr><td>CFL non-closure under complement</td><td>Why EQ_CFG is undecidable — the symmetric-difference trick fails (Ch. 4–5)</td></tr>
+  <tr><td>Church-Turing Thesis</td><td>Justifies every "no algorithm exists" claim in Ch. 4–7</td></tr>
+  <tr><td>TM encoding ⟨M⟩ (Ch. 4)</td><td>Reductions (Ch. 5): every undecidability proof passes ⟨M, w⟩ to another machine</td></tr>
+  <tr><td>Universal TM (Ch. 4)</td><td>A_TM is recognizable; foundation of the Halting Problem; basis of Rice's Theorem (Ch. 5)</td></tr>
+  <tr><td>Diagonalization (Ch. 4)</td><td>The direct undecidability proof for A_TM; motivates the reduction framework of Ch. 5</td></tr>
+  <tr><td>Recognizable + co-recognizable ↔ decidable (Ch. 4)</td><td>Used to show Ā_TM not recognizable; complement technique throughout Ch. 5</td></tr>
+  <tr><td>Accept / Reject / Loop trichotomy (Ch. 3)</td><td>The whole reason decidable ≠ recognizable (Ch. 4); reductions exploit looping (Ch. 5)</td></tr>
+  <tr><td>NTM → DTM exponential blowup (Ch. 3)</td><td>Why NP ≠ P (conjectured); Ch. 7 P vs. NP question</td></tr>
+  </tbody>
+</table>
+</section>
+
+<div style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);font-family:'Space Grotesk',sans-serif;font-size:.73rem;color:var(--dim);text-align:center">Based on Sipser — <em>Introduction to the Theory of Computation</em> · Teaching notes emphasizing intuition and connections between concepts</div>
+
+</main>
+</body>
+</html>
