@@ -9,6 +9,15 @@
       "featured": true,
       "createdAt": "2026-10-16T09:48:00.000Z",
       "updatedAt": "2026-10-16T09:48:00.000Z"
+    },
+    {
+      "file": "Theory of Computation — Chapters 1–4.html",
+      "title": "Theory of Computation — Chapters 1–4",
+      "description": "",
+      "subject": "خلاصه نظریه محاسبه",
+      "featured": false,
+      "updatedAt": "2026-10-16T10:36:59.784Z",
+      "createdAt": "2026-10-16T10:36:59.784Z"
     }
   ]
 }
