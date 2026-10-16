@@ -3,68 +3,110 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self'; base-uri 'self'; object-src 'none'">
+<meta name="theme-color" content="#1c1712">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'nonce-reading-room' https://fonts.googleapis.com; font-src https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self'; base-uri 'self'; object-src 'none'">
 <title>نمایش منبع</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&display=swap" rel="stylesheet">
-<style>
-  :root { color-scheme: light; --ink:#10233f; --muted:#667085; --line:#e6e1d6; --bg:#f4f0e6; --card:#fffcf7; }
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style nonce="reading-room">
+  :root {
+    color-scheme: light;
+    --ink: #1c1712;
+    --muted: #74685c;
+    --gold: #b8883a;
+    --gold-light: #e7c98a;
+    --line: rgba(75, 54, 33, .17);
+    --bg: #efe4d4;
+    --paper: #fbf6ee;
+  }
   * { box-sizing: border-box; }
   body {
     margin: 0;
+    color: var(--ink);
+    background:
+      radial-gradient(circle at 10% 20%, rgba(184,136,58,.1), transparent 23rem),
+      repeating-linear-gradient(96deg, transparent 0 76px, rgba(91,61,34,.018) 77px 78px),
+      var(--bg);
     font-family: Vazirmatn, Tahoma, sans-serif;
-    background: var(--bg);
-    color: #1d2430;
     line-height: 2;
   }
   .bar {
+    min-height: 68px;
+    padding: 13px max(22px, calc((100vw - 900px) / 2));
     display: flex;
+    align-items: center;
     justify-content: space-between;
     gap: 12px;
-    align-items: center;
-    padding: 14px 22px;
-    background: var(--ink);
-    color: #fff;
+    color: #f6efe6;
+    background:
+      repeating-linear-gradient(4deg, transparent 0 29px, rgba(255,255,255,.018) 30px, transparent 32px),
+      linear-gradient(112deg, #19120e, #3a2418 52%, #1c1712);
+    border-bottom: 1px solid rgba(231,201,138,.34);
+    box-shadow: 0 8px 24px rgba(54,35,21,.15);
   }
   .bar a, .bar button {
-    color: #fff;
-    background: transparent;
-    border: 1px solid rgba(255,255,255,.3);
+    min-height: 39px;
+    padding: 6px 15px;
+    border: 1px solid rgba(231,201,138,.35);
     border-radius: 999px;
-    padding: 6px 14px;
-    text-decoration: none;
+    color: #f6efe6;
+    background: rgba(255,255,255,.05);
     font: inherit;
+    text-decoration: none;
     cursor: pointer;
   }
-  main { max-width: 820px; margin: 0 auto; padding: 36px 20px 80px; }
+  .bar a { color: var(--gold-light); font-weight: 800; }
+  .bar a:hover, .bar button:hover { background: rgba(231,201,138,.12); }
+  main { max-width: 860px; margin: 0 auto; padding: 42px 20px 84px; }
   article {
-    background: var(--card);
+    padding: clamp(25px, 5vw, 44px) clamp(21px, 5vw, 40px);
     border: 1px solid var(--line);
     border-radius: 18px;
-    padding: 32px 28px;
-    box-shadow: 0 10px 30px rgba(16,35,63,.06);
+    color: var(--ink);
+    background:
+      repeating-linear-gradient(0deg, transparent 0 4px, rgba(116,104,92,.018) 4px 5px),
+      var(--paper);
+    box-shadow: 0 18px 44px rgba(73,45,22,.11);
   }
-  h1, h2, h3 { color: var(--ink); line-height: 1.6; }
-  h1 { font-size: 1.7rem; margin-top: 0; }
+  h1, h2, h3 { color: var(--ink); font-weight: 900; line-height: 1.6; }
+  h1 { margin-top: 0; font-size: clamp(1.55rem, 4vw, 2rem); }
   pre, code { font-family: ui-monospace, Vazirmatn, monospace; }
   pre {
-    background: #f6f3ec;
-    border-radius: 12px;
-    padding: 14px;
     overflow: auto;
-    line-height: 1.7;
+    padding: 15px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
     direction: ltr;
+    color: #2b241e;
+    background: #f1e8da;
     text-align: left;
+    line-height: 1.7;
   }
-  code { background: #f6f3ec; border-radius: 6px; padding: 0 5px; }
-  pre code { background: none; padding: 0; }
-  blockquote { margin: 12px 0; padding: 8px 16px; border-right: 4px solid #c6a15b; background: #fbf6ea; }
+  code { padding: 0 5px; border-radius: 6px; background: #f1e8da; }
+  pre code { padding: 0; background: none; }
+  blockquote {
+    margin: 18px 0;
+    padding: 12px 18px;
+    border-right: 4px solid var(--gold);
+    border-radius: 10px 0 0 10px;
+    color: #4d4034;
+    background: #f3e6cf;
+  }
+  blockquote > :first-child { margin-top: 0; }
+  blockquote > :last-child { margin-bottom: 0; }
   img { max-width: 100%; border-radius: 12px; }
-  a { color: #1f5fae; }
+  a { color: #8c3d32; text-underline-offset: 3px; }
   .plain { white-space: pre-wrap; font-size: 1rem; }
-  .error { color: #8d2f2f; }
+  .error { color: #8c3d32; }
+  ::selection { color: #1c1712; background: var(--gold-light); }
+  :focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+  @media (max-width: 520px) {
+    .bar { padding-inline: 16px; }
+    main { padding: 24px 13px 60px; }
+    article { border-radius: 14px; }
+  }
 </style>
 </head>
 <body>
