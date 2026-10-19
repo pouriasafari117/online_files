@@ -1,0 +1,1760 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>راهنمای جامع نورم-۲ (برداری و ماتریسی) و اثبات قضایا</title>
+<style>
+  /* ============================================================
+     پایه‌ها — Design tokens
+     ============================================================ */
+  :root{
+    --paper:#F4EEE2;
+    --paper-2:#EDE4D3;
+    --paper-3:#E4D8C2;
+    --ink:#1C2B2F;
+    --ink-2:#4A5A5E;
+    --neutral:#6B6257;
+    --turq:#0F6B6B;
+    --turq-dark:#0A3B3B;
+    --turq-soft:#D9E5E1;
+    --ochre:#B4761F;
+    --crimson:#9B2F26;
+
+    --ui:"Vazirmatn","IRANSans","IRANSansX","Segoe UI",Tahoma,Arial,sans-serif;
+    --math:"Cambria Math","STIX Two Math","Latin Modern Math","Times New Roman",Times,serif;
+
+    --measure:36rem;
+    --rail:15rem;
+    --step:1.25;
+
+    /* نماد جذر: شکل برداری که با ماسک و رنگ جاری رنگ‌آمیزی می‌شود */
+    --radmask:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 120' preserveAspectRatio='none'%3E%3Cpath d='M2 78 L8.5 88 L17 3 L29 3' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation:none !important; transition:none !important;}
+    .reveal{opacity:1 !important; transform:none !important;}
+  }
+
+  body{
+    margin:0;
+    background-color:var(--paper);
+    /* حالت کاغذ: دانه‌بندی ظریف SVG — کاملاً آفلاین */
+    background-image:
+      radial-gradient(rgba(28,43,47,.045) 1px, transparent 1px),
+      radial-gradient(rgba(28,43,47,.03) 1px, transparent 1px);
+    background-size:3px 3px, 7px 7px;
+    background-position:0 0, 2px 3px;
+    color:var(--ink);
+    font-family:var(--ui);
+    font-size:17px;
+    line-height:2.05;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+
+  /* ============================================================
+     ریاضیات — CSS math kit (بدون هیچ کتابخانه خارجی)
+     ============================================================ */
+  .m{
+    direction:ltr;
+    unicode-bidi:isolate;
+    font-family:var(--math);
+    font-style:normal;
+    white-space:nowrap;
+    line-height:1.75;
+    letter-spacing:.005em;
+  }
+  .m i, .m .v{font-style:italic;}
+  .m .up{font-style:normal;}
+  .m .n{font-style:normal; font-variant-numeric:lining-nums tabular-nums;}
+  .m .txt{font-family:var(--ui); font-style:normal; font-size:.86em;}
+
+  sub,sup{font-size:.66em; line-height:0;}
+
+  .frac{
+    display:inline-flex; flex-direction:column; align-items:center;
+    vertical-align:middle; margin:0 .16em;
+  }
+  .frac > .num{padding:0 .38em .04em;}
+  .frac > .den{padding:.06em .38em 0; border-top:1.15px solid currentColor;}
+
+  .sqrt{display:inline-flex; align-items:stretch; vertical-align:middle;}
+  .sqrt > .sign{
+    width:.8em;
+    display:block;
+    overflow:hidden;
+    text-indent:-9999em;
+    background-color:currentColor;
+    -webkit-mask-image:var(--radmask); mask-image:var(--radmask);
+    -webkit-mask-size:100% 100%; mask-size:100% 100%;
+    -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
+    -webkit-mask-position:center; mask-position:center;
+  }
+  .sqrt > .arg{
+    border-top:1.15px solid currentColor;
+    padding:.16em .26em .02em .12em;
+    display:inline-flex; align-items:center;
+    line-height:1.42;
+  }
+  /* پشتیبانی برای مرورگرهای بدون قابلیت ماسک */
+  @supports not ((-webkit-mask-image: url("")) or (mask-image: url(""))){
+    .sqrt > .sign{
+      background-color:transparent;
+      width:.62em; font-family:var(--math); font-size:1.6em; line-height:.8;
+      overflow:visible; text-indent:0;
+    }
+    .sqrt > .sign::before{content:"√";}
+    .sqrt{align-items:flex-end;}
+    .sqrt > .arg{align-items:flex-start;}
+  }
+
+  .m .over{text-decoration:overline; text-decoration-thickness:.7px; padding:0 .06em;}
+
+  ul.steps > li::before{
+    content:"◆"; position:absolute; right:.42rem; top:.78rem;
+    font-size:.62rem; color:var(--crimson); line-height:1;
+  }
+
+  .sum, .oplim{
+    display:inline-flex; flex-direction:column; align-items:center;
+    vertical-align:middle; line-height:1.02; margin:0 .12em;
+  }
+  .sum > .lim{font-size:.6em; font-family:var(--math);}
+  .sum > .op{font-size:1.42em; line-height:.9; margin:-.04em 0;}
+  .oplim > .op{font-size:1.16em;}
+  .oplim > .cond{font-size:.58em; font-family:var(--math); margin-top:.12em;}
+
+  /* پرانتز/کروشه بلند با خطوط CSS */
+  .mat{display:inline-flex; align-items:stretch; vertical-align:middle; gap:.34em; margin:0 .12em;}
+  .mat > .brk{width:.3em; border-top:1.3px solid currentColor; border-bottom:1.3px solid currentColor;}
+  .mat > .brk.l{border-left:1.3px solid currentColor;}
+  .mat > .brk.r{border-right:1.3px solid currentColor;}
+  .mat > .grid{display:grid; gap:.12em .85em; align-items:center; justify-items:center; padding:.28em .18em;}
+  .mat.round > .brk{border-radius:.42em;}
+
+  .paren{display:inline-block; font-family:var(--math); transform-origin:center;}
+
+  /* ============================================================
+     ساختار صفحه
+     ============================================================ */
+  .progress{
+    position:fixed; top:0; right:0; height:3px; width:0%;
+    background:linear-gradient(90deg,var(--ochre),var(--turq));
+    z-index:80; transition:width .12s linear;
+  }
+
+  /* --- نوار عنوان --- */
+  .hero{
+    position:relative;
+    background:var(--turq-dark);
+    color:#F0E9DA;
+    overflow:hidden;
+    border-bottom:1px solid rgba(240,233,218,.18);
+  }
+  .hero::after{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background:
+      repeating-linear-gradient(90deg, rgba(240,233,218,.055) 0 1px, transparent 1px 46px),
+      radial-gradient(120% 90% at 85% 10%, rgba(180,118,31,.16), transparent 62%);
+  }
+  .hero-ghost{
+    position:absolute; left:-2%; bottom:-16%;
+    font-family:var(--math); font-style:italic;
+    font-size:clamp(9rem,26vw,22rem); line-height:.85;
+    color:rgba(240,233,218,.075);
+    direction:ltr; user-select:none; pointer-events:none; white-space:nowrap;
+  }
+  .hero-inner{
+    position:relative; z-index:2;
+    max-width:78rem; margin:0 auto;
+    padding:clamp(3.2rem,7vw,6.2rem) clamp(1.25rem,5vw,3.5rem) clamp(2.6rem,5vw,4.2rem);
+  }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:.75rem;
+    font-size:.72rem; letter-spacing:.32em; text-transform:uppercase;
+    color:#C6B995; direction:ltr;
+  }
+  .eyebrow::before{content:""; width:2.4rem; height:1px; background:#C6B995; opacity:.6;}
+  .hero h1{
+    font-family:var(--ui);
+    font-size:clamp(2.05rem,5.2vw,3.65rem);
+    line-height:1.42; font-weight:800; letter-spacing:-.015em;
+    margin:.85rem 0 0; max-width:20ch;
+  }
+  .hero h1 .accent{color:#E2A44B;}
+  .hero .lede{
+    margin:1.5rem 0 0; max-width:52ch;
+    font-size:clamp(1rem,1.5vw,1.14rem); line-height:2.15;
+    color:rgba(240,233,218,.82);
+  }
+  .hero-formula{
+    margin:2.6rem 0 0; padding:1.65rem 1.9rem;
+    background:rgba(240,233,218,.075);
+    border:1px solid rgba(240,233,218,.16);
+    border-right:3px solid var(--ochre);
+    display:inline-block; max-width:100%; overflow-x:auto;
+  }
+  .hero-formula .m{font-size:clamp(1.35rem,3.4vw,2.15rem); color:#FBF5E8;}
+  .hero-meta{
+    margin-top:2.5rem; display:flex; flex-wrap:wrap; gap:.65rem 2.4rem;
+    font-size:.82rem; color:rgba(240,233,218,.62);
+  }
+  .hero-meta b{color:#E2A44B; font-weight:600; letter-spacing:.06em;}
+  .hero-nav{margin-top:2.2rem; display:flex; flex-wrap:wrap; gap:.6rem;}
+  .hero-nav a{
+    color:#F0E9DA; text-decoration:none; font-size:.86rem;
+    padding:.52rem 1.15rem; border:1px solid rgba(240,233,218,.28);
+    border-radius:2px; transition:background .22s ease, color .22s ease, border-color .22s ease;
+  }
+  .hero-nav a:hover, .hero-nav a:focus-visible{
+    background:#F0E9DA; color:var(--turq-dark); border-color:#F0E9DA; outline:none;
+  }
+
+  /* --- بدنه دو مسیره (ریل + متن) --- */
+  .shell{
+    max-width:78rem; margin:0 auto;
+    padding:0 clamp(1.25rem,5vw,3.5rem);
+    display:grid; grid-template-columns:var(--rail) minmax(0,1fr);
+    gap:clamp(1.6rem,4vw,3.6rem);
+    align-items:start;
+  }
+  .rail{
+    position:sticky; top:2.2rem;
+    padding:3.2rem 0 3rem;
+  }
+  .rail-title{
+    font-size:.68rem; letter-spacing:.3em; text-transform:uppercase;
+    color:var(--neutral); direction:ltr; margin-bottom:1.15rem;
+    padding-bottom:.75rem; border-bottom:1px solid var(--paper-3);
+  }
+  .toc{list-style:none; margin:0; padding:0;}
+  .toc li{margin:0;}
+  .toc a{
+    display:flex; align-items:baseline; gap:.7rem;
+    padding:.52rem .75rem .52rem .55rem;
+    color:var(--ink-2); text-decoration:none; font-size:.87rem;
+    line-height:1.75; border-right:2px solid transparent;
+    transition:color .2s ease, border-color .2s ease, background .2s ease;
+  }
+  .toc a .idx{
+    font-family:var(--math); font-size:.78rem; color:var(--neutral);
+    font-variant-numeric:tabular-nums; direction:ltr; min-width:2.1rem;
+  }
+  .toc a:hover{color:var(--turq); background:rgba(15,107,107,.05);}
+  .toc a.active{
+    color:var(--turq-dark); border-right-color:var(--ochre);
+    background:rgba(180,118,31,.08); font-weight:700;
+  }
+  .toc .sub a{font-size:.82rem; padding-right:1.7rem;}
+  .rail-note{
+    margin-top:1.8rem; padding:1rem 1.05rem;
+    background:var(--paper-2); border-right:2px solid var(--turq);
+    font-size:.78rem; line-height:2; color:var(--neutral);
+  }
+
+  .main{
+    position:relative;
+    padding:3.2rem 0 5rem;
+    border-right:1px solid var(--paper-3);
+    padding-right:clamp(1.25rem,3vw,2.6rem);
+    min-width:0;
+  }
+
+  /* --- تیتر بخش‌ها --- */
+  .sec{scroll-margin-top:1.4rem; margin:0 0 4.6rem;}
+  .sec-head{margin-bottom:2.2rem;}
+  .sec-num{
+    display:block; font-family:var(--math); direction:ltr;
+    font-size:.82rem; letter-spacing:.28em; color:var(--ochre);
+    font-variant-numeric:tabular-nums;
+  }
+  h2{
+    font-family:var(--ui); font-size:clamp(1.62rem,3.2vw,2.35rem);
+    line-height:1.55; font-weight:800; letter-spacing:-.012em;
+    margin:.35rem 0 0; color:var(--ink);
+  }
+  h3{
+    font-family:var(--ui); font-size:clamp(1.12rem,2vw,1.34rem);
+    line-height:1.8; font-weight:750; margin:3.1rem 0 1.15rem;
+    color:var(--turq-dark);
+    display:flex; align-items:baseline; gap:.85rem; flex-wrap:wrap;
+  }
+  h3 .tag{
+    font-family:var(--math); direction:ltr; font-size:.76rem;
+    letter-spacing:.22em; color:var(--neutral); font-weight:400;
+    border-bottom:1px solid var(--paper-3); padding-bottom:.18rem;
+  }
+  h4{
+    font-family:var(--ui); font-size:1.03rem; font-weight:750;
+    margin:2.15rem 0 .85rem; color:var(--ink);
+    display:flex; align-items:center; gap:.75rem;
+  }
+  h4 .badge{
+    flex:none; width:1.75rem; height:1.75rem; border-radius:50%;
+    background:var(--turq); color:#F4EEE2; font-family:var(--math);
+    font-size:.82rem; display:inline-flex; align-items:center; justify-content:center;
+    direction:ltr; font-variant-numeric:tabular-nums;
+  }
+  p{margin:0 0 1.15rem; max-width:var(--measure);}
+  .muted{color:var(--neutral);}
+  strong{font-weight:750; color:var(--turq-dark);}
+  em.hl{
+    font-style:normal; background:linear-gradient(transparent 62%, rgba(180,118,31,.26) 62%);
+    padding:0 .12em;
+  }
+
+  /* --- بلوک‌های اصلی متن --- */
+  .def{
+    background:var(--paper-2);
+    border-right:3px solid var(--turq);
+    padding:1.65rem 1.85rem 1.15rem;
+    margin:1.75rem 0 2.15rem;
+    max-width:none;
+  }
+  .def .label{
+    display:flex; align-items:center; gap:.75rem;
+    font-size:.72rem; letter-spacing:.26em; text-transform:uppercase;
+    color:var(--turq); direction:ltr; margin-bottom:.85rem;
+  }
+  .def .label .fa{
+    font-family:var(--ui); letter-spacing:0; text-transform:none;
+    font-size:.95rem; font-weight:750; color:var(--turq-dark);
+  }
+  .def p:last-child{margin-bottom:.35rem;}
+
+  .axiom{
+    position:relative;
+    background:#FBF7EE;
+    border:1px solid var(--paper-3);
+    border-top:2px solid var(--turq-dark);
+    padding:1.75rem 1.9rem 1.55rem;
+    margin:1.85rem 0;
+    max-width:none;
+    box-shadow:0 1px 0 rgba(28,43,47,.05), 0 14px 26px -22px rgba(28,43,47,.35);
+  }
+  .axiom > .head{
+    display:flex; align-items:baseline; gap:.9rem; flex-wrap:wrap;
+    margin-bottom:1.05rem;
+  }
+  .axiom .kicker{
+    font-family:var(--math); direction:ltr; font-size:.74rem;
+    letter-spacing:.28em; color:var(--ochre); font-variant-numeric:tabular-nums;
+  }
+  .axiom .name{font-size:1.06rem; font-weight:750; color:var(--ink);}
+  .axiom .lat{font-family:var(--math); font-size:.8rem; color:var(--neutral); direction:ltr; letter-spacing:.05em;}
+
+  .proof{
+    margin:1.15rem 0 .35rem;
+    padding:.35rem 1.35rem .35rem 1.15rem;
+    border-right:1px solid var(--paper-3);
+    padding-right:1.35rem;
+  }
+  .proof .p-label{
+    display:inline-flex; align-items:center; gap:.55rem;
+    font-size:.72rem; letter-spacing:.24em; text-transform:uppercase;
+    color:var(--neutral); direction:ltr; margin-bottom:.55rem;
+  }
+  .proof .p-label .fa{
+    font-family:var(--ui); letter-spacing:0; text-transform:none;
+    font-size:.92rem; font-weight:750; color:var(--turq);
+  }
+  .proof p{max-width:var(--measure);}
+  .qedsymbol{color:var(--turq-dark); font-family:var(--math);}
+
+  /* --- فرمول‌های نمایشی --- */
+  .eq{
+    position:relative;
+    margin:1.55rem 0;
+    padding:.75rem 3.1rem;
+    overflow-x:auto;
+    overflow-y:hidden;
+    text-align:center;
+  }
+  .eq .no{
+    position:absolute; left:.15rem; top:50%; transform:translateY(-50%);
+    font-family:var(--math); direction:ltr; font-size:.78rem;
+    color:var(--neutral); font-variant-numeric:tabular-nums; letter-spacing:.06em;
+  }
+  .eq .m{font-size:1.16rem;}
+  .eq.big .m{font-size:1.34rem;}
+  .eq.result{
+    background:#FBF7EE;
+    border:1px solid var(--paper-3);
+    border-right:3px solid var(--ochre);
+  }
+  .eq-note{
+    text-align:center; font-size:.86rem; color:var(--neutral);
+    margin:-.75rem 0 1.4rem;
+  }
+
+  /* --- مثال‌ها --- */
+  .example{
+    background:#FBF7EE;
+    border:1px solid var(--paper-3);
+    border-right:3px solid var(--crimson);
+    padding:1.65rem 1.85rem 1.35rem;
+    margin:1.85rem 0;
+    max-width:none;
+  }
+  .example .head{
+    display:flex; align-items:baseline; gap:.85rem; flex-wrap:wrap;
+    margin-bottom:1.15rem;
+  }
+  .example .kicker{
+    font-family:var(--math); direction:ltr; font-size:.74rem;
+    letter-spacing:.28em; color:var(--crimson); font-variant-numeric:tabular-nums;
+  }
+  .example .name{font-size:1.04rem; font-weight:750;}
+  ol.steps{list-style:none; counter-reset:st; margin:.45rem 0 1.15rem; padding:0;}
+  ol.steps > li{
+    counter-increment:st; position:relative;
+    padding:.42rem 2.55rem .42rem 0; margin:0;
+    line-height:2.1; max-width:var(--measure);
+  }
+  ul.steps > li{
+    position:relative;
+    padding:.42rem 2.55rem .42rem 0; margin:0;
+    line-height:2.1; max-width:var(--measure);
+  }
+  ol.steps > li::before{
+    content:counter(st,decimal);
+    position:absolute; right:0; top:.72rem;
+    width:1.65rem; height:1.65rem; border-radius:50%;
+    background:var(--paper-3); color:var(--turq-dark);
+    font-family:var(--math); font-size:.82rem;
+    display:flex; align-items:center; justify-content:center;
+    direction:ltr; font-variant-numeric:tabular-nums;
+  }
+  .answer{
+    display:flex; align-items:baseline; gap:.85rem; flex-wrap:wrap;
+    background:rgba(180,118,31,.11);
+    border-right:3px solid var(--ochre);
+    padding:.85rem 1.25rem; margin:.65rem 0 .15rem;
+  }
+  .answer .lbl{font-size:.82rem; font-weight:750; color:#8A5A14;}
+
+  /* --- لیست خصوصیات --- */
+  .prop{margin:2.15rem 0;}
+  .prop .prop-head{
+    display:flex; align-items:flex-start; gap:.95rem;
+    padding-bottom:.75rem; border-bottom:1px solid var(--paper-3);
+    margin-bottom:1.15rem;
+  }
+  .prop .idx{
+    flex:none; font-family:var(--math); direction:ltr;
+    font-size:.95rem; color:var(--ochre); letter-spacing:.14em;
+    padding-top:.28rem; font-variant-numeric:tabular-nums;
+  }
+  .prop .title{font-size:1.08rem; font-weight:750; line-height:1.95;}
+
+  /* --- جدول مقایسه‌ای --- */
+  .table-wrap{
+    margin:1.85rem 0; overflow-x:auto;
+    border:1px solid var(--paper-3); background:#FBF7EE;
+    box-shadow:0 14px 26px -24px rgba(28,43,47,.4);
+  }
+  table.cmp{
+    width:100%; min-width:44rem; border-collapse:collapse;
+    font-size:.94rem;
+  }
+  table.cmp thead th{
+    background:var(--turq-dark); color:#F0E9DA;
+    font-weight:700; text-align:right; padding:.95rem 1.1rem;
+    font-size:.86rem; letter-spacing:.02em; line-height:1.9;
+    border-left:1px solid rgba(240,233,218,.14);
+    vertical-align:middle;
+  }
+  table.cmp tbody td{
+    padding:1.05rem 1.1rem; border-top:1px solid var(--paper-3);
+    border-left:1px solid var(--paper-3);
+    vertical-align:middle; line-height:2.1;
+  }
+  table.cmp tbody tr:nth-child(even){background:var(--paper-2);}
+  table.cmp tbody tr:hover{background:rgba(15,107,107,.08);}
+  table.cmp td .m{font-size:1.02rem;}
+  table.cmp .norm-name{font-weight:750; color:var(--turq-dark); white-space:nowrap;}
+
+  /* --- ابزار تعاملی --- */
+  .tool{
+    margin:2.6rem 0;
+    background:var(--turq-dark);
+    color:#EDE6D6;
+    border:1px solid rgba(240,233,218,.14);
+    padding:0;
+    overflow:hidden;
+  }
+  .tool-head{
+    padding:1.55rem 1.85rem 1.25rem;
+    border-bottom:1px solid rgba(240,233,218,.15);
+    display:flex; align-items:baseline; gap:.95rem; flex-wrap:wrap;
+  }
+  .tool-head .kicker{
+    font-family:var(--math); direction:ltr; font-size:.72rem;
+    letter-spacing:.28em; color:#E2A44B;
+  }
+  .tool-head .name{font-size:1.12rem; font-weight:750; color:#FBF5E8;}
+  .tool-head .desc{font-size:.85rem; color:rgba(237,230,214,.68); width:100%; line-height:2;}
+  .tool-body{padding:1.65rem 1.85rem 1.85rem;}
+
+  .canvas-box{
+    position:relative; width:100%; height:340px;
+    background:rgba(240,233,218,.05);
+    border:1px solid rgba(240,233,218,.16);
+    touch-action:none; cursor:crosshair;
+  }
+  .canvas-box canvas{display:block; width:100%; height:100%;}
+  .canvas-hint{
+    position:absolute; bottom:.75rem; right:.95rem;
+    font-size:.74rem; color:rgba(237,230,214,.55); pointer-events:none;
+    letter-spacing:.02em;
+  }
+  .readouts{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(9.5rem,1fr));
+    gap:.85rem; margin-top:1.15rem;
+  }
+  .readout{
+    background:rgba(240,233,218,.07);
+    border:1px solid rgba(240,233,218,.15);
+    padding:.85rem 1.05rem;
+  }
+  .readout .k{
+    font-family:var(--math); direction:ltr; font-size:.92rem;
+    color:#E2A44B; display:block; margin-bottom:.28rem;
+  }
+  .readout .v{
+    font-family:var(--math); direction:ltr; font-size:1.32rem;
+    color:#FBF5E8; font-variant-numeric:tabular-nums lining-nums;
+  }
+  .legend{display:flex; flex-wrap:wrap; gap:.55rem 1.55rem; margin-top:1.15rem; font-size:.82rem;}
+  .legend span{display:inline-flex; align-items:center; gap:.55rem; color:rgba(237,230,214,.8);}
+  .legend i{width:1.65rem; height:0; border-top:2px solid; display:inline-block;}
+
+  .matrix-form{
+    display:grid; grid-template-columns:repeat(2,minmax(0,7.5rem));
+    gap:.75rem; margin:.35rem 0 1.35rem;
+  }
+  .matrix-form label{
+    display:flex; flex-direction:column; gap:.35rem;
+    font-family:var(--math); direction:ltr; font-size:.82rem;
+    color:rgba(237,230,214,.72);
+  }
+  .matrix-form input{
+    font-family:var(--math); font-size:1.08rem; direction:ltr;
+    padding:.55rem .75rem; text-align:center;
+    background:rgba(240,233,218,.1); color:#FBF5E8;
+    border:1px solid rgba(240,233,218,.22); border-radius:2px;
+    font-variant-numeric:tabular-nums; width:100%;
+  }
+  .matrix-form input:focus-visible{
+    outline:2px solid #E2A44B; outline-offset:2px;
+  }
+  .result-grid{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(11.5rem,1fr));
+    gap:.85rem; margin-top:.65rem;
+  }
+  .result-card{
+    background:rgba(240,233,218,.07);
+    border:1px solid rgba(240,233,218,.15);
+    padding:1rem 1.15rem;
+  }
+  .result-card.accent{background:rgba(224,164,75,.14); border-color:rgba(224,164,75,.42);}
+  .result-card .k{
+    font-family:var(--math); direction:ltr; font-size:.86rem;
+    color:#E2A44B; display:block; margin-bottom:.35rem;
+  }
+  .result-card .v{
+    font-family:var(--math); direction:ltr; font-size:1.42rem;
+    color:#FBF5E8; font-variant-numeric:tabular-nums lining-nums;
+  }
+  .tool-steps{
+    margin-top:1.45rem; padding-top:1.25rem;
+    border-top:1px solid rgba(240,233,218,.15);
+    display:flex; flex-direction:column; gap:.85rem;
+  }
+  .tool-steps .row{
+    display:flex; align-items:center; gap:1rem; flex-wrap:wrap;
+    font-size:.88rem; color:rgba(237,230,214,.82);
+  }
+  .tool-steps .row .cap{min-width:11.5rem; color:rgba(237,230,214,.6);}
+  .tool-steps .row .m{font-size:1.05rem; color:#FBF5E8;}
+
+  /* --- پانوشت --- */
+  footer{
+    background:var(--turq-dark); color:rgba(240,233,218,.76);
+    margin-top:2rem;
+    padding:3.4rem clamp(1.25rem,5vw,3.5rem) 2.6rem;
+    font-size:.88rem; line-height:2.15;
+  }
+  .foot-inner{
+    max-width:78rem; margin:0 auto;
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(17rem,1fr)); gap:2.2rem;
+  }
+  footer h5{
+    margin:0 0 .85rem; font-size:.72rem; letter-spacing:.28em;
+    text-transform:uppercase; color:#E2A44B; font-weight:600; direction:ltr;
+    font-family:var(--math);
+  }
+  footer .m{color:#F0E9DA;}
+  .colophon{
+    max-width:78rem; margin:2.6rem auto 0; padding-top:1.55rem;
+    border-top:1px solid rgba(240,233,218,.16);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:1.15rem;
+    font-size:.78rem; color:rgba(240,233,218,.52);
+  }
+  .offline-badge{
+    display:inline-flex; align-items:center; gap:.55rem;
+    border:1px solid rgba(224,164,75,.5); color:#E2A44B;
+    padding:.32rem .85rem; border-radius:2px; font-size:.75rem;
+    letter-spacing:.08em;
+  }
+  .offline-badge .dot{width:.42rem; height:.42rem; border-radius:50%; background:#E2A44B;}
+
+  /* --- ظهور هنگام اسکرول --- */
+  .js .reveal{opacity:0; transform:translateY(12px); transition:opacity .32s ease-out, transform .32s ease-out;}
+  .js .reveal.in{opacity:1; transform:none;}
+
+  /* جوهر روی کاغذ: ظهور سربرگ */
+  @keyframes inkIn{from{opacity:0; transform:translateY(16px);} to{opacity:1; transform:none;}}
+  .hero .eyebrow{animation:inkIn .55s ease-out both;}
+  .hero h1{animation:inkIn .65s .08s ease-out both;}
+  .hero .lede{animation:inkIn .65s .18s ease-out both;}
+  .hero-formula{animation:inkIn .75s .26s ease-out both;}
+  .hero-meta, .hero-nav{animation:inkIn .65s .38s ease-out both;}
+
+  /* --- واکنش‌گرایی --- */
+  @media (max-width:1080px){
+    .shell{grid-template-columns:minmax(0,1fr);}
+    .rail{
+      position:static; padding:2.2rem 0 0;
+    }
+    .rail-title{margin-bottom:.85rem;}
+    .toc{
+      display:flex; flex-wrap:wrap; gap:.35rem;
+    }
+    .toc li{flex:0 0 auto;}
+    .toc a{
+      border-right-width:2px; background:var(--paper-2);
+      padding:.42rem .85rem; font-size:.82rem;
+    }
+    .toc .sub{display:none;}
+    .rail-note{display:none;}
+    .main{border-right:none; padding-right:0; padding-top:1.65rem;}
+  }
+  @media (max-width:640px){
+    body{font-size:16px; line-height:2.1;}
+    .hero h1{line-height:1.5;}
+    .hero-formula{padding:1.15rem 1.25rem;}
+    .eq{padding:.65rem 2.45rem;}
+    .eq .m{font-size:1.02rem;}
+    .eq.big .m{font-size:1.12rem;}
+    .def,.axiom,.example,.tool-body,.tool-head{padding-left:1.15rem; padding-right:1.15rem;}
+    .canvas-box{height:275px;}
+    ol.steps > li{padding-right:2.25rem;}
+    .matrix-form{grid-template-columns:repeat(2,minmax(0,1fr));}
+  }
+
+  @media print{
+    .reveal, .js .reveal{opacity:1 !important; transform:none !important;}
+    *{animation:none !important;}
+    .rail,.progress,.hero-nav,.tool{display:none;}
+    body{background:#fff; font-size:11.5pt;}
+    .hero{background:#fff; color:#000; border-bottom:2px solid #000;}
+    .hero h1,.hero .lede,.hero-meta,.hero .eyebrow{color:#000;}
+    .hero-formula{background:#fff; border:1px solid #000;}
+    .hero-formula .m{color:#000;}
+    .shell{display:block;}
+    .main{border:none; padding:0;}
+    .sec{page-break-inside:auto;}
+  }
+</style>
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<!-- ============================================================
+     سربرگ / نوار عنوان
+     ============================================================ -->
+<header class="hero">
+  <div class="hero-ghost">‖x‖₂</div>
+  <div class="hero-inner">
+    <div class="eyebrow">Numerical Linear Algebra — Chapter 02</div>
+    <h1>راهنمای جامع <span class="accent">نورم-۲</span><br>برداری و ماتریسی و اثبات قضایا</h1>
+    <p class="lede">
+      این فایل بر اساس مطالب <strong>فصل دوم کتاب جبر خطی عددی و کاربردها</strong>
+      (تألیف دکتر داود خجسته سالکویه) تنظیم شده است و شامل تعریف دقیق نورم-۲،
+      اثبات کامل خواص نورم، مثال‌های عددی و نحوهٔ محاسبهٔ نورم طیفی ماتریس‌ها می‌باشد.
+    </p>
+
+    <div class="hero-formula">
+      <span class="m">
+        ‖<i>x</i>‖<sub>2</sub> &nbsp;=&nbsp;
+        <span class="sqrt"><span class="sign">√</span><span class="arg">⟨<i>x</i>,&nbsp;<i>x</i>⟩</span></span>
+        &nbsp;=&nbsp;
+        <span class="sqrt"><span class="sign">√</span><span class="arg"><i>x</i><sup class="up">H</sup><i>x</i></span></span>
+        &nbsp;=&nbsp;
+        <span class="sqrt"><span class="sign">√</span><span class="arg"><span class="sum"><span class="lim"><i>n</i></span><span class="op">Σ</span><span class="lim"><i>i</i>=1</span></span>|<i>x<sub>i</sub></i>|<sup>2</sup></span></span>
+      </span>
+    </div>
+
+    <div class="hero-meta">
+      <div><b>منبع</b> &nbsp; جبر خطی عددی و کاربردها — فصل ۲</div>
+      <div><b>گستره</b> &nbsp; نورم برداری · نورم طیفی · اثبات · مثال عددی</div>
+      <div><b>حالت</b> &nbsp; کاملاً آفلاین و قابل چاپ</div>
+    </div>
+
+    <nav class="hero-nav" aria-label="پیوندهای سریع">
+      <a href="#s1">نورم-۲ برداری</a>
+      <a href="#s1-2">سه اصل نورم</a>
+      <a href="#lab1">آزمایشگاه بردار</a>
+      <a href="#s2">نورم طیفی ماتریس</a>
+      <a href="#lab2">ماشین‌حساب طیفی</a>
+      <a href="#s3">جدول مقایسه‌ای</a>
+    </nav>
+  </div>
+</header>
+
+<div class="shell">
+
+  <!-- ============================================================
+       ریل کناری — فهرست
+       ============================================================ -->
+  <aside class="rail">
+    <div class="rail-title">Contents</div>
+    <ul class="toc" id="toc">
+      <li><a href="#s1"><span class="idx">۱</span><span>نورم-۲ برداری</span></a></li>
+      <li class="sub"><a href="#s1-1"><span class="idx">۱-۱</span><span>تعریف</span></a></li>
+      <li class="sub"><a href="#s1-2"><span class="idx">۱-۲</span><span>اثبات نورم بودن</span></a></li>
+      <li class="sub"><a href="#s1-3"><span class="idx">۱-۳</span><span>مثال‌های عددی</span></a></li>
+      <li><a href="#lab1"><span class="idx">◆</span><span>آزمایشگاه نورم‌ها</span></a></li>
+      <li><a href="#s2"><span class="idx">۲</span><span>نورم-۲ ماتریسی</span></a></li>
+      <li class="sub"><a href="#s2-1"><span class="idx">۲-۱</span><span>تعریف طیفی</span></a></li>
+      <li class="sub"><a href="#s2-2"><span class="idx">۲-۲</span><span>ویژگی‌ها و اثبات‌ها</span></a></li>
+      <li class="sub"><a href="#s2-3"><span class="idx">۲-۳</span><span>مثال‌های عددی</span></a></li>
+      <li><a href="#lab2"><span class="idx">◆</span><span>ماشین‌حساب طیفی</span></a></li>
+      <li><a href="#s3"><span class="idx">۳</span><span>جدول مقایسه‌ای نورم‌ها</span></a></li>
+      <li><a href="#colophon"><span class="idx">†</span><span>شناسنامهٔ سند</span></a></li>
+    </ul>
+    <div class="rail-note">
+      تمام فرمول‌های این سند با <span class="m">HTML</span> و <span class="m">CSS</span>
+      نوشته شده‌اند؛ برای نمایش آن‌ها به هیچ اتصال اینترنتی یا کتابخانهٔ خارجی نیاز نیست.
+    </div>
+  </aside>
+
+  <!-- ============================================================
+       بدنهٔ اصلی
+       ============================================================ -->
+  <main class="main">
+
+    <!-- ===================== بخش ۱ ===================== -->
+    <section class="sec" id="s1">
+      <div class="sec-head reveal">
+        <span class="sec-num">SECTION 01</span>
+        <h2>نورم-۲ برداری<br>نورم اقلیدسی / Euclidean Norm</h2>
+      </div>
+
+      <h3 id="s1-1"><span class="tag">1-1</span> تعریف</h3>
+      <div class="def reveal">
+        <div class="label"><span class="fa">تعریف</span> Definition</div>
+        <p>
+          برای بردار <span class="m"><i>x</i> = (<i>x</i><sub>1</sub>, <i>x</i><sub>2</sub>, … , <i>x<sub>n</sub></i>)<sup class="up">T</sup> ∈ ℂ<sup class="up"><i>n</i></sup></span>
+          ، <strong>نورم-۲ برداری</strong> (که به نورم اقلیدسی معروف است) بر حسب ضرب داخلی
+          به صورت زیر تعریف می‌شود:
+        </p>
+        <div class="eq big result reveal">
+          <span class="no">(۱-۱)</span>
+          <span class="m">
+            ‖<i>x</i>‖<sub>2</sub> =
+            <span class="sqrt"><span class="sign">√</span><span class="arg">⟨<i>x</i>, <i>x</i>⟩</span></span> =
+            <span class="sqrt"><span class="sign">√</span><span class="arg"><i>x</i><sup class="up">H</sup><i>x</i></span></span> =
+            <span class="sqrt"><span class="sign">√</span><span class="arg"><span class="sum"><span class="lim"><i>n</i></span><span class="op">Σ</span><span class="lim"><i>i</i>=1</span></span> |<i>x<sub>i</sub></i>|<sup>2</sup></span></span>
+          </span>
+        </div>
+        <p>
+          و برای بردارهای حقیقی <span class="m"><i>x</i> ∈ ℝ<sup class="up"><i>n</i></sup></span>:
+        </p>
+        <div class="eq reveal">
+          <span class="no">(۱-۲)</span>
+          <span class="m">
+            ‖<i>x</i>‖<sub>2</sub> =
+            <span class="sqrt"><span class="sign">√</span><span class="arg"><i>x</i><sup class="up">T</sup><i>x</i></span></span> =
+            <span class="sqrt"><span class="sign">√</span><span class="arg"><i>x</i><sub>1</sub><sup>2</sup> + <i>x</i><sub>2</sub><sup>2</sup> + … + <i>x<sub>n</sub></i><sup>2</sup></span></span>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== بخش ۱-۲ ===================== -->
+    <section class="sec" id="s1-2">
+      <div class="sec-head reveal">
+        <span class="sec-num">SECTION 01 · 02</span>
+        <h2>اثبات نورم بودن <span class="m">‖<i>x</i>‖<sub>2</sub></span></h2>
+      </div>
+
+      <p class="reveal">
+        برای اینکه یک تابع <span class="m">‖·‖ : <i>V</i> → ℝ</span> یک <strong>نورم</strong> باشد،
+        باید سه اصل زیر را ارضا کند. در ادامه اثبات این سه اصل برای نورم-۲ ارائه می‌شود:
+      </p>
+
+      <!-- اصل اول -->
+      <div class="axiom reveal">
+        <div class="head">
+          <span class="kicker">AXIOM 01</span>
+          <span class="name">اصل اول: مثبت بودن و ناصفر بودن</span>
+          <span class="lat">Non-negativity &amp; Definiteness</span>
+        </div>
+        <p>
+          <strong>حکم:</strong>
+          <span class="m">‖<i>x</i>‖<sub>2</sub> ≥ 0</span> برای هر
+          <span class="m"><i>x</i> ∈ ℂ<sup class="up"><i>n</i></sup></span>، و
+          <span class="m">‖<i>x</i>‖<sub>2</sub> = 0 ⟺ <i>x</i> = 0</span>.
+        </p>
+        <div class="proof">
+          <div class="p-label"><span class="fa">اثبات</span> Proof</div>
+          <p>
+            چون برای هر عدد مختلط <span class="m"><i>x<sub>i</sub></i></span> داریم
+            <span class="m">|<i>x<sub>i</sub></i>| ≥ 0</span>، پس مجموع قدر مطلقِ مربعِ درایه‌ها
+            نیز غیرمنفی است:
+          </p>
+          <div class="eq reveal">
+            <span class="m">
+              <span class="sum"><span class="lim"><i>n</i></span><span class="op">Σ</span><span class="lim"><i>i</i>=1</span></span>
+              |<i>x<sub>i</sub></i>|<sup>2</sup> ≥ 0
+              ⟹
+              ‖<i>x</i>‖<sub>2</sub> =
+              <span class="sqrt"><span class="sign">√</span><span class="arg"><span class="sum"><span class="lim"><i>n</i></span><span class="op">Σ</span><span class="lim"><i>i</i>=1</span></span>|<i>x<sub>i</sub></i>|<sup>2</sup></span></span> ≥ 0
+            </span>
+          </div>
+          <p>همچنین:</p>
+          <div class="eq reveal">
+            <span class="m">
+              ‖<i>x</i>‖<sub>2</sub> = 0 ⟺
+              <span class="sqrt"><span class="sign">√</span><span class="arg"><span class="sum"><span class="lim"><i>n</i></span><span class="op">Σ</span><span class="lim"><i>i</i>=1</span></span>|<i>x<sub>i</sub></i>|<sup>2</sup></span></span> = 0
+              ⟺
+              <span class="sum"><span class="lim"><i>n</i></span><span class="op">Σ</span><span class="lim"><i>i</i>=1</span></span>|<i>x<sub>i</sub></i>|<sup>2</sup> = 0
+            </span>
+          </div>
+          <p>
+            از آنجا که تمام جملات <span class="m">|<i>x<sub>i</sub></i>|<sup>2</sup></span> غیرمنفی هستند،
+            مجموع آن‌ها تنها زمانی صفر می‌شود که تک‌تک جملات صفر باشند:
+          </p>
+          <div class="eq result reveal">
+            <span class="m">
+              |<i>x</i><sub>1</sub>|<sup>2</sup> = |<i>x</i><sub>2</sub>|<sup>2</sup> = … = |<i>x<sub>n</sub></i>|<sup>2</sup> = 0
+              ⟺ <i>x</i><sub>1</sub> = <i>x</i><sub>2</sub> = … = <i>x<sub>n</sub></i> = 0
+              ⟺ <i>x</i> = 0
+              <span class="qedsymbol">∎</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- اصل دوم -->
+      <div class="axiom reveal">
+        <div class="head">
+          <span class="kicker">AXIOM 02</span>
+          <span class="name">اصل دوم: همگن‌پذیری مطلق</span>
+          <span class="lat">Absolute Homogeneity</span>
+        </div>
+        <p>
+          <strong>حکم:</strong> برای هر اسکالر <span class="m"><i>α</i> ∈ ℂ</span> و هر بردار
+          <span class="m"><i>x</i> ∈ ℂ<sup class="up"><i>n</i></sup></span> داریم
+          <span class="m">‖<i>α</i><i>x</i>‖<sub>2</sub> = |<i>α</i>|‖<i>x</i>‖<sub>2</sub></span>.
+        </p>
+        <div class="proof">
+          <div class="p-label"><span class="fa">اثبات</span> Proof</div>
+          <p>
+            درایه‌های بردار <span class="m"><i>α</i><i>x</i></span> به صورت
+            <span class="m">(<i>α</i><i>x</i><sub>1</sub>, <i>α</i><i>x</i><sub>2</sub>, … , <i>α</i><i>x<sub>n</sub></i>)<sup class="up">T</sup></span>
+            هستند:
+          </p>
+          <div class="eq reveal">
+            <span class="m">
+              ‖<i>α</i><i>x</i>‖<sub>2</sub> =
+              <span class="sqrt"><span class="sign">√</span><span class="arg"><span class="sum"><span class="lim"><i>n</i></span><span class="op">Σ</span><span class="lim"><i>i</i>=1</span></span>|<i>α</i><i>x<sub>i</sub></i>|<sup>2</sup></span></span> =
+              <span class="sqrt"><span class="sign">√</span><span class="arg"><span class="sum"><span class="lim"><i>n</i></span><span class="op">Σ</span><span class="lim"><i>i</i>=1</span></span>|<i>α</i>|<sup>2</sup>|<i>x<sub>i</sub></i>|<sup>2</sup></span></span>
+            </span>
+          </div>
+          <p>
+            چون <span class="m">|<i>α</i>|<sup>2</sup></span> یک فاکتور مشترک ثابت است،
+            آن را از سیگما خارج می‌کنیم:
+          </p>
+          <div class="eq result reveal">
+            <span class="m">
+              ‖<i>α</i><i>x</i>‖<sub>2</sub> =
+              <span class="sqrt"><span class="sign">√</span><span class="arg">|<i>α</i>|<sup>2</sup> <span class="sum"><span class="lim"><i>n</i></span><span class="op">Σ</span><span class="lim"><i>i</i>=1</span></span>|<i>x<sub>i</sub></i>|<sup>2</sup></span></span>
+              =
+              <span class="sqrt"><span class="sign">√</span><span class="arg">|<i>α</i>|<sup>2</sup></span></span>
+              ·
+              <span class="sqrt"><span class="sign">√</span><span class="arg"><span class="sum"><span class="lim"><i>n</i></span><span class="op">Σ</span><span class="lim"><i>i</i>=1</span></span>|<i>x<sub>i</sub></i>|<sup>2</sup></span></span>
+              = |<i>α</i>|‖<i>x</i>‖<sub>2</sub> <span class="qedsymbol">∎</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- اصل سوم -->
+      <div class="axiom reveal">
+        <div class="head">
+          <span class="kicker">AXIOM 03</span>
+          <span class="name">اصل سوم: نامساوی مثلث</span>
+          <span class="lat">Triangle Inequality · Minkowski</span>
+        </div>
+        <p>
+          <strong>حکم:</strong> برای هر دو بردار
+          <span class="m"><i>x</i>, <i>y</i> ∈ ℂ<sup class="up"><i>n</i></sup></span> داریم
+          <span class="m">‖<i>x</i> + <i>y</i>‖<sub>2</sub> ≤ ‖<i>x</i>‖<sub>2</sub> + ‖<i>y</i>‖<sub>2</sub></span>.
+        </p>
+        <div class="proof">
+          <div class="p-label"><span class="fa">اثبات</span> Proof</div>
+          <p>ابتدا از مربع نورم-۲ شروع می‌کنیم:</p>
+          <div class="eq reveal">
+            <span class="m">
+              ‖<i>x</i>+<i>y</i>‖<sub>2</sub><sup>2</sup> =
+              ⟨<i>x</i>+<i>y</i>, <i>x</i>+<i>y</i>⟩ =
+              ⟨<i>x</i>, <i>x</i>⟩ + ⟨<i>x</i>, <i>y</i>⟩ + ⟨<i>y</i>, <i>x</i>⟩ + ⟨<i>y</i>, <i>y</i>⟩
+            </span>
+          </div>
+          <p>
+            می‌دانیم <span class="m">⟨<i>y</i>, <i>x</i>⟩ = <span class="over">⟨<i>x</i>, <i>y</i>⟩</span></span>
+            و برای هر عدد مختلط <span class="m"><i>z</i></span> داریم
+            <span class="m"><i>z</i> + <i class="up">z̄</i> = 2 Re(<i>z</i>)</span>:
+          </p>
+          <div class="eq reveal">
+            <span class="m">
+              ‖<i>x</i>+<i>y</i>‖<sub>2</sub><sup>2</sup> =
+              ‖<i>x</i>‖<sub>2</sub><sup>2</sup> + 2 Re(⟨<i>x</i>, <i>y</i>⟩) + ‖<i>y</i>‖<sub>2</sub><sup>2</sup>
+            </span>
+          </div>
+          <p>
+            از آنجا که برای هر عدد مختلط <span class="m">Re(<i>z</i>) ≤ |<i>z</i>|</span> است،
+            و با به‌کارگیری <strong>نامساوی کوشی-شوارتس</strong>
+            (<span class="m">|⟨<i>x</i>, <i>y</i>⟩| ≤ ‖<i>x</i>‖<sub>2</sub>‖<i>y</i>‖<sub>2</sub></span>):
+          </p>
+          <div class="eq reveal">
+            <span class="m">
+              ‖<i>x</i>+<i>y</i>‖<sub>2</sub><sup>2</sup> ≤
+              ‖<i>x</i>‖<sub>2</sub><sup>2</sup> + 2|⟨<i>x</i>, <i>y</i>⟩| + ‖<i>y</i>‖<sub>2</sub><sup>2</sup> ≤
+              ‖<i>x</i>‖<sub>2</sub><sup>2</sup> + 2‖<i>x</i>‖<sub>2</sub>‖<i>y</i>‖<sub>2</sub> + ‖<i>y</i>‖<sub>2</sub><sup>2</sup>
+            </span>
+          </div>
+          <p>سمت راست عبارت بالا یک مربع کامل است:</p>
+          <div class="eq reveal">
+            <span class="m">
+              ‖<i>x</i>+<i>y</i>‖<sub>2</sub><sup>2</sup> ≤ (‖<i>x</i>‖<sub>2</sub> + ‖<i>y</i>‖<sub>2</sub>)<sup>2</sup>
+            </span>
+          </div>
+          <p>با گرفتن جذر از طرفین (چون طرفین مثبت هستند):</p>
+          <div class="eq result reveal">
+            <span class="m">
+              ‖<i>x</i>+<i>y</i>‖<sub>2</sub> ≤ ‖<i>x</i>‖<sub>2</sub> + ‖<i>y</i>‖<sub>2</sub>
+              <span class="qedsymbol">∎</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== بخش ۱-۳ ===================== -->
+    <section class="sec" id="s1-3">
+      <div class="sec-head reveal">
+        <span class="sec-num">SECTION 01 · 03</span>
+        <h2>مثال‌های عددی برای نورم-۲ برداری</h2>
+      </div>
+
+      <div class="example reveal">
+        <div class="head">
+          <span class="kicker">EXAMPLE 01</span>
+          <span class="name">بردار حقیقی</span>
+        </div>
+        <p>بردار <span class="m"><i>x</i> = (3, −4, 12)<sup class="up">T</sup> ∈ ℝ<sup class="up">3</sup></span> را در نظر بگیرید:</p>
+        <ol class="steps">
+          <li>مربع هر درایه را حساب کنید: <span class="m">3<sup>2</sup> = 9</span>، <span class="m">(−4)<sup>2</sup> = 16</span>، <span class="m">12<sup>2</sup> = 144</span></li>
+          <li>مجموع مربع‌ها: <span class="m">9 + 16 + 144 = 169</span></li>
+          <li>گرفتن جذر: <span class="m"><span class="sqrt"><span class="sign">√</span><span class="arg">169</span></span> = 13</span></li>
+        </ol>
+        <div class="eq result">
+          <span class="m">
+            ‖<i>x</i>‖<sub>2</sub> =
+            <span class="sqrt"><span class="sign">√</span><span class="arg">3<sup>2</sup> + (−4)<sup>2</sup> + 12<sup>2</sup></span></span> =
+            <span class="sqrt"><span class="sign">√</span><span class="arg">9 + 16 + 144</span></span> =
+            <span class="sqrt"><span class="sign">√</span><span class="arg">169</span></span> = 13
+          </span>
+        </div>
+        <div class="answer"><span class="lbl">پاسخ:</span><span class="m">‖<i>x</i>‖<sub>2</sub> = 13</span></div>
+      </div>
+
+      <div class="example reveal">
+        <div class="head">
+          <span class="kicker">EXAMPLE 02</span>
+          <span class="name">بردار مختلط</span>
+        </div>
+        <p>بردار <span class="m"><i>y</i> = (1+<i>i</i>, 2−<i>i</i>, 3)<sup class="up">T</sup> ∈ ℂ<sup class="up">3</sup></span> را در نظر بگیرید:</p>
+        <ul class="steps" style="list-style:none;">
+          <li><span class="m">|1+<i>i</i>|<sup>2</sup> = 1<sup>2</sup> + 1<sup>2</sup> = 2</span></li>
+          <li><span class="m">|2−<i>i</i>|<sup>2</sup> = 2<sup>2</sup> + (−1)<sup>2</sup> = 5</span></li>
+          <li><span class="m">|3|<sup>2</sup> = 9</span></li>
+        </ul>
+        <div class="eq result">
+          <span class="m">
+            ‖<i>y</i>‖<sub>2</sub> =
+            <span class="sqrt"><span class="sign">√</span><span class="arg">2 + 5 + 9</span></span> =
+            <span class="sqrt"><span class="sign">√</span><span class="arg">16</span></span> = 4
+          </span>
+        </div>
+        <div class="answer"><span class="lbl">پاسخ:</span><span class="m">‖<i>y</i>‖<sub>2</sub> = 4</span></div>
+      </div>
+    </section>
+
+    <!-- ===================== آزمایشگاه ۱ ===================== -->
+    <section class="sec" id="lab1">
+      <div class="sec-head reveal">
+        <span class="sec-num">INTERACTIVE 01</span>
+        <h2>آزمایشگاه نورم‌های برداری</h2>
+      </div>
+      <p class="reveal">
+        نوک بردار را با ماوس یا انگشت جابه‌جا کنید. سه «توپ واحد» هم‌زمان رسم می‌شوند:
+        مربعِ <span class="m">‖·‖<sub>∞</sub></span>، لوزیِ <span class="m">‖·‖<sub>1</sub></span>
+        و دایرهٔ <span class="m">‖·‖<sub>2</sub></span>. هر مرز، مکان هندسیِ نقاطی است که نورمِ
+        متناظرشان برابر یک است.
+      </p>
+
+      <div class="tool reveal">
+        <div class="tool-head">
+          <span class="kicker">VECTOR LAB</span>
+          <span class="name">توپ‌های واحد نورم‌ها</span>
+          <span class="desc">بردار <span class="m" style="color:#FBF5E8;"><i>x</i> = (<i>x</i><sub>1</sub>, <i>x</i><sub>2</sub>)</span> را بکشید تا مقادیر سه نورم زنده به‌روز شود.</span>
+        </div>
+        <div class="tool-body">
+          <div class="canvas-box" id="canvasBox">
+            <canvas id="normCanvas"></canvas>
+            <div class="canvas-hint">برای جابه‌جایی بردار، بکشید / کلیک کنید</div>
+          </div>
+
+          <div class="readouts">
+            <div class="readout"><span class="k">x₁</span><span class="v" id="rx1">3.00</span></div>
+            <div class="readout"><span class="k">x₂</span><span class="v" id="rx2">2.00</span></div>
+            <div class="readout"><span class="k">‖x‖₁</span><span class="v" id="rn1">5.00</span></div>
+            <div class="readout"><span class="k">‖x‖₂</span><span class="v" id="rn2">3.61</span></div>
+            <div class="readout"><span class="k">‖x‖∞</span><span class="v" id="rnf">3.00</span></div>
+          </div>
+
+          <div class="legend">
+            <span><i style="border-color:#E2A44B; border-top-style:dashed;"></i> توپ واحد <span class="m" style="color:#FBF5E8;">‖·‖<sub>∞</sub></span></span>
+            <span><i style="border-color:#D9736A; border-top-style:dashed;"></i> توپ واحد <span class="m" style="color:#FBF5E8;">‖·‖<sub>1</sub></span></span>
+            <span><i style="border-color:#6FD3C4;"></i> توپ واحد <span class="m" style="color:#FBF5E8;">‖·‖<sub>2</sub></span></span>
+            <span><i style="border-color:#FBF5E8;"></i> بردار <span class="m" style="color:#FBF5E8;"><i>x</i></span></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== بخش ۲ ===================== -->
+    <section class="sec" id="s2">
+      <div class="sec-head reveal">
+        <span class="sec-num">SECTION 02</span>
+        <h2>نورم-۲ ماتریسی<br>نورم طیفی / Spectral Matrix Norm</h2>
+      </div>
+
+      <h3 id="s2-1"><span class="tag">2-1</span> تعریف</h3>
+      <div class="def reveal">
+        <div class="label"><span class="fa">تعریف</span> Definition</div>
+        <p>
+          برای ماتریس <span class="m"><i>A</i> ∈ ℂ<sup class="up"><i>m</i>×<i>n</i></sup></span>،
+          <strong>نورم-۲ ماتریسی</strong> (که نورم طیفی نیز نامیده می‌شود) به عنوان نورمِ
+          طبیعیِ القاشده از نورم-۲ برداری تعریف می‌شود:
+        </p>
+        <div class="eq big result reveal">
+          <span class="no">(۲-۱)</span>
+          <span class="m">
+            ‖<i>A</i>‖<sub>2</sub> =
+            <span class="oplim"><span class="op">max</span><span class="cond"><i>x</i> ≠ 0</span></span>
+            <span class="frac"><span class="num">‖<i>A</i><i>x</i>‖<sub>2</sub></span><span class="den">‖<i>x</i>‖<sub>2</sub></span></span>
+            =
+            <span class="oplim"><span class="op">max</span><span class="cond">‖<i>x</i>‖<sub>2</sub>=1</span></span>
+            ‖<i>A</i><i>x</i>‖<sub>2</sub>
+          </span>
+        </div>
+        <p><strong>فرمول محاسباتی:</strong></p>
+        <div class="eq big result reveal">
+          <span class="no">(۲-۲)</span>
+          <span class="m">
+            ‖<i>A</i>‖<sub>2</sub> =
+            <span class="sqrt"><span class="sign">√</span><span class="arg"><i>ρ</i>(<i>A</i><sup class="up">H</sup><i>A</i>)</span></span>
+          </span>
+        </div>
+        <p class="muted">
+          که در آن <span class="m"><i>ρ</i>(<i>A</i><sup class="up">H</sup><i>A</i>)</span>
+          شعاع طیفی (بزرگ‌ترین مقدار ویژه) ماتریس
+          <span class="m"><i>A</i><sup class="up">H</sup><i>A</i></span> است.
+        </p>
+      </div>
+
+      <h3 id="s2-2"><span class="tag">2-2</span> ویژگی‌های کلیدی و اثبات‌ها</h3>
+
+      <div class="prop reveal">
+        <div class="prop-head">
+          <span class="idx">P.01</span>
+          <span class="title">
+            اگر <span class="m"><i>A</i></span> هرمیتی باشد (<span class="m"><i>A</i><sup class="up">H</sup> = <i>A</i></span>)،
+            آنگاه <span class="m">‖<i>A</i>‖<sub>2</sub> = <i>ρ</i>(<i>A</i>)</span>
+          </span>
+        </div>
+        <div class="proof">
+          <div class="p-label"><span class="fa">اثبات</span> Proof</div>
+          <p>
+            اگر <span class="m"><i>A</i><sup class="up">H</sup> = <i>A</i></span> باشد، آنگاه
+            <span class="m"><i>A</i><sup class="up">H</sup><i>A</i> = <i>A</i><sup>2</sup></span>.
+            اگر مقادیر ویژهٔ <span class="m"><i>A</i></span> برابر
+            <span class="m"><i>λ<sub>i</sub></i></span> باشند، مقادیر ویژهٔ
+            <span class="m"><i>A</i><sup>2</sup></span> برابر
+            <span class="m"><i>λ<sub>i</sub></i><sup>2</sup></span> خواهند بود. بنابراین:
+          </p>
+          <div class="eq reveal">
+            <span class="m">
+              <i>ρ</i>(<i>A</i><sup class="up">H</sup><i>A</i>) = <i>ρ</i>(<i>A</i><sup>2</sup>) =
+              <span class="oplim"><span class="op">max</span><span class="cond"><i>i</i></span></span>
+              |<i>λ<sub>i</sub></i><sup>2</sup>| =
+              <span class="paren">(</span>
+              <span class="oplim"><span class="op">max</span><span class="cond"><i>i</i></span></span>
+              |<i>λ<sub>i</sub></i>|<span class="paren">)</span><sup>2</sup> =
+              (<i>ρ</i>(<i>A</i>))<sup>2</sup>
+            </span>
+          </div>
+          <p>با جایگذاری در فرمول نورم طیفی:</p>
+          <div class="eq result reveal">
+            <span class="m">
+              ‖<i>A</i>‖<sub>2</sub> =
+              <span class="sqrt"><span class="sign">√</span><span class="arg">(<i>ρ</i>(<i>A</i>))<sup>2</sup></span></span>
+              = <i>ρ</i>(<i>A</i>) <span class="qedsymbol">∎</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="prop reveal">
+        <div class="prop-head">
+          <span class="idx">P.02</span>
+          <span class="title">ناوردایی تحت ضرب یکانی <span class="lat" style="font-family:var(--math); font-size:.82rem; color:var(--neutral);">(Unitary Invariance)</span></span>
+        </div>
+        <p>
+          برای هر دو ماتریس یکانی <span class="m"><i>U</i></span> و <span class="m"><i>V</i></span>
+          داریم:
+        </p>
+        <div class="eq result reveal">
+          <span class="m">‖<i>U</i> <i>A</i> <i>V</i>‖<sub>2</sub> = ‖<i>A</i>‖<sub>2</sub></span>
+        </div>
+        <p class="muted">
+          یعنی ضرب در ماتریس‌های یکانی، نورم طیفی را تغییر نمی‌دهد؛ از این رو مقدارهای منفرد
+          <span class="m"><i>A</i></span> (از تجزیهٔ <span class="m"><i>SVD</i></span>) کاملاً
+          <span class="m">‖<i>A</i>‖<sub>2</sub></span> را تعیین می‌کنند.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===================== بخش ۲-۳ ===================== -->
+    <section class="sec" id="s2-3">
+      <div class="sec-head reveal">
+        <span class="sec-num">SECTION 02 · 03</span>
+        <h2>مثال‌های عددی برای نورم-۲ ماتریسی</h2>
+      </div>
+
+      <div class="example reveal">
+        <div class="head">
+          <span class="kicker">EXAMPLE 03</span>
+          <span class="name">ماتریس متقارن</span>
+        </div>
+        <p>
+          ماتریس متقارن
+          <span class="m">
+            <i>A</i> =
+            <span class="mat"><span class="brk l"></span><span class="grid" style="grid-template-columns:auto auto;">
+              <span class="n">4</span><span class="n">1</span><span class="n">1</span><span class="n">4</span>
+            </span><span class="brk r"></span></span>
+          </span>
+          را در نظر بگیرید.
+        </p>
+        <ol class="steps">
+          <li>
+            محاسبهٔ مقادیر ویژه:
+            <div class="eq" style="margin:.85rem 0 .35rem;">
+              <span class="m">
+                det(<i>A</i> − <i>λ</i><i>I</i>) = (4−<i>λ</i>)<sup>2</sup> − 1 = 0
+                ⟹ 4 − <i>λ</i> = ±1
+                ⟹ <i>λ</i><sub>1</sub> = 5, &nbsp; <i>λ</i><sub>2</sub> = 3
+              </span>
+            </div>
+          </li>
+          <li>شعاع طیفی: <span class="m"><i>ρ</i>(<i>A</i>) = max{5, 3} = 5</span></li>
+          <li>
+            چون <span class="m"><i>A</i></span> متقارن حقیقی است
+            (<span class="m"><i>A</i><sup class="up">T</sup> = <i>A</i></span>)، نورم طیفی آن
+            برابر شعاع طیفی است.
+          </li>
+        </ol>
+        <div class="eq result">
+          <span class="m">‖<i>A</i>‖<sub>2</sub> = <i>ρ</i>(<i>A</i>) = 5</span>
+        </div>
+        <div class="answer"><span class="lbl">پاسخ:</span><span class="m">‖<i>A</i>‖<sub>2</sub> = 5</span></div>
+      </div>
+
+      <div class="example reveal">
+        <div class="head">
+          <span class="kicker">EXAMPLE 04</span>
+          <span class="name">ماتریس عمومی غیرمتقارن</span>
+        </div>
+        <p>
+          ماتریس
+          <span class="m">
+            <i>B</i> =
+            <span class="mat"><span class="brk l"></span><span class="grid" style="grid-template-columns:auto auto;">
+              <span class="n">0</span><span class="n">3</span><span class="n">0</span><span class="n">0</span>
+            </span><span class="brk r"></span></span>
+          </span>
+          را در نظر بگیرید.
+        </p>
+        <ol class="steps">
+          <li>
+            تشکیل ماتریس <span class="m"><i>B</i><sup class="up">T</sup><i>B</i></span>:
+            <div class="eq" style="margin:.85rem 0 .35rem;">
+              <span class="m">
+                <i>B</i><sup class="up">T</sup><i>B</i> =
+                <span class="mat"><span class="brk l"></span><span class="grid" style="grid-template-columns:auto auto;">
+                  <span class="n">0</span><span class="n">0</span><span class="n">3</span><span class="n">0</span>
+                </span><span class="brk r"></span></span>
+                <span class="mat"><span class="brk l"></span><span class="grid" style="grid-template-columns:auto auto;">
+                  <span class="n">0</span><span class="n">3</span><span class="n">0</span><span class="n">0</span>
+                </span><span class="brk r"></span></span>
+                =
+                <span class="mat"><span class="brk l"></span><span class="grid" style="grid-template-columns:auto auto;">
+                  <span class="n">0</span><span class="n">0</span><span class="n">0</span><span class="n">9</span>
+                </span><span class="brk r"></span></span>
+              </span>
+            </div>
+          </li>
+          <li>
+            مقادیر ویژهٔ <span class="m"><i>B</i><sup class="up">T</sup><i>B</i></span>
+            عبارتند از <span class="m"><i>λ</i><sub>1</sub> = 0</span> و
+            <span class="m"><i>λ</i><sub>2</sub> = 9</span>.
+          </li>
+          <li>شعاع طیفی: <span class="m"><i>ρ</i>(<i>B</i><sup class="up">T</sup><i>B</i>) = 9</span></li>
+          <li>
+            نورم طیفی:
+            <div class="eq" style="margin:.85rem 0 .35rem;">
+              <span class="m">
+                ‖<i>B</i>‖<sub>2</sub> =
+                <span class="sqrt"><span class="sign">√</span><span class="arg"><i>ρ</i>(<i>B</i><sup class="up">T</sup><i>B</i>)</span></span> =
+                <span class="sqrt"><span class="sign">√</span><span class="arg">9</span></span> = 3
+              </span>
+            </div>
+          </li>
+        </ol>
+        <div class="answer"><span class="lbl">پاسخ:</span><span class="m">‖<i>B</i>‖<sub>2</sub> = 3</span></div>
+      </div>
+    </section>
+
+    <!-- ===================== آزمایشگاه ۲ ===================== -->
+    <section class="sec" id="lab2">
+      <div class="sec-head reveal">
+        <span class="sec-num">INTERACTIVE 02</span>
+        <h2>ماشین‌حساب نورم طیفی ماتریس</h2>
+      </div>
+      <p class="reveal">
+        درایه‌های یک ماتریس <span class="m">2×2</span> را وارد کنید تا ماتریس
+        <span class="m"><i>A</i><sup class="up">T</sup><i>A</i></span>، مقادیر ویژه، شعاع طیفی و
+        نورم‌های <span class="m">1</span>، <span class="m">2</span>، <span class="m">∞</span>
+        و فروبنیوس آن گام‌به‌گام محاسبه شود.
+      </p>
+
+      <div class="tool reveal">
+        <div class="tool-head">
+          <span class="kicker">SPECTRAL LAB</span>
+          <span class="name">محاسبهٔ زندهٔ <span class="m" style="color:#FBF5E8;">‖<i>A</i>‖<sub>2</sub></span></span>
+          <span class="desc">اعداد صحیح یا اعشاری (مثلاً <span class="m" style="color:#FBF5E8;">2.5</span> یا <span class="m" style="color:#FBF5E8;">−3</span>) وارد کنید.</span>
+        </div>
+        <div class="tool-body">
+          <div class="matrix-form" id="matrixForm">
+            <label>a₁₁ <input type="number" step="any" value="4" data-i="0"></label>
+            <label>a₁₂ <input type="number" step="any" value="1" data-i="1"></label>
+            <label>a₂₁ <input type="number" step="any" value="1" data-i="2"></label>
+            <label>a₂₂ <input type="number" step="any" value="4" data-i="3"></label>
+          </div>
+
+          <div class="result-grid">
+            <div class="result-card accent"><span class="k">‖A‖₂ = √ρ(AᵀA)</span><span class="v" id="mA2">5.0000</span></div>
+            <div class="result-card"><span class="k">ρ(AᵀA) = λmax</span><span class="v" id="mRho">25.0000</span></div>
+            <div class="result-card"><span class="k">‖A‖₁</span><span class="v" id="mA1">5.0000</span></div>
+            <div class="result-card"><span class="k">‖A‖∞</span><span class="v" id="mAinf">5.0000</span></div>
+            <div class="result-card"><span class="k">‖A‖F</span><span class="v" id="mAF">5.9161</span></div>
+            <div class="result-card"><span class="k">κ₂(A)</span><span class="v" id="mK">1.6667</span></div>
+          </div>
+
+          <div class="tool-steps">
+            <div class="row">
+              <span class="cap">۱) ماتریس <span class="m">AᵀA</span></span>
+              <span class="m" id="mAtA">[ 17 8 ; 8 17 ]</span>
+            </div>
+            <div class="row">
+              <span class="cap">۲) چندجمله‌ای مشخصه</span>
+              <span class="m" id="mChar">λ² − 34λ + 225 = 0</span>
+            </div>
+            <div class="row">
+              <span class="cap">۳) مقادیر ویژه</span>
+              <span class="m" id="mEig">λ₁ = 25.0000 , λ₂ = 9.0000</span>
+            </div>
+            <div class="row">
+              <span class="cap">۴) شعاع طیفی</span>
+              <span class="m" id="mRho2">ρ(AᵀA) = 25.0000</span>
+            </div>
+            <div class="row">
+              <span class="cap">۵) نورم طیفی</span>
+              <span class="m" id="mFinal">‖A‖₂ = √25.0000 = 5.0000</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== بخش ۳ ===================== -->
+    <section class="sec" id="s3">
+      <div class="sec-head reveal">
+        <span class="sec-num">SECTION 03</span>
+        <h2>خلاصهٔ مقایسه‌ای نورم‌های مهم برداری و ماتریسی</h2>
+      </div>
+
+      <div class="table-wrap reveal">
+        <table class="cmp">
+          <thead>
+            <tr>
+              <th style="width:16%;">نوع نورم</th>
+              <th style="width:38%;">فرمول برداری<br><span class="m" style="font-size:.92rem; opacity:.72;"><i>x</i> ∈ ℂ<sup class="up"><i>n</i></sup></span></th>
+              <th style="width:46%;">فرمول ماتریسی<br><span class="m" style="font-size:.92rem; opacity:.72;"><i>A</i> ∈ ℂ<sup class="up"><i>m</i>×<i>n</i></sup></span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="norm-name">نورم-۱</td>
+              <td><span class="m">‖<i>x</i>‖<sub>1</sub> = <span class="sum"><span class="lim"><i>n</i></span><span class="op">Σ</span><span class="lim"><i>i</i>=1</span></span>|<i>x<sub>i</sub></i>|</span></td>
+              <td>
+                <span class="m">‖<i>A</i>‖<sub>1</sub> = <span class="oplim"><span class="op">max</span><span class="cond">1≤<i>j</i>≤<i>n</i></span></span> <span class="sum"><span class="lim"><i>m</i></span><span class="op">Σ</span><span class="lim"><i>i</i>=1</span></span>|<i>a<sub>ij</sub></i>|</span>
+                <span class="muted" style="font-size:.85rem;">(بزرگ‌ترین مجموع ستونی)</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="norm-name">نورم-۲<br><span class="muted" style="font-size:.82rem; font-weight:400;">اقلیدسی / طیفی</span></td>
+              <td>
+                <span class="m">‖<i>x</i>‖<sub>2</sub> =
+                <span class="sqrt"><span class="sign">√</span><span class="arg"><span class="sum"><span class="lim"><i>n</i></span><span class="op">Σ</span><span class="lim"><i>i</i>=1</span></span>|<i>x<sub>i</sub></i>|<sup>2</sup></span></span></span>
+              </td>
+              <td>
+                <span class="m">‖<i>A</i>‖<sub>2</sub> =
+                <span class="sqrt"><span class="sign">√</span><span class="arg"><i>ρ</i>(<i>A</i><sup class="up">H</sup><i>A</i>)</span></span></span>
+              </td>
+            </tr>
+            <tr>
+              <td class="norm-name">نورم بی‌نهایت</td>
+              <td>
+                <span class="m">‖<i>x</i>‖<sub>∞</sub> =
+                <span class="oplim"><span class="op">max</span><span class="cond">1≤<i>i</i>≤<i>n</i></span></span> |<i>x<sub>i</sub></i>|</span>
+              </td>
+              <td>
+                <span class="m">‖<i>A</i>‖<sub>∞</sub> = <span class="oplim"><span class="op">max</span><span class="cond">1≤<i>i</i>≤<i>m</i></span></span> <span class="sum"><span class="lim"><i>n</i></span><span class="op">Σ</span><span class="lim"><i>j</i>=1</span></span>|<i>a<sub>ij</sub></i>|</span>
+                <span class="muted" style="font-size:.85rem;">(بزرگ‌ترین مجموع سطری)</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="norm-name">نورم فروبنیوس</td>
+              <td><span class="muted">—</span></td>
+              <td>
+                <span class="m">‖<i>A</i>‖<sub>F</sub> =
+                <span class="sqrt"><span class="sign">√</span><span class="arg">trace(<i>A</i><sup class="up">H</sup><i>A</i>)</span></span> =
+                <span class="sqrt"><span class="sign">√</span><span class="arg"><span class="sum"><span class="lim"><i>i</i>,<i>j</i></span><span class="op">Σ</span><span class="lim"> </span></span>|<i>a<sub>ij</sub></i>|<sup>2</sup></span></span></span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="def reveal" style="border-right-color:var(--ochre);">
+        <div class="label" style="color:var(--ochre);"><span class="fa" style="color:#8A5A14;">یادداشت</span> Remark</div>
+        <p>
+          برای هر بردار <span class="m"><i>x</i> ∈ ℂ<sup class="up"><i>n</i></sup></span> نامساوی‌های
+          زیر میان نورم‌ها برقرار است:
+        </p>
+        <div class="eq">
+          <span class="m">
+            ‖<i>x</i>‖<sub>∞</sub> ≤ ‖<i>x</i>‖<sub>2</sub> ≤ ‖<i>x</i>‖<sub>1</sub> ≤
+            <span class="sqrt"><span class="sign">√</span><span class="arg"><i>n</i></span></span>‖<i>x</i>‖<sub>2</sub>
+          </span>
+        </div>
+        <p class="muted" style="margin-bottom:.35rem;">
+          این نامساوی‌ها نشان می‌دهند که همهٔ نورم‌ها در فضا‌های بعدِ متناهی هم‌ارزند؛
+          اما مقدار عددی آن‌ها متفاوت است و انتخاب نورم مناسب در تحلیل خطا و پایداری عددی اهمیت دارد.
+        </p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ============================================================
+     شناسنامه
+     ============================================================ -->
+<footer id="colophon">
+  <div class="foot-inner">
+    <div>
+      <h5>Source</h5>
+      <p style="margin:0;">
+        کتاب <strong style="color:#F0E9DA;">جبر خطی عددی و کاربردها</strong>،
+        تألیف دکتر داود خجسته سالکویه — فصل دوم: نورم‌ها.
+      </p>
+    </div>
+    <div>
+      <h5>Key Formulae</h5>
+      <p style="margin:0;">
+        <span class="m">‖<i>x</i>‖<sub>2</sub> = <span class="sqrt"><span class="sign">√</span><span class="arg"><i>x</i><sup class="up">H</sup><i>x</i></span></span></span><br>
+        <span class="m">‖<i>A</i>‖<sub>2</sub> = <span class="sqrt"><span class="sign">√</span><span class="arg"><i>ρ</i>(<i>A</i><sup class="up">H</sup><i>A</i>)</span></span></span><br>
+        <span class="m">‖<i>U</i><i>A</i><i>V</i>‖<sub>2</sub> = ‖<i>A</i>‖<sub>2</sub></span>
+      </p>
+    </div>
+    <div>
+      <h5>Build</h5>
+      <p style="margin:0;">
+        ریاضیات این سند با <span class="m">HTML</span> + <span class="m">CSS</span>
+        نوشته شده‌اند و هیچ درخواست شبکه‌ای (فونت، کتابخانه یا تصویر) ندارد.
+      </p>
+      <div style="margin-top:1rem;">
+        <span class="offline-badge"><span class="dot"></span> OFFLINE READY</span>
+      </div>
+    </div>
+  </div>
+  <div class="colophon">
+    <span>راهنمای جامع نورم-۲ · نسخهٔ تک‌فایلی قابل چاپ</span>
+    <span class="m" style="color:rgba(240,233,218,.5);">‖x‖₂ &nbsp;·&nbsp; ‖A‖₂ = √ρ(AᴴA)</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- نوار پیشرفت ---------- */
+  var progress = document.getElementById('progress');
+  function updateProgress(){
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    var p = h > 0 ? (window.scrollY / h) * 100 : 0;
+    progress.style.width = Math.max(0, Math.min(100, p)) + '%';
+  }
+  window.addEventListener('scroll', updateProgress, {passive:true});
+  window.addEventListener('resize', updateProgress);
+  updateProgress();
+
+  /* ---------- ظهور ملایم هنگام اسکرول ---------- */
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var reveals = document.querySelectorAll('.reveal');
+  if (reduced || !('IntersectionObserver' in window)) {
+    reveals.forEach(function(el){ el.classList.add('in'); });
+  } else {
+    var ro = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting){ e.target.classList.add('in'); ro.unobserve(e.target); }
+      });
+    }, {rootMargin:'0px 0px -8% 0px', threshold:0.08});
+    reveals.forEach(function(el){ ro.observe(el); });
+  }
+
+  /* ---------- فهرست چسبان: برجسته‌سازی بخش فعال ---------- */
+  var tocLinks = Array.prototype.slice.call(document.querySelectorAll('#toc a'));
+  var sections = tocLinks.map(function(a){
+    return document.getElementById(a.getAttribute('href').slice(1));
+  }).filter(Boolean);
+
+  function absTop(el){
+    var r = el.getBoundingClientRect();
+    return r.top + (window.pageYOffset || document.documentElement.scrollTop || 0);
+  }
+  function updateToc(){
+    var pos = (window.pageYOffset || document.documentElement.scrollTop || 0) + window.innerHeight * 0.28;
+    var current = sections[0];
+    sections.forEach(function(s){
+      if (absTop(s) <= pos) current = s;
+    });
+    tocLinks.forEach(function(a){
+      var active = current && a.getAttribute('href') === '#' + current.id;
+      a.classList.toggle('active', !!active);
+    });
+  }
+  window.addEventListener('scroll', updateToc, {passive:true});
+  window.addEventListener('resize', updateToc);
+  updateToc();
+
+  /* ============================================================
+     آزمایشگاه ۱: توپ‌های واحد نورم‌ها روی بوم
+     ============================================================ */
+  var box = document.getElementById('canvasBox');
+  var canvas = document.getElementById('normCanvas');
+
+  if (box && canvas && canvas.getContext) {
+    var ctx = canvas.getContext('2d');
+    var state = {x: 3, y: 2};
+    var view = {w:0, h:0, cx:0, cy:0, s:1};
+
+    function resizeCanvas(){
+      var rect = box.getBoundingClientRect();
+      var dpr = window.devicePixelRatio || 1;
+      view.w = Math.max(240, rect.width);
+      view.h = Math.max(200, rect.height);
+      canvas.width = Math.round(view.w * dpr);
+      canvas.height = Math.round(view.h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      view.cx = view.w * 0.5;
+      view.cy = view.h * 0.52;
+      view.s = Math.min(view.w, view.h) / 2 * 0.36;
+      draw();
+    }
+
+    function toPx(x, y){ return [view.cx + x * view.s, view.cy - y * view.s]; }
+
+    function line(pts, color, dash, width){
+      ctx.save();
+      ctx.beginPath();
+      pts.forEach(function(p, i){
+        var q = toPx(p[0], p[1]);
+        if (i === 0) ctx.moveTo(q[0], q[1]); else ctx.lineTo(q[0], q[1]);
+      });
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width || 1.6;
+      if (dash) ctx.setLineDash(dash);
+      ctx.lineJoin = 'round';
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function draw(){
+      var w = view.w, h = view.h;
+      ctx.clearRect(0, 0, w, h);
+
+      // شبکهٔ ظریف
+      ctx.save();
+      ctx.strokeStyle = 'rgba(240,233,218,0.10)';
+      ctx.lineWidth = 1;
+      for (var g = -4; g <= 4; g++){
+        var p1 = toPx(g, -4), p2 = toPx(g, 4);
+        ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]); ctx.stroke();
+        var p3 = toPx(-4, g), p4 = toPx(4, g);
+        ctx.beginPath(); ctx.moveTo(p3[0], p3[1]); ctx.lineTo(p4[0], p4[1]); ctx.stroke();
+      }
+      ctx.restore();
+
+      // محورها
+      var ax1 = toPx(-4.2, 0), ax2 = toPx(4.2, 0);
+      var ay1 = toPx(0, -4.2), ay2 = toPx(0, 4.2);
+      ctx.save();
+      ctx.strokeStyle = 'rgba(240,233,218,0.42)';
+      ctx.lineWidth = 1.25;
+      ctx.beginPath(); ctx.moveTo(ax1[0], ax1[1]); ctx.lineTo(ax2[0], ax2[1]); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(ay1[0], ay1[1]); ctx.lineTo(ay2[0], ay2[1]); ctx.stroke();
+      ctx.restore();
+
+      // توپ واحد بی‌نهایت (مربع)
+      line([[-1,-1],[1,-1],[1,1],[-1,1],[-1,-1]], 'rgba(226,164,75,0.9)', [7,5], 1.8);
+      // توپ واحد ۱ (لوزی)
+      line([[0,1],[1,0],[0,-1],[-1,0],[0,1]], 'rgba(217,115,106,0.9)', [7,5], 1.8);
+      // توپ واحد ۲ (دایره)
+      var circ = [];
+      for (var a = 0; a <= 64; a++){
+        var t = a / 64 * Math.PI * 2;
+        circ.push([Math.cos(t), Math.sin(t)]);
+      }
+      line(circ, 'rgba(111,211,196,0.95)', null, 2.1);
+
+      // بردار
+      var o = toPx(0, 0), v = toPx(state.x, state.y);
+      ctx.save();
+      ctx.strokeStyle = '#FBF5E8';
+      ctx.lineWidth = 2.6;
+      ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(o[0], o[1]); ctx.lineTo(v[0], v[1]); ctx.stroke();
+
+      // سر فلشه
+      var ang = Math.atan2(o[1] - v[1], v[0] - o[0]);
+      ctx.beginPath();
+      ctx.moveTo(v[0], v[1]);
+      ctx.lineTo(v[0] - 14 * Math.cos(ang - 0.42), v[1] + 14 * Math.sin(ang - 0.42));
+      ctx.lineTo(v[0] - 14 * Math.cos(ang + 0.42), v[1] + 14 * Math.sin(ang + 0.42));
+      ctx.closePath();
+      ctx.fillStyle = '#FBF5E8';
+      ctx.fill();
+
+      // نقطهٔ سر بردار
+      ctx.beginPath();
+      ctx.arc(v[0], v[1], 7.5, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(226,164,75,1)';
+      ctx.fill();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#0A3B3B';
+      ctx.stroke();
+
+      // برچسب‌ها
+      ctx.font = '14px "Cambria Math","Times New Roman",serif';
+      ctx.fillStyle = 'rgba(240,233,218,0.72)';
+      ctx.textAlign = 'left';
+      ctx.fillText('x₁', ax2[0] - 26, ax2[1] - 12);
+      ctx.fillText('x₂', ay2[0] + 12, ay2[1] + 8);
+      ctx.restore();
+    }
+
+    function updateReadouts(){
+      var ax = Math.abs(state.x), ay = Math.abs(state.y);
+      var n1 = ax + ay;
+      var n2 = Math.sqrt(state.x * state.x + state.y * state.y);
+      var nf = Math.max(ax, ay);
+      document.getElementById('rx1').textContent = state.x.toFixed(2);
+      document.getElementById('rx2').textContent = state.y.toFixed(2);
+      document.getElementById('rn1').textContent = n1.toFixed(2);
+      document.getElementById('rn2').textContent = n2.toFixed(2);
+      document.getElementById('rnf').textContent = nf.toFixed(2);
+    }
+
+    var dragging = false;
+    function pointerToUnits(ev){
+      var rect = canvas.getBoundingClientRect();
+      var px = ev.clientX - rect.left;
+      var py = ev.clientY - rect.top;
+      return {
+        x: (px - view.cx) / view.s,
+        y: (view.cy - py) / view.s
+      };
+    }
+    function clampState(){
+      state.x = Math.max(-3.2, Math.min(3.2, state.x));
+      state.y = Math.max(-3.2, Math.min(3.2, state.y));
+    }
+    function onMove(ev){
+      if (!dragging) return;
+      if (ev.cancelable) ev.preventDefault();
+      var u = pointerToUnits(ev);
+      state.x = u.x; state.y = u.y;
+      clampState();
+      draw();
+      updateReadouts();
+    }
+    canvas.addEventListener('pointerdown', function(ev){
+      dragging = true;
+      canvas.setPointerCapture && canvas.setPointerCapture(ev.pointerId);
+      onMove(ev);
+    });
+    canvas.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', function(){ dragging = false; });
+    canvas.addEventListener('pointercancel', function(){ dragging = false; });
+
+    // پشتیبانی با صفحه‌کلید
+    canvas.setAttribute('tabindex', '0');
+    canvas.setAttribute('aria-label', 'نمودار تعاملی نورم‌های برداری');
+    canvas.addEventListener('keydown', function(ev){
+      var d = 0.15, used = true;
+      if (ev.key === 'ArrowLeft') state.x -= d;
+      else if (ev.key === 'ArrowRight') state.x += d;
+      else if (ev.key === 'ArrowUp') state.y += d;
+      else if (ev.key === 'ArrowDown') state.y -= d;
+      else used = false;
+      if (used){
+        ev.preventDefault();
+        clampState(); draw(); updateReadouts();
+      }
+    });
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    updateReadouts();
+  }
+
+  /* ============================================================
+     آزمایشگاه ۲: ماشین‌حساب نورم طیفی ماتریس ۲×۲
+     ============================================================ */
+  var inputs = Array.prototype.slice.call(document.querySelectorAll('#matrixForm input'));
+
+  function fmt(v){
+    if (!isFinite(v)) return '—';
+    return (Math.abs(v) < 1e-12 ? 0 : v).toFixed(4);
+  }
+
+  function computeMatrix(){
+    if (!inputs.length) return;
+    var vals = inputs.map(function(inp){
+      var n = parseFloat(inp.value);
+      return isFinite(n) ? n : 0;
+    });
+
+    var a = vals[0], b = vals[1], c = vals[2], d = vals[3];
+
+    // AᵀA
+    var p = a*a + c*c;   // (1,1)
+    var q = a*b + c*d;   // (1,2)
+    var r = q;           // (2,1)
+    var s = b*b + d*d;   // (2,2)
+
+    // مقادیر ویژهٔ ماتریس متقارن ۲×۲
+    var tr = p + s;
+    var det = p*s - q*r;
+    var disc = tr*tr - 4*det;
+    var l1, l2;
+    if (disc >= 0){
+      var sq = Math.sqrt(disc);
+      l1 = (tr + sq) / 2;
+      l2 = (tr - sq) / 2;
+    } else {
+      l1 = tr / 2;
+      l2 = tr / 2;
+    }
+    if (l2 > l1){ var tmp = l1; l1 = l2; l2 = tmp; }
+    var rho = Math.max(l1, 0);
+    var spec = Math.sqrt(rho);
+
+    var norm1 = Math.max(Math.abs(a) + Math.abs(c), Math.abs(b) + Math.abs(d));
+    var normInf = Math.max(Math.abs(a) + Math.abs(b), Math.abs(c) + Math.abs(d));
+    var fro = Math.sqrt(a*a + b*b + c*c + d*d);
+    var minEig = Math.max(l2, 0);
+    var kappa = minEig > 1e-12 ? Math.sqrt(l1 / minEig) : Infinity;
+
+    document.getElementById('mA2').textContent = fmt(spec);
+    document.getElementById('mRho').textContent = fmt(rho);
+    document.getElementById('mA1').textContent = fmt(norm1);
+    document.getElementById('mAinf').textContent = fmt(normInf);
+    document.getElementById('mAF').textContent = fmt(fro);
+    document.getElementById('mK').textContent = isFinite(kappa) ? fmt(kappa) : '∞';
+
+    document.getElementById('mAtA').textContent =
+      '[ ' + fmt(p) + '  ' + fmt(q) + ' ;  ' + fmt(r) + '  ' + fmt(s) + ' ]';
+
+    var a2 = -(p + s);
+    var a1 = det;
+    document.getElementById('mChar').textContent =
+      'λ² ' + (a2 < 0 ? '− ' + fmt(-a2) : '+ ' + fmt(a2)) + 'λ '
+      + (a1 < 0 ? '− ' + fmt(-a1) : '+ ' + fmt(a1)) + ' = 0';
+
+    document.getElementById('mEig').textContent =
+      'λ₁ = ' + fmt(l1) + ' , λ₂ = ' + fmt(l2);
+    document.getElementById('mRho2').textContent = 'ρ(AᵀA) = ' + fmt(rho);
+    document.getElementById('mFinal').textContent =
+      '‖A‖₂ = √' + fmt(rho) + ' = ' + fmt(spec);
+  }
+
+  inputs.forEach(function(inp){
+    inp.addEventListener('input', computeMatrix);
+    inp.addEventListener('change', computeMatrix);
+  });
+  computeMatrix();
+
+})();
+</script>
+
+</body>
+</html>
