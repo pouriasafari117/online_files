@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>عامل‌های هوشمند | درس‌نامه جامع فصل دوم AIMA</title>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<script src="https://unpkg.com/lucide@latest" defer></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+  html{scroll-behavior:smooth;scroll-padding-top:104px}
+  body{background:#05060c;color:#e9ebf4;font-family:'Vazirmatn',system-ui,sans-serif;overflow-x:hidden}
+  *{-webkit-tap-highlight-color:transparent}
+  ::selection{background:rgba(34,211,238,.35);color:#fff}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-track{background:#07080f}
+  ::-webkit-scrollbar-thumb{background:#23263a;border-radius:99px;border:2px solid #07080f}
+  ::-webkit-scrollbar-thumb:hover{background:#3a3f5e}
+  .mono{font-family:'JetBrains Mono',monospace}
+  .kicker{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.32em;text-transform:uppercase;color:#67e8f9}
+  .grad-text{background:linear-gradient(100deg,#67e8f9 10%,#a78bfa 55%,#f0abfc 90%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .grad-amber{background:linear-gradient(100deg,#fde68a,#f59e0b);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .panel{background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.08);border-radius:1.25rem;transition:border-color .4s,transform .4s,box-shadow .4s}
+  .panel:hover{border-color:rgba(103,232,249,.28)}
+  .glow-card{position:relative}
+  .glow-card::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;background:linear-gradient(135deg,rgba(103,232,249,.5),rgba(167,139,250,.15) 40%,transparent 60%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .5s;pointer-events:none}
+  .glow-card:hover::before{opacity:1}
+  .reveal{opacity:0;transform:translateY(30px);transition:opacity .9s cubic-bezier(.22,1,.36,1),transform .9s cubic-bezier(.22,1,.36,1)}
+  .reveal.in{opacity:1;transform:none}
+  .reveal-d1{transition-delay:.1s}.reveal-d2{transition-delay:.2s}.reveal-d3{transition-delay:.3s}
+  .noise{position:fixed;inset:0;pointer-events:none;z-index:70;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(148,163,253,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(148,163,253,.06) 1px,transparent 1px);background-size:56px 56px;mask-image:radial-gradient(ellipse 90% 70% at 50% 30%,#000 30%,transparent 75%)}
+  .orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.35;animation:orbFloat 14s ease-in-out infinite alternate}
+  @keyframes orbFloat{from{transform:translate(0,0) scale(1)}to{transform:translate(40px,-50px) scale(1.15)}}
+  .shimmer{background-size:220% auto;animation:shimmer 6s linear infinite}
+  @keyframes shimmer{to{background-position:220% center}}
+  @keyframes floaty{0%,100%{transform:translateY(0) rotate(var(--r,0deg))}50%{transform:translateY(-16px) rotate(var(--r,0deg))}}
+  .floaty{animation:floaty 7s ease-in-out infinite}
+  @keyframes pulseDot{0%,100%{box-shadow:0 0 0 0 rgba(52,211,153,.5)}50%{box-shadow:0 0 0 7px rgba(52,211,153,0)}}
+  .live-dot{animation:pulseDot 2s infinite}
+  .math-box{direction:ltr;text-align:center;background:rgba(8,10,20,.7);border:1px solid rgba(255,255,255,.09);border-radius:1rem;padding:1.1rem 1.4rem;overflow-x:auto}
+  .math-inline .katex{font-size:1.02em}
+  .katex{direction:ltr}
+  code,.codeblock{font-family:'JetBrains Mono',monospace}
+  .codeblock{direction:ltr;text-align:left;background:#070910;border:1px solid rgba(255,255,255,.09);border-radius:1rem;padding:1.25rem 1.4rem;font-size:.8rem;line-height:1.85;overflow-x:auto;color:#c3cbdd}
+  .codeblock .kw{color:#67e8f9}.codeblock .fn{color:#c4b5fd}.codeblock .cm{color:#5b6076}
+  .diag{direction:ltr}
+  .dbox{border:1px solid rgba(255,255,255,.14);background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border-radius:.8rem;padding:.45rem .9rem;font-size:.72rem;text-align:center;line-height:1.5}
+  .dbox b{font-size:.78rem}
+  .tbl{width:100%;border-collapse:separate;border-spacing:0;font-size:.85rem}
+  .tbl th{background:rgba(255,255,255,.06);font-weight:700;padding:.8rem 1rem;text-align:right;white-space:nowrap}
+  .tbl td{padding:.8rem 1rem;border-top:1px solid rgba(255,255,255,.06);vertical-align:top;line-height:1.9}
+  .tbl tr:first-child th:first-child{border-top-right-radius:1rem}
+  .tbl tr:first-child th:last-child{border-top-left-radius:1rem}
+  .tbl tbody tr{transition:background .3s}
+  .tbl tbody tr:hover{background:rgba(103,232,249,.045)}
+  .badge{display:inline-flex;align-items:center;gap:.35rem;padding:.2rem .7rem;border-radius:99px;font-size:.72rem;font-weight:600;border:1px solid}
+  .b-easy{color:#67e8f9;border-color:rgba(103,232,249,.35);background:rgba(103,232,249,.08)}
+  .b-hard{color:#fda4af;border-color:rgba(251,113,133,.35);background:rgba(251,113,133,.08)}
+  .b-mid{color:#fcd34d;border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.08)}
+  .badge b,strong{color:#fff;font-weight:700}
+  .opt-btn{width:100%;text-align:right;padding:.85rem 1.1rem;border-radius:.9rem;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);transition:all .3s;display:flex;align-items:center;gap:.7rem;line-height:1.8}
+  .opt-btn:not(.locked):hover{border-color:rgba(103,232,249,.45);background:rgba(103,232,249,.06);transform:translateX(-4px)}
+  .opt-btn.correct{border-color:rgba(52,211,153,.6);background:rgba(52,211,153,.1)}
+  .opt-btn.wrong{border-color:rgba(251,113,133,.6);background:rgba(251,113,133,.1)}
+  .opt-btn.locked{cursor:default}
+  .ans-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .55s cubic-bezier(.22,1,.36,1)}
+  .ans-body.open{grid-template-rows:1fr}
+  .ans-body>div{overflow:hidden}
+  .chev{transition:transform .45s}
+  .open-btn .chev{transform:rotate(180deg)}
+  .vcell{position:relative;border-radius:1.1rem;border:1.5px solid rgba(255,255,255,.1);background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));transition:all .4s;cursor:pointer;min-height:150px}
+  .vcell:hover{border-color:rgba(255,255,255,.25)}
+  .vcell.clean-state{background:linear-gradient(180deg,rgba(52,211,153,.1),rgba(52,211,153,.03));border-color:rgba(52,211,153,.35)}
+  .dirt{position:absolute;border-radius:50%;background:radial-gradient(circle at 35% 30%,#b98a4e,#6b4a24);box-shadow:0 2px 8px rgba(0,0,0,.5)}
+  #vacAgent{position:absolute;top:50%;left:25%;transform:translate(-50%,-58%);transition:left .65s cubic-bezier(.22,1,.36,1);z-index:5}
+  @keyframes suckPulse{0%{box-shadow:0 0 0 0 rgba(103,232,249,.6)}100%{box-shadow:0 0 0 26px rgba(103,232,249,0)}}
+  .sucking{animation:suckPulse .7s ease-out}
+  .log-item{animation:logIn .45s cubic-bezier(.22,1,.36,1)}
+  @keyframes logIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+  .side-dot{position:relative}
+  .side-dot .tip{position:absolute;left:130%;top:50%;transform:translateY(-50%) translateX(8px);white-space:nowrap;background:#12142a;border:1px solid rgba(255,255,255,.12);padding:.3rem .8rem;border-radius:.6rem;font-size:.7rem;opacity:0;pointer-events:none;transition:all .3s}
+  .side-dot:hover .tip{opacity:1;transform:translateY(-50%) translateX(0)}
+  .side-dot.active span.ball{background:#67e8f9;box-shadow:0 0 12px rgba(103,232,249,.8)}
+  details>summary{list-style:none}
+  details>summary::-webkit-details-marker{display:none}
+  #navMenu a.active{color:#67e8f9}
+  #navMenu a.active::after{width:100%}
+  #navbar.scrolled{background:rgba(5,6,12,.82);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.07)}
+  .num-badge{font-family:'JetBrains Mono',monospace}
+  @media (max-width:768px){.vcell{min-height:110px}}
+</style>
+</head>
+<body class="antialiased">
+<div class="noise"></div>
+
+<!-- ══════════ NAVBAR ══════════ -->
+<header id="navbar" class="fixed top-0 inset-x-0 z-50 transition-all duration-500">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="flex items-center justify-between h-[72px]">
+      <a href="#hero" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-violet-500 flex items-center justify-center shadow-lg shadow-cyan-500/25 group-hover:scale-105 transition-transform">
+          <i data-lucide="brain-circuit" class="w-5 h-5 text-[#05060c]"></i>
+        </div>
+        <div>
+          <div class="font-extrabold text-sm leading-none">هوش مصنوعی: رویکردی نوین</div>
+          <div class="mono text-[10px] text-cyan-300/80 mt-1 tracking-widest">AIMA · CHAPTER 2</div>
+        </div>
+      </a>
+      <nav id="navMenu" class="hidden lg:flex items-center gap-7 text-[13px] font-medium text-slate-300">
+        <a href="#roadmap" class="hover:text-cyan-300 transition-colors relative after:absolute after:-bottom-1.5 after:right-0 after:h-[2px] after:w-0 after:bg-cyan-400 after:transition-all after:duration-300 hover:after:w-full">نقشه راه</a>
+        <a href="#s1" class="hover:text-cyan-300 transition-colors relative after:absolute after:-bottom-1.5 after:right-0 after:h-[2px] after:w-0 after:bg-cyan-400 after:transition-all after:duration-300 hover:after:w-full">عامل‌ها</a>
+        <a href="#s2" class="hover:text-cyan-300 transition-colors relative after:absolute after:-bottom-1.5 after:right-0 after:h-[2px] after:w-0 after:bg-cyan-400 after:transition-all after:duration-300 hover:after:w-full">عقلانیت</a>
+        <a href="#s3" class="hover:text-cyan-300 transition-colors relative after:absolute after:-bottom-1.5 after:right-0 after:h-[2px] after:w-0 after:bg-cyan-400 after:transition-all after:duration-300 hover:after:w-full">محیط و PEAS</a>
+        <a href="#s4" class="hover:text-cyan-300 transition-colors relative after:absolute after:-bottom-1.5 after:right-0 after:h-[2px] after:w-0 after:bg-cyan-400 after:transition-all after:duration-300 hover:after:w-full">معماری‌ها</a>
+        <a href="#s5" class="hover:text-cyan-300 transition-colors relative after:absolute after:-bottom-1.5 after:right-0 after:h-[2px] after:w-0 after:bg-cyan-400 after:transition-all after:duration-300 hover:after:w-full">خودارزیابی</a>
+        <a href="#s6" class="px-4 py-2 rounded-full bg-cyan-400/10 border border-cyan-400/30 text-cyan-300 hover:bg-cyan-400/20 transition-colors">خلاصه نهایی</a>
+      </nav>
+      <button id="mobBtn" class="lg:hidden w-10 h-10 rounded-lg border border-white/10 flex items-center justify-center text-slate-300">
+        <i data-lucide="menu" class="w-5 h-5"></i>
+      </button>
+    </div>
+  </div>
+  <div id="mobPanel" class="lg:hidden hidden bg-[#0a0c16]/95 backdrop-blur-xl border-t border-white/10 px-6 py-5">
+    <div class="grid grid-cols-2 gap-3 text-sm">
+      <a href="#roadmap" class="mnav py-2.5 px-4 rounded-lg bg-white/5 text-slate-200">نقشه راه</a>
+      <a href="#s1" class="mnav py-2.5 px-4 rounded-lg bg-white/5 text-slate-200">عامل‌ها</a>
+      <a href="#s2" class="mnav py-2.5 px-4 rounded-lg bg-white/5 text-slate-200">عقلانیت</a>
+      <a href="#s3" class="mnav py-2.5 px-4 rounded-lg bg-white/5 text-slate-200">محیط و PEAS</a>
+      <a href="#s4" class="mnav py-2.5 px-4 rounded-lg bg-white/5 text-slate-200">معماری‌ها</a>
+      <a href="#s5" class="mnav py-2.5 px-4 rounded-lg bg-white/5 text-slate-200">خودارزیابی</a>
+      <a href="#s6" class="mnav py-2.5 px-4 rounded-lg bg-cyan-400/10 border border-cyan-400/30 text-cyan-300 col-span-2 text-center">خلاصه نهایی</a>
+    </div>
+  </div>
+  <div class="h-[3px] bg-white/5">
+    <div id="progressBar" class="h-full w-0 bg-gradient-to-l from-cyan-400 via-violet-400 to-fuchsia-400 transition-[width] duration-150"></div>
+  </div>
+</header>
+
+<!-- side dots -->
+<nav id="sideDots" class="fixed left-5 top-1/2 -translate-y-1/2 z-40 hidden xl:flex flex-col gap-4">
+  <a href="#hero" class="side-dot" data-spy="hero"><span class="ball block w-2.5 h-2.5 rounded-full bg-white/25 transition-all duration-300"></span><span class="tip">شروع</span></a>
+  <a href="#roadmap" class="side-dot" data-spy="roadmap"><span class="ball block w-2.5 h-2.5 rounded-full bg-white/25 transition-all duration-300"></span><span class="tip">نقشه راه</span></a>
+  <a href="#s1" class="side-dot" data-spy="s1"><span class="ball block w-2.5 h-2.5 rounded-full bg-white/25 transition-all duration-300"></span><span class="tip">عامل‌ها و محیط‌ها</span></a>
+  <a href="#s2" class="side-dot" data-spy="s2"><span class="ball block w-2.5 h-2.5 rounded-full bg-white/25 transition-all duration-300"></span><span class="tip">عقلانیت</span></a>
+  <a href="#s3" class="side-dot" data-spy="s3"><span class="ball block w-2.5 h-2.5 rounded-full bg-white/25 transition-all duration-300"></span><span class="tip">محیط‌های مسئله</span></a>
+  <a href="#s4" class="side-dot" data-spy="s4"><span class="ball block w-2.5 h-2.5 rounded-full bg-white/25 transition-all duration-300"></span><span class="tip">معماری عامل‌ها</span></a>
+  <a href="#s5" class="side-dot" data-spy="s5"><span class="ball block w-2.5 h-2.5 rounded-full bg-white/25 transition-all duration-300"></span><span class="tip">خودارزیابی</span></a>
+  <a href="#s6" class="side-dot" data-spy="s6"><span class="ball block w-2.5 h-2.5 rounded-full bg-white/25 transition-all duration-300"></span><span class="tip">خلاصه</span></a>
+</nav>
+
+<!-- ══════════ HERO ══════════ -->
+<section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden pt-24 pb-16">
+  <div class="hero-grid"></div>
+  <div class="orb w-[420px] h-[420px] bg-cyan-500/60 top-[-120px] right-[-80px]"></div>
+  <div class="orb w-[380px] h-[380px] bg-violet-600/50 bottom-[-100px] left-[-60px]" style="animation-delay:-6s"></div>
+  <div class="orb w-[240px] h-[240px] bg-fuchsia-500/40 top-[35%] left-[22%]" style="animation-delay:-3s"></div>
+
+  <!-- floating formula chips -->
+  <div class="hidden md:block absolute top-[24%] right-[8%] floaty" style="--r:-6deg">
+    <div class="panel px-4 py-2.5 !rounded-xl text-xs mono text-cyan-200/90 shadow-xl shadow-cyan-950/40 math-inline" dir="ltr">$f: \mathcal{P}^{*} \rightarrow \mathcal{A}$</div>
+  </div>
+  <div class="hidden md:block absolute top-[30%] left-[7%] floaty" style="--r:5deg;animation-delay:-2.5s">
+    <div class="panel px-4 py-2.5 !rounded-xl text-xs mono text-violet-200/90 math-inline" dir="ltr">$Agent = Architecture + Program$</div>
+  </div>
+  <div class="hidden md:block absolute bottom-[22%] right-[12%] floaty" style="--r:4deg;animation-delay:-4.5s">
+    <div class="panel px-4 py-2.5 !rounded-xl text-xs font-bold text-amber-200/90 flex items-center gap-2"><i data-lucide="layout-grid" class="w-3.5 h-3.5"></i> PEAS</div>
+  </div>
+  <div class="hidden md:block absolute bottom-[28%] left-[14%] floaty" style="--r:-5deg;animation-delay:-1.2s">
+    <div class="panel px-4 py-2.5 !rounded-xl text-xs font-bold text-emerald-200/90 flex items-center gap-2"><i data-lucide="bot" class="w-3.5 h-3.5"></i> Rational Agent</div>
+  </div>
+
+  <div class="relative z-10 max-w-5xl mx-auto px-6 text-center">
+    <div class="reveal inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-cyan-400/25 bg-cyan-400/5 text-cyan-300 text-xs font-semibold mb-8">
+      <span class="w-2 h-2 rounded-full bg-emerald-400 live-dot"></span>
+      درس‌نامه خودآموز جامع · راسل و نورویگ
+    </div>
+    <h1 class="reveal reveal-d1 text-5xl md:text-7xl lg:text-8xl font-black leading-[1.15] mb-6">
+      عامل‌های <span class="grad-text shimmer">هوشمند</span>
+    </h1>
+    <p class="reveal reveal-d2 text-slate-400 text-base md:text-xl leading-relaxed md:leading-loose max-w-2xl mx-auto mb-10">
+      فصل دوم کتاب «هوش مصنوعی: رویکردی نوین»؛ از تعریف عامل و ادراک تا عقلانیت، محیط‌های مسئله و پنج معماری بنیادین عامل‌ها — همراه با شبیه‌سازی تعاملی و آزمون تسلط کامل.
+    </p>
+    <div class="reveal reveal-d3 flex flex-wrap items-center justify-center gap-4 mb-14">
+      <a href="#roadmap" class="group inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-gradient-to-l from-cyan-400 to-violet-500 text-[#05060c] font-extrabold text-sm shadow-lg shadow-cyan-500/30 hover:shadow-cyan-400/50 hover:scale-[1.03] transition-all">
+        شروع یادگیری
+        <i data-lucide="arrow-down" class="w-4 h-4 group-hover:translate-y-0.5 transition-transform"></i>
+      </a>
+      <a href="#s5" class="inline-flex items-center gap-2 px-7 py-3.5 rounded-full border border-white/15 text-slate-200 font-bold text-sm hover:bg-white/5 hover:border-white/30 transition-all">
+        <i data-lucide="clipboard-check" class="w-4 h-4 text-amber-300"></i>
+        رفتن به آزمون
+      </a>
+    </div>
+    <div class="reveal reveal-d3 grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl mx-auto">
+      <div class="panel p-4 text-center"><div class="num-badge text-2xl font-bold text-cyan-300" dir="ltr">06</div><div class="text-[11px] text-slate-400 mt-1">بخش آموزشی</div></div>
+      <div class="panel p-4 text-center"><div class="num-badge text-2xl font-bold text-violet-300" dir="ltr">10</div><div class="text-[11px] text-slate-400 mt-1">سوال تمرینی + تحلیل</div></div>
+      <div class="panel p-4 text-center"><div class="num-badge text-2xl font-bold text-fuchsia-300" dir="ltr">05</div><div class="text-[11px] text-slate-400 mt-1">معماری عامل</div></div>
+      <div class="panel p-4 text-center"><div class="num-badge text-2xl font-bold text-amber-300" dir="ltr">02</div><div class="text-[11px] text-slate-400 mt-1">ابزارهای تعاملی</div></div>
+    </div>
+  </div>
+  <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-slate-500">
+    <span class="text-[10px] mono tracking-widest">SCROLL</span>
+    <div class="w-[22px] h-9 rounded-full border border-white/20 flex justify-center pt-1.5"><div class="w-1 h-2 rounded-full bg-cyan-300 animate-bounce"></div></div>
+  </div>
+</section>
+
+<main class="relative z-10">
+
+<!-- ══════════ ROADMAP ══════════ -->
+<section id="roadmap" class="max-w-7xl mx-auto px-5 lg:px-8 py-20 md:py-28">
+  <div class="reveal mb-4 flex items-center gap-3">
+    <span class="kicker">ROADMAP · CHAPTER 2</span>
+    <span class="h-px flex-1 bg-gradient-to-l from-cyan-400/40 to-transparent"></span>
+  </div>
+  <div class="reveal flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+    <h2 class="text-3xl md:text-5xl font-black leading-tight">مقدمه و <span class="grad-text">نقشه راه</span> فصل دوم</h2>
+    <p class="text-slate-400 text-sm leading-loose max-w-xl">چرا «عامل» قلب تپنده هوش مصنوعی است؟ راسل و نورویگ کل درسنامه هوش مصنوعی را بر یک ایده واحد بنا می‌کنند: <b>ساخت عامل‌هایی که عقلایی رفتار کنند.</b></p>
+  </div>
+
+  <div class="reveal panel glow-card p-6 md:p-8 mb-10 grid md:grid-cols-[auto_1fr] gap-6 items-start">
+    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-300 to-orange-500 flex items-center justify-center text-[#05060c] shadow-lg shadow-amber-500/25 shrink-0">
+      <i data-lucide="lightbulb" class="w-7 h-7"></i>
+    </div>
+    <div>
+      <h3 class="font-extrabold text-lg mb-3 text-amber-200">ایده مرکزی فصل</h3>
+      <p class="text-slate-300 text-sm md:text-[15px] leading-loose mb-4">
+        هوش مصنوعی را می‌توان <b>«مطالعه و ساخت عامل‌های هوشمند»</b> تعریف کرد؛ عامل‌هایی که محیط را درک می‌کنند، دربارهٔ آن استدلال می‌کنند و تصمیم می‌گیرند چه عملی انجام دهند. این چارچوب یکپارچه، همهٔ زیرشاخه‌ها — از رباتیک و بینایی ماشین تا یادگیری و برنامه‌ریزی — را زیر یک چتر قرار می‌دهد. در این فصل با مفاهیم پایه‌ای <b>عامل، محیط، عقلانیت</b> و <b>معماری</b> آشنا می‌شوید که ستون فقرات کل کتاب هستند.
+      </p>
+      <div class="math-box math-inline text-sm md:text-base">
+        <span class="text-slate-400 mono text-[10px] block text-right mb-2" dir="rtl">معادله تعریف هوش مصنوعی به سبک AIMA</span>
+        $$AI \;=\; \text{Design \& Build} \;\; \textbf{Rational Agents}$$
+      </div>
+    </div>
+  </div>
+
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <a href="#s1" class="reveal panel glow-card p-6 group hover:-translate-y-1.5 transition-transform duration-500 block">
+      <div class="flex items-center justify-between mb-5"><span class="num-badge text-xs text-cyan-400/70">01</span><i data-lucide="bot" class="w-6 h-6 text-cyan-300"></i></div>
+      <h3 class="font-extrabold mb-2 group-hover:text-cyan-300 transition-colors">عامل‌ها و محیط‌ها</h3>
+      <p class="text-xs text-slate-400 leading-loose">حسگر، عملگر، ادراک، تابع عامل و دنیای جاروبرقی تعاملی.</p>
+    </a>
+    <a href="#s2" class="reveal reveal-d1 panel glow-card p-6 group hover:-translate-y-1.5 transition-transform duration-500 block">
+      <div class="flex items-center justify-between mb-5"><span class="num-badge text-xs text-violet-400/70">02</span><i data-lucide="scale" class="w-6 h-6 text-violet-300"></i></div>
+      <h3 class="font-extrabold mb-2 group-hover:text-violet-300 transition-colors">مفهوم عقلانیت</h3>
+      <p class="text-xs text-slate-400 leading-loose">سنجه کارایی، عامل عقلانی، آگاهی مطلق و خودمختاری.</p>
+    </a>
+    <a href="#s3" class="reveal reveal-d2 panel glow-card p-6 group hover:-translate-y-1.5 transition-transform duration-500 block">
+      <div class="flex items-center justify-between mb-5"><span class="num-badge text-xs text-fuchsia-400/70">03</span><i data-lucide="globe-2" class="w-6 h-6 text-fuchsia-300"></i></div>
+      <h3 class="font-extrabold mb-2 group-hover:text-fuchsia-300 transition-colors">محیط‌های مسئله و PEAS</h3>
+      <p class="text-xs text-slate-400 leading-loose">چارچوب PEAS و هفت بعد طبقه‌بندی محیط‌ها + کاوشگر تعاملی.</p>
+    </a>
+    <a href="#s4" class="reveal panel glow-card p-6 group hover:-translate-y-1.5 transition-transform duration-500 block">
+      <div class="flex items-center justify-between mb-5"><span class="num-badge text-xs text-emerald-400/70">04</span><i data-lucide="layers" class="w-6 h-6 text-emerald-300"></i></div>
+      <h3 class="font-extrabold mb-2 group-hover:text-emerald-300 transition-colors">معماری عامل‌ها</h3>
+      <p class="text-xs text-slate-400 leading-loose">از بازتابی ساده تا عامل یادگیرنده؛ با دیاگرام و شبه‌کد.</p>
+    </a>
+    <a href="#s5" class="reveal reveal-d1 panel glow-card p-6 group hover:-translate-y-1.5 transition-transform duration-500 block">
+      <div class="flex items-center justify-between mb-5"><span class="num-badge text-xs text-amber-400/70">05</span><i data-lucide="clipboard-check" class="w-6 h-6 text-amber-300"></i></div>
+      <h3 class="font-extrabold mb-2 group-hover:text-amber-300 transition-colors">خودارزیابی</h3>
+      <p class="text-xs text-slate-400 leading-loose">۵ سوال تشریحی + ۵ تست چهارگزینه‌ای با تحلیل کامل پاسخ‌ها.</p>
+    </a>
+    <a href="#s6" class="reveal reveal-d2 panel glow-card p-6 group hover:-translate-y-1.5 transition-transform duration-500 block">
+      <div class="flex items-center justify-between mb-5"><span class="num-badge text-xs text-rose-400/70">06</span><i data-lucide="zap" class="w-6 h-6 text-rose-300"></i></div>
+      <h3 class="font-extrabold mb-2 group-hover:text-rose-300 transition-colors">خلاصه در یک نگاه</h3>
+      <p class="text-xs text-slate-400 leading-loose">Cheatsheet شب امتحان؛ همهٔ نکات طلایی فصل در یک صفحه.</p>
+    </a>
+  </div>
+</section>
+
+<!-- ══════════ SECTION 1 : AGENTS & ENVIRONMENTS ══════════ -->
+<section id="s1" class="max-w-7xl mx-auto px-5 lg:px-8 py-20 md:py-28 border-t border-white/5">
+  <div class="reveal mb-4 flex items-center gap-3">
+    <span class="num-badge text-xs px-3 py-1 rounded-full bg-cyan-400/10 border border-cyan-400/25 text-cyan-300" dir="ltr">01</span>
+    <span class="kicker">AGENTS &amp; ENVIRONMENTS</span>
+    <span class="h-px flex-1 bg-gradient-to-l from-cyan-400/40 to-transparent"></span>
+  </div>
+  <h2 class="reveal text-3xl md:text-5xl font-black mb-4">عامل‌ها، ادراکات و <span class="grad-text">تابع عامل</span></h2>
+  <p class="reveal text-slate-400 text-sm md:text-base leading-loose max-w-3xl mb-12">
+    همه‌چیز از یک تعریف ساده اما عمیق شروع می‌شود. عامل هر چیزی است که دنیا را «حس» کند و در آن «عمل» کند — از انسان گرفته تا نرم‌افزار و ربات.
+  </p>
+
+  <!-- Agent core definition -->
+  <div class="reveal panel glow-card p-6 md:p-10 mb-8">
+    <div class="grid lg:grid-cols-2 gap-10 items-center">
+      <div>
+        <div class="flex items-center gap-2 mb-4">
+          <i data-lucide="bot" class="w-6 h-6 text-cyan-300"></i>
+          <h3 class="font-extrabold text-xl">تعریف بنیادین: عامل چیست؟</h3>
+        </div>
+        <p class="text-slate-300 text-sm md:text-[15px] leading-loose mb-5">
+          <b>عامل (Agent)</b> هر چیزی است که بتواند محیط خود را از طریق <b>حسگرها (Sensors)</b> <span class="text-cyan-300">درک</span> کند و از طریق <b>عملگرها (Actuators)</b> بر آن محیط <span class="text-violet-300">عمل</span> کند. این چرخهٔ بی‌پایانِ «درک ← تصمیم ← عمل»، چرخهٔ حیات هر سیستم هوشمند است.
+        </p>
+        <ul class="space-y-3 text-sm leading-loose">
+          <li class="flex items-start gap-3"><span class="mt-1 w-7 h-7 rounded-lg bg-cyan-400/10 border border-cyan-400/25 flex items-center justify-center shrink-0"><i data-lucide="eye" class="w-3.5 h-3.5 text-cyan-300"></i></span><span class="text-slate-300"><b>حسگرها:</b> چشم و گوش انسان، دوربین، مادون‌قرمز، سونار، کیبورد، یا حتی بسته‌های شبکه در یک عامل نرم‌افزاری.</span></li>
+          <li class="flex items-start gap-3"><span class="mt-1 w-7 h-7 rounded-lg bg-violet-400/10 border border-violet-400/25 flex items-center justify-center shrink-0"><i data-lucide="zap" class="w-3.5 h-3.5 text-violet-300"></i></span><span class="text-slate-300"><b>عملگرها:</b> دست و پا، موتورها و چرخ‌ها، نمایشگر، یا نوشتن روی فایل در یک عامل نرم‌افزاری.</span></li>
+        </ul>
+      </div>
+      <!-- agent-environment loop diagram -->
+      <div class="diag">
+        <div class="flex flex-col items-center gap-1 max-w-sm mx-auto" dir="ltr">
+          <div class="dbox w-full !py-3 border-cyan-400/30"><b class="text-cyan-200">AGENT</b><span class="block text-slate-400 text-[10px]">Perceives → Decides → Acts</span></div>
+          <div class="flex w-full justify-between px-8 py-1 items-center">
+            <div class="flex flex-col items-center text-violet-300">
+              <i data-lucide="corner-right-down" class="w-4 h-4"></i>
+              <span class="text-[9px] mono">Actions</span>
+            </div>
+            <div class="flex flex-col items-center text-cyan-300">
+              <span class="text-[9px] mono">Percepts</span>
+              <i data-lucide="corner-left-up" class="w-4 h-4"></i>
+            </div>
+          </div>
+          <div class="dbox w-full !py-3 border-violet-400/30"><b class="text-violet-200">ENVIRONMENT</b><span class="block text-slate-400 text-[10px]">The world the agent lives in</span></div>
+        </div>
+        <p class="text-[11px] text-slate-500 text-center mt-5 leading-relaxed">چرخهٔ عامل–محیط: ادراک‌ها از محیط به عامل، اعمال از عامل به محیط</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Percept & percept sequence -->
+  <div class="grid md:grid-cols-2 gap-4 mb-8">
+    <div class="reveal panel glow-card p-6">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="w-10 h-10 rounded-xl bg-cyan-400/10 border border-cyan-400/25 flex items-center justify-center"><i data-lucide="scan-eye" class="w-5 h-5 text-cyan-300"></i></span>
+        <h3 class="font-extrabold">ادراک (Percept)</h3>
+      </div>
+      <p class="text-sm text-slate-400 leading-loose">ورودی حسی عامل در <b>یک لحظهٔ مشخص</b> از زمان. مثلاً در دنیای جاروبرقی: «در خانهٔ A هستم و این‌جا کثیف است» — یک ادراک واحد.</p>
+    </div>
+    <div class="reveal reveal-d1 panel glow-card p-6">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="w-10 h-10 rounded-xl bg-violet-400/10 border border-violet-400/25 flex items-center justify-center"><i data-lucide="history" class="w-5 h-5 text-violet-300"></i></span>
+        <h3 class="font-extrabold">دنبالهٔ ادراکات (Percept Sequence)</h3>
+      </div>
+      <p class="text-sm text-slate-400 leading-loose"><b>تاریخچهٔ کامل</b> هر چیزی که عامل تا کنون ادراک کرده است. نکتهٔ کلیدی: تصمیم عامل در هر لحظه می‌تواند به <b>کل</b> این دنباله وابسته باشد، نه فقط ادراک فعلی.</p>
+    </div>
+  </div>
+
+  <!-- Agent function vs program -->
+  <div class="reveal panel glow-card p-6 md:p-10 mb-8">
+    <div class="flex items-center gap-3 mb-6">
+      <span class="w-11 h-11 rounded-xl bg-gradient-to-br from-cyan-400 to-violet-500 flex items-center justify-center text-[#05060c]"><i data-lucide="function-square" class="w-6 h-6"></i></span>
+      <div>
+        <h3 class="font-extrabold text-xl">تابع عامل در برابر برنامهٔ عامل</h3>
+        <p class="text-xs text-slate-500 mt-1">مفهوم‌سازی ریاضی در برابر پیاده‌سازی فیزیکی — تفاوتی که بسیاری اشتباه می‌گیرند</p>
+      </div>
+    </div>
+    <div class="grid lg:grid-cols-2 gap-6">
+      <div class="rounded-2xl border border-cyan-400/20 bg-cyan-400/[.04] p-6">
+        <div class="flex items-center gap-2 mb-3"><i data-lucide="square-function" class="w-4 h-4 text-cyan-300"></i><b class="text-cyan-200 text-sm">تابع عامل (Agent Function)</b></div>
+        <p class="text-sm text-slate-300 leading-loose mb-4">نگاشت <b>ریاضی و انتزاعی</b> از «هر دنبالهٔ ادراکِ ممکن» به «یک عمل». این تابع، رفتار خارجی عامل را به‌طور کامل توصیف می‌کند — فارغ از اینکه چگونه پیاده‌سازی شده است.</p>
+        <div class="math-box math-inline text-base mb-4">$$f:\; \mathcal{P}^{*} \;\longrightarrow\; \mathcal{A}$$</div>
+        <p class="text-[11px] text-slate-500 leading-relaxed">$\mathcal{P}^{*}$: مجموعهٔ همهٔ دنباله‌های ادراک ممکن (به هر طولی) · $\mathcal{A}$: مجموعهٔ اعمال ممکن</p>
+      </div>
+      <div class="rounded-2xl border border-violet-400/20 bg-violet-400/[.04] p-6">
+        <div class="flex items-center gap-2 mb-3"><i data-lucide="cpu" class="w-4 h-4 text-violet-300"></i><b class="text-violet-200 text-sm">برنامهٔ عامل (Agent Program)</b></div>
+        <p class="text-sm text-slate-300 leading-loose mb-4">پیاده‌سازی <b>عینی و ملموس</b> تابع عامل؛ کدی واقعی که روی یک <b>معماری فیزیکی</b> (سخت‌افزار حسگرها و عملگرها) اجرا می‌شود.</p>
+        <div class="math-box math-inline text-base">$$Agent \;=\; Architecture \;+\; Program$$</div>
+      </div>
+    </div>
+    <div class="mt-6 flex items-start gap-4 rounded-2xl border border-amber-400/25 bg-amber-400/[.05] p-5">
+      <i data-lucide="lightbulb" class="w-5 h-5 text-amber-300 shrink-0 mt-0.5"></i>
+      <p class="text-sm text-slate-300 leading-loose"><b class="grad-amber">به زبان ساده (ELI5):</b> تابع عامل مثل «دستورِ پختِ کاملِ یک غذا در ذهنِ سرآشپز» است؛ جدولی فرضی که برای هر وضعیتِ آشپزخانه می‌گوید چه کاری باید کرد. برنامهٔ عامل، خودِ «آشپزیِ واقعی با دست‌ها و قابلمه» است. تابع عامل را می‌توان در ذهن تصور کرد، اما آنچه واقعاً اجرا می‌شود، برنامه است.</p>
+    </div>
+  </div>
+
+  <!-- Table-driven agent -->
+  <div class="reveal panel glow-card p-6 md:p-10 mb-14">
+    <div class="flex items-center gap-3 mb-5">
+      <span class="w-11 h-11 rounded-xl bg-rose-400/10 border border-rose-400/25 flex items-center justify-center"><i data-lucide="table-2" class="w-6 h-6 text-rose-300"></i></span>
+      <h3 class="font-extrabold text-xl">عامل جدول‌محور: ساده‌ترین ایده، محکوم به شکست</h3>
+    </div>
+    <p class="text-sm md:text-[15px] text-slate-300 leading-loose mb-5">
+      اگر تابع عامل فقط یک نگاشت است، چرا همهٔ دنباله‌های ادراک را در یک <b>جدول (Lookup Table)</b> ذخیره نکنیم و عمل مناسب را مستقیم پیدا نکنیم؟ مشکل، <b>انفجار نمایی</b> است: اگر تعداد ادراک‌های متمایز $|\mathcal{P}|$ و طول عمر عامل $T$ قدم باشد، جدول به همین سادگی مهارناپذیر می‌شود:
+    </p>
+    <div class="grid sm:grid-cols-3 gap-4 mb-5">
+      <div class="math-box math-inline text-sm">$$\text{Table Size} = \sum_{t=1}^{T} |\mathcal{P}|^{t}$$</div>
+      <div class="math-box math-inline text-sm"><span class="text-slate-400 text-[10px] block mono mb-1">CHESS</span>$$\geq 10^{150} \;\; \text{entries}$$</div>
+      <div class="math-box math-inline text-sm"><span class="text-slate-400 text-[10px] block mono mb-1">ATOMS IN UNIVERSE</span>$$\approx 10^{80}$$</div>
+    </div>
+    <p class="text-sm text-slate-400 leading-loose">جدولِ شطرنج بزرگ‌تر از تعداد اتم‌های جهان قابل مشاهده است! نتیجه: <b>هیچ اتاقِ ذخیره‌سازی‌ای در عالم</b> برای این روش کافی نیست؛ چاره در برنامه‌های هوشمندانه‌تر است که در بخش ۴ می‌آیند.</p>
+  </div>
+
+  <!-- ═══ VACUUM WORLD : interactive ═══ -->
+  <div class="reveal mb-10">
+    <div class="flex items-center gap-3 mb-2">
+      <span class="w-11 h-11 rounded-xl bg-emerald-400/10 border border-emerald-400/25 flex items-center justify-center"><i data-lucide="gamepad-2" class="w-6 h-6 text-emerald-300"></i></span>
+      <div>
+        <h3 class="font-extrabold text-2xl">دنیای جاروبرقی <span class="text-emerald-300">— آزمایشگاه تعاملی</span></h3>
+        <p class="text-xs text-slate-500 mt-1">دو خانهٔ A و B · وضعیت تمیز/کثیف · اعمال: چپ، راست، مکش · سنجهٔ کارایی: +۱ به ازای هر خانهٔ تمیز در هر قدم</p>
+      </div>
+    </div>
+    <p class="text-sm text-slate-400 leading-loose max-w-3xl mb-8">
+      خودتان عمل کنید! روی هر خانه کلیک کنید تا کثیف/تمیز شود، سپس عامل را قدم‌به‌قدم اجرا کنید. عامل برنامهٔ بازتابی سادهٔ کتاب را اجرا می‌کند: <b>اگر کثیف بود بمک؛ وگرنه به خانهٔ دیگر برو.</b>
+    </p>
+    <div class="grid lg:grid-cols-[1.5fr_1fr] gap-6 items-start">
+      <div class="panel p-6 md:p-8 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-[.04]" style="background-image:radial-gradient(circle at 1px 1px,#fff 1px,transparent 0);background-size:22px 22px"></div>
+        <div class="relative">
+          <div class="flex items-center justify-between mb-6">
+            <span class="text-xs font-bold text-slate-400 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-400 live-dot"></span>شبیه‌ساز زنده</span>
+            <div class="flex items-center gap-5 text-xs">
+              <div class="text-center"><div class="num-badge text-xl font-bold text-emerald-300" id="vacScore">۰</div><div class="text-[10px] text-slate-500 mt-0.5">کارایی</div></div>
+              <div class="text-center"><div class="num-badge text-xl font-bold text-sky-300" id="vacSteps">۰</div><div class="text-[10px] text-slate-500 mt-0.5">قدم</div></div>
+            </div>
+          </div>
+          <div class="relative" dir="ltr">
+            <div id="vacAgent">
+              <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-400 to-violet-500 flex items-center justify-center shadow-xl shadow-cyan-500/40 border-2 border-white/30">
+                <i data-lucide="bot" class="w-7 h-7 text-[#05060c]"></i>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <button id="vcell0" class="vcell" aria-label="خانه A">
+                <span class="absolute top-3 right-4 mono text-lg font-bold text-slate-500">A</span>
+                <span class="state-badge absolute top-3 left-3"></span>
+                <span class="dirt-wrap absolute inset-0 pointer-events-none"></span>
+              </button>
+              <button id="vcell1" class="vcell" aria-label="خانه B">
+                <span class="absolute top-3 right-4 mono text-lg font-bold text-slate-500">B</span>
+                <span class="state-badge absolute top-3 left-3"></span>
+                <span class="dirt-wrap absolute inset-0 pointer-events-none"></span>
+              </button>
+            </div>
+          </div>
+          <div class="grid grid-cols-3 gap-3 mt-6 text-center">
+            <div class="rounded-xl bg-white/[.03] border border-white/[.07] py-2.5 px-2"><div class="text-[10px] text-slate-500 mb-1">مکان عامل</div><div class="mono font-bold text-cyan-300" id="vacLoc">A</div></div>
+            <div class="rounded-xl bg-white/[.03] border border-white/[.07] py-2.5 px-2"><div class="text-[10px] text-slate-500 mb-1">ادراک فعلی</div><div class="text-[11px] font-bold text-violet-300" id="vacPercept">[A, کثیف]</div></div>
+            <div class="rounded-xl bg-white/[.03] border border-white/[.07] py-2.5 px-2"><div class="text-[10px] text-slate-500 mb-1">عمل بعدی</div><div class="text-[11px] font-bold text-emerald-300" id="vacAction">مکش (Suck)</div></div>
+          </div>
+          <div class="flex flex-wrap gap-3 mt-6">
+            <button id="vacStep" class="flex-1 min-w-[130px] inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-l from-cyan-400 to-violet-500 text-[#05060c] font-extrabold text-sm hover:opacity-90 hover:scale-[1.02] transition-all"><i data-lucide="step-forward" class="w-4 h-4"></i>قدم بعدی</button>
+            <button id="vacAuto" class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-cyan-400/35 text-cyan-300 font-bold text-sm hover:bg-cyan-400/10 transition-colors"><i data-lucide="play" class="w-4 h-4"></i><span>اجرای خودکار</span></button>
+            <button id="vacRand" class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-white/15 text-slate-300 text-sm font-bold hover:bg-white/5 transition-colors"><i data-lucide="shuffle" class="w-4 h-4"></i>تصادفی</button>
+            <button id="vacReset" class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-white/15 text-slate-300 text-sm font-bold hover:bg-white/5 transition-colors"><i data-lucide="rotate-ccw" class="w-4 h-4"></i>بازنشانی</button>
+          </div>
+        </div>
+      </div>
+      <div class="space-y-4">
+        <div class="panel p-5">
+          <div class="flex items-center gap-2 mb-3"><i data-lucide="scroll-text" class="w-4 h-4 text-cyan-300"></i><b class="text-sm">گزارش زندهٔ تصمیم‌ها</b></div>
+          <div id="vacLog" class="space-y-2 min-h-[60px]"><div class="text-[11px] text-slate-600 py-2">هنوز عملی انجام نشده؛ «قدم بعدی» را بزنید.</div></div>
+        </div>
+        <div class="panel p-5">
+          <div class="flex items-center gap-2 mb-4"><i data-lucide="table" class="w-4 h-4 text-violet-300"></i><b class="text-sm">جدول جزئی تابع عامل جاروبرقی</b></div>
+          <div class="overflow-x-auto">
+            <table class="tbl text-[12px]">
+              <thead><tr><th>دنبالهٔ ادراک</th><th>عمل</th></tr></thead>
+              <tbody class="text-slate-300">
+                <tr><td class="mono" dir="ltr">[A, Clean]</td><td>راست</td></tr>
+                <tr><td class="mono" dir="ltr">[A, Dirty]</td><td>مکش</td></tr>
+                <tr><td class="mono" dir="ltr">[B, Clean]</td><td>چپ</td></tr>
+                <tr><td class="mono" dir="ltr">[B, Dirty]</td><td>مکش</td></tr>
+                <tr><td class="mono" dir="ltr">[A, Clean], [A, Clean]</td><td>راست</td></tr>
+                <tr><td class="mono" dir="ltr">[A, Clean], [A, Dirty]</td><td>مکش</td></tr>
+                <tr><td class="text-slate-500">...</td><td class="text-slate-500">...</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-[11px] text-slate-500 leading-relaxed mt-3">نکتهٔ امتحانی: کلید تصمیم، <b>ادراکِ فعلی</b> است؛ چون با دانستن آخرین ادراک می‌توان عمل درست را تعیین کرد. ($\;$این خوش‌شانسیِ دنیای سادهٔ جاروبرقی است!$\;$)</p>
+        </div>
+        <div class="panel p-5">
+          <div class="flex items-center gap-2 mb-3"><i data-lucide="code-2" class="w-4 h-4 text-emerald-300"></i><b class="text-sm">برنامهٔ عامل بازتابی جاروبرقی</b></div>
+          <div class="codeblock" dir="ltr"><span class="kw">function</span> <span class="fn">REFLEX-VACUUM-AGENT</span>([location, status]) <span class="kw">returns an action</span>
+  <span class="kw">if</span> status = <span class="fn">Dirty</span> <span class="kw">then return</span> Suck
+  <span class="kw">else if</span> location = <span class="fn">A</span> <span class="kw">then return</span> Right
+  <span class="kw">else return</span> Left</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SECTION 2 : RATIONALITY ══════════ -->
+<section id="s2" class="max-w-7xl mx-auto px-5 lg:px-8 py-20 md:py-28 border-t border-white/5">
+  <div class="reveal mb-4 flex items-center gap-3">
+    <span class="num-badge text-xs px-3 py-1 rounded-full bg-violet-400/10 border border-violet-400/25 text-violet-300" dir="ltr">02</span>
+    <span class="kicker">GOOD BEHAVIOR · RATIONALITY</span>
+    <span class="h-px flex-1 bg-gradient-to-l from-violet-400/40 to-transparent"></span>
+  </div>
+  <h2 class="reveal text-3xl md:text-5xl font-black mb-4">مفهوم <span class="grad-text">عقلانیت</span></h2>
+  <p class="reveal text-slate-400 text-sm md:text-base leading-loose max-w-3xl mb-12">
+    «کارِ درست کردن» قلب هوش مصنوعی است؛ اما کارِ درست یعنی چه؟ پاسخ علمی: <b>بیشینه‌سازی کاراییِ متوقع</b> بر اساس آنچه تاکنون دیده‌ایم.
+  </p>
+
+  <!-- performance measure -->
+  <div class="reveal panel glow-card p-6 md:p-9 mb-8">
+    <div class="flex items-center gap-3 mb-4">
+      <span class="w-11 h-11 rounded-xl bg-cyan-400/10 border border-cyan-400/25 flex items-center justify-center"><i data-lucide="gauge" class="w-6 h-6 text-cyan-300"></i></span>
+      <h3 class="font-extrabold text-xl">سنجهٔ کارایی (Performance Measure)</h3>
+    </div>
+    <p class="text-sm md:text-[15px] text-slate-300 leading-loose mb-5">
+      معیاری <b>بیرونی و عینی</b> برای ارزیابی میزان مطلوبیتِ وضعیت‌های محیط؛ نه قضاوتِ ذهنیِ خودِ عامل! سنجه، دنباله‌ای از وضعیت‌های محیط را ارزیابی می‌کند چون همان دنباله است که نتیجهٔ واقعیِ رفتارِ عامل را نشان می‌دهد.
+    </p>
+    <div class="rounded-2xl border-2 border-amber-400/30 bg-gradient-to-l from-amber-400/[.08] to-transparent p-5 md:p-6">
+      <div class="flex items-center gap-2 mb-3"><i data-lucide="crown" class="w-5 h-5 text-amber-300"></i><b class="text-amber-200">قانون طلایی طراحی سنجه</b></div>
+      <p class="text-sm text-slate-300 leading-loose">
+        سنجهٔ کارایی را بر اساس <b>آنچه واقعاً در محیط می‌خواهیم</b> طراحی کنید، نه بر اساس رفتاری که فکر می‌کنید عامل «باید» داشته باشد. اگر به جاروبرقی به ازای هر مکش جایزه بدهید، عاقلانه‌ترین کارش این می‌شود: <b>خاک را بریزد و دوباره بمکد، بارها و بارها!</b> پاداش به «کفِ تمیز» بدهید، نه به «تعداد دفعات مکش».
+      </p>
+    </div>
+  </div>
+
+  <!-- 4 pillars of rationality -->
+  <div class="reveal mb-3 flex items-center gap-3"><i data-lucide="landmark" class="w-5 h-5 text-violet-300"></i><h3 class="font-extrabold text-lg">چهار ستون تعیین‌کنندهٔ عقلانیت</h3></div>
+  <p class="reveal text-sm text-slate-500 mb-6">برای هر مسئله، عقلانی بودنِ یک عامل به این چهار چیز بستگی دارد:</p>
+  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+    <div class="reveal panel glow-card p-5"><span class="num-badge text-[10px] text-cyan-400/60">A</span><div class="my-3 w-10 h-10 rounded-xl bg-cyan-400/10 border border-cyan-400/25 flex items-center justify-center"><i data-lucide="gauge" class="w-5 h-5 text-cyan-300"></i></div><b class="text-sm block mb-2">سنجهٔ کارایی</b><p class="text-xs text-slate-400 leading-loose">معیاری که موفقیت را تعریف می‌کند.</p></div>
+    <div class="reveal reveal-d1 panel glow-card p-5"><span class="num-badge text-[10px] text-violet-400/60">B</span><div class="my-3 w-10 h-10 rounded-xl bg-violet-400/10 border border-violet-400/25 flex items-center justify-center"><i data-lucide="book-marked" class="w-5 h-5 text-violet-300"></i></div><b class="text-sm block mb-2">دانش پیش‌فرض</b><p class="text-xs text-slate-400 leading-loose">آنچه عامل از قبل دربارهٔ محیط می‌داند.</p></div>
+    <div class="reveal reveal-d2 panel glow-card p-5"><span class="num-badge text-[10px] text-fuchsia-400/60">C</span><div class="my-3 w-10 h-10 rounded-xl bg-fuchsia-400/10 border border-fuchsia-400/25 flex items-center justify-center"><i data-lucide="git-branch" class="w-5 h-5 text-fuchsia-300"></i></div><b class="text-sm block mb-2">اعمالِ ممکن</b><p class="text-xs text-slate-400 leading-loose">مجموعهٔ کارهایی که عامل می‌تواند انجام دهد.</p></div>
+    <div class="reveal reveal-d3 panel glow-card p-5"><span class="num-badge text-[10px] text-amber-400/60">D</span><div class="my-3 w-10 h-10 rounded-xl bg-amber-400/10 border border-amber-400/25 flex items-center justify-center"><i data-lucide="history" class="w-5 h-5 text-amber-300"></i></div><b class="text-sm block mb-2">دنبالهٔ ادراکات تا کنون</b><p class="text-xs text-slate-400 leading-loose">تنها «شواهدِ» در دسترس عامل دربارهٔ جهان.</p></div>
+  </div>
+
+  <!-- rational agent definition -->
+  <div class="reveal panel glow-card p-6 md:p-9 mb-8 border-violet-400/20">
+    <div class="grid lg:grid-cols-[1fr_auto] gap-8 items-center">
+      <div>
+        <div class="flex items-center gap-3 mb-4">
+          <span class="w-11 h-11 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-white shadow-lg shadow-violet-500/30"><i data-lucide="brain" class="w-6 h-6"></i></span>
+          <h3 class="font-extrabold text-xl">تعریف رسمی: عامل عقلانی (Rational Agent)</h3>
+        </div>
+        <p class="text-sm md:text-[15px] text-slate-300 leading-loose">
+          به ازای <b>هر دنبالهٔ ادراکِ ممکن</b>، عاملِ عقلانی عملی را انتخاب می‌کند که — با توجه به شواهدِ حاصل از آن دنبالهٔ ادراک و هر دانشِ پیش‌فرضی که دارد — انتظار می‌رود سنجهٔ کارایی را <b>بیشینه</b> کند. یعنی نه «بهترین نتیجهٔ قطعی»، بلکه <b>بهترین انتظارِ آماری</b>.
+        </p>
+      </div>
+      <div class="math-box math-inline text-sm md:text-base min-w-[280px]">
+        <span class="text-slate-400 mono text-[10px] block text-right mb-2" dir="rtl">اصل انتخاب عقلانی</span>
+        $$a^{*}=\arg\max_{a\,\in\,\mathcal{A}}\;\; \mathbb{E}\!\left[\,\text{Performance}\,\middle|\,\text{Percepts},\, a\,\right]$$
+      </div>
+    </div>
+  </div>
+
+  <!-- omniscience story -->
+  <div class="grid lg:grid-cols-2 gap-4 mb-8">
+    <div class="reveal panel glow-card p-6 md:p-7">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="w-10 h-10 rounded-xl bg-rose-400/10 border border-rose-400/25 flex items-center justify-center"><i data-lucide="eye-off" class="w-5 h-5 text-rose-300"></i></span>
+        <h3 class="font-extrabold">عقلانیت ≠ آگاهی مطلق (Omniscience)</h3>
+      </div>
+      <p class="text-sm text-slate-300 leading-loose mb-4">
+        موجودِ <b>همه‌دان</b> نتیجهٔ واقعیِ هر عمل را از قبل می‌داند و در عمل غیرممکن است. عقلانیت فقط <b>موفقیتِ متوقع</b> را می‌خواهد: بهترین تصمیمِ ممکن با اطلاعاتِ موجود.
+      </p>
+      <div class="rounded-xl bg-rose-400/[.06] border border-rose-400/20 p-4 text-sm leading-loose text-slate-300">
+        <b class="text-rose-200 block mb-1">داستان کوچه (از خود کتاب):</b>
+        دو طرف خیابان را نگاه می‌کنم، خلوت است؛ عقلایی است که رد شوم. ناگاه درِ یک هواپیمای غول‌پیکر از ارتفاع ۱۰ کیلومتری روی سرم سقوط می‌کند! آیا تصمیمم غیرعقلانی بود؟ <b>خیر</b> — چون هیچ‌کس نمی‌توانست سقوط آن در را از قبل بداند. عقلانیت نسبت به اطلاعاتِ موجود سنجیده می‌شود، نه نسبت به آیندهٔ نادیدنی.
+      </div>
+    </div>
+    <div class="reveal reveal-d1 panel glow-card p-6 md:p-7 space-y-5">
+      <div>
+        <div class="flex items-center gap-3 mb-3">
+          <span class="w-10 h-10 rounded-xl bg-cyan-400/10 border border-cyan-400/25 flex items-center justify-center"><i data-lucide="search" class="w-5 h-5 text-cyan-300"></i></span>
+          <h3 class="font-extrabold">گردآوری اطلاعات و اکتشاف</h3>
+        </div>
+        <p class="text-sm text-slate-400 leading-loose">گاهی <b>عقلانی‌ترین عمل</b>، انجام کاری است که خودش مستقیم امتیاز نمی‌دهد بلکه <b>ادراکاتِ بعدی را بهتر می‌کند</b>: نگاه کردن به دو طرفِ خیابان قبل از عبور، یا گشتن در بیمارستانِ ناشناخته برای یافتن تشخیص درست. به این «اکتشاف» (Exploration) می‌گویند.</p>
+      </div>
+      <div class="h-px bg-white/8"></div>
+      <div>
+        <div class="flex items-center gap-3 mb-3">
+          <span class="w-10 h-10 rounded-xl bg-emerald-400/10 border border-emerald-400/25 flex items-center justify-center"><i data-lucide="compass" class="w-5 h-5 text-emerald-300"></i></span>
+          <h3 class="font-extrabold">خودمختاری (Autonomy)</h3>
+        </div>
+        <p class="text-sm text-slate-400 leading-loose">عاملی که رفتارش کاملاً از دانشِ طراح تغذیه کند، خودمختار نیست. عاملِ عقلانی باید با <b>یادگیری از تجربه</b>، دانشِ اولیهٔ ناقص یا اشتباهِ خود را جبران کند و استقلال یابد — درست مثل موجودی زنده که کم‌کم روی پای خودش می‌ایستد. دانشِ اولیه لازم است، اما نباید جای ادراک و تجربه را بگیرد.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════ SECTION 3 : TASK ENVIRONMENTS & PEAS ══════════ -->
+<section id="s3" class="max-w-7xl mx-auto px-5 lg:px-8 py-20 md:py-28 border-t border-white/5">
+  <div class="reveal mb-4 flex items-center gap-3">
+    <span class="num-badge text-xs px-3 py-1 rounded-full bg-fuchsia-400/10 border border-fuchsia-400/25 text-fuchsia-300" dir="ltr">03</span>
+    <span class="kicker">TASK ENVIRONMENTS · PEAS</span>
+    <span class="h-px flex-1 bg-gradient-to-l from-fuchsia-400/40 to-transparent"></span>
+  </div>
+  <h2 class="reveal text-3xl md:text-5xl font-black mb-4">محیط‌های مسئله و <span class="grad-text">چارچوب PEAS</span></h2>
+  <p class="reveal text-slate-400 text-sm md:text-base leading-loose max-w-3xl mb-12">
+    قبل از ساخت هر عامل، باید «مسئله»‌اش را دقیق توصیف کنیم. این توصیف را <b>محیطِ مسئله (Task Environment)</b> می‌نامند و ابزار استاندارد آن، چارچوب <b>PEAS</b> است.
+  </p>
+
+  <!-- PEAS framework -->
+  <div class="reveal grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+    <div class="panel glow-card p-6 text-center group">
+      <div class="num-badge text-4xl font-black grad-text mb-2" dir="ltr">P</div>
+      <b class="text-sm block mb-1.5">Performance</b>
+      <p class="text-[11px] text-slate-500 leading-relaxed">سنجهٔ کارایی؛ موفقیت یعنی چه؟</p>
+    </div>
+    <div class="panel glow-card p-6 text-center">
+      <div class="num-badge text-4xl font-black grad-text mb-2" dir="ltr">E</div>
+      <b class="text-sm block mb-1.5">Environment</b>
+      <p class="text-[11px] text-slate-500 leading-relaxed">محیط؛ عامل با چه چیزهایی سروکار دارد؟</p>
+    </div>
+    <div class="panel glow-card p-6 text-center">
+      <div class="num-badge text-4xl font-black grad-text mb-2" dir="ltr">A</div>
+      <b class="text-sm block mb-1.5">Actuators</b>
+      <p class="text-[11px] text-slate-500 leading-relaxed">عملگرها؛ عامل با چه چیزی عمل می‌کند؟</p>
+    </div>
+    <div class="panel glow-card p-6 text-center">
+      <div class="num-badge text-4xl font-black grad-text mb-2" dir="ltr">S</div>
+      <b class="text-sm block mb-1.5">Sensors</b>
+      <p class="text-[11px] text-slate-500 leading-relaxed">حسگرها؛ عامل با چه چیزی درک می‌کند؟</p>
+    </div>
+  </div>
+
+  <!-- PEAS table -->
+  <div class="reveal panel p-6 md:p-8 mb-14">
+    <div class="flex items-center gap-3 mb-5">
+      <i data-lucide="table-properties" class="w-5 h-5 text-fuchsia-300"></i>
+      <h3 class="font-extrabold text-lg">توصیف PEAS برای چهار سیستم معروف</h3>
+    </div>
+    <div class="overflow-x-auto rounded-2xl border border-white/8">
+      <table class="tbl min-w-[860px]">
+        <thead>
+          <tr class="text-slate-200">
+            <th>سیستم عامل</th>
+            <th><span class="text-cyan-300">P</span> · سنجهٔ کارایی</th>
+            <th><span class="text-violet-300">E</span> · محیط</th>
+            <th><span class="text-fuchsia-300">A</span> · عملگرها</th>
+            <th><span class="text-amber-300">S</span> · حسگرها</th>
+          </tr>
+        </thead>
+        <tbody class="text-slate-300 text-[12.5px]">
+          <tr>
+            <td><b class="flex items-center gap-2 whitespace-nowrap"><i data-lucide="car-taxi-front" class="w-4 h-4 text-amber-300"></i>تاکسی خودران</b></td>
+            <td>ایمنی، سرعت مناسب، رعایت قوانین رانندگی، راحتی مسافر، بیشینه‌سازی سود</td>
+            <td>جاده‌ها، سایر خودروها و ترافیک، عابران پیاده، مشتریان</td>
+            <td>فرمان، پدال گاز، ترمز، راهنما، بوق، نمایشگر</td>
+            <td>دوربین، سونار، سرعت‌سنج، GPS، کیلومترشمار، شتاب‌سنج</td>
+          </tr>
+          <tr>
+            <td><b class="flex items-center gap-2 whitespace-nowrap"><i data-lucide="stethoscope" class="w-4 h-4 text-emerald-300"></i>تشخیص پزشکی</b></td>
+            <td>سلامتی بیمار، کمینه‌سازی هزینه‌ها</td>
+            <td>بیمار، بیمارستان، کادر درمانی</td>
+            <td>نمایش سؤال، آزمایش، تشخیص و درمان روی صفحه</td>
+            <td>ورود علائم، یافته‌ها و پاسخ‌های بیمار از کیبورد</td>
+          </tr>
+          <tr>
+            <td><b class="flex items-center gap-2 whitespace-nowrap"><i data-lucide="graduation-cap" class="w-4 h-4 text-sky-300"></i>معلم انگلیسی تعاملی</b></td>
+            <td>بیشینه‌سازی نمرهٔ دانشجو در آزمون</td>
+            <td>مجموعهٔ دانشجویان، آژانس برگزارکنندهٔ آزمون</td>
+            <td>نمایش تمرین، پیشنهاد و تصحیح</td>
+            <td>ورودی کیبورد دانشجو</td>
+          </tr>
+          <tr>
+            <td><b class="flex items-center gap-2 whitespace-nowrap"><i data-lucide="factory" class="w-4 h-4 text-rose-300"></i>کنترل‌کنندهٔ پالایشگاه</b></td>
+            <td>بیشینه‌سازی خلوص و بازده، ایمنی فرایند</td>
+            <td>پالایشگاه، اپراتورها</td>
+            <td>شیرها (سوپاپ‌ها)، پمپ‌ها، گرم‌کن‌ها، نمایشگرها</td>
+            <td>حسگرهای دما، فشار و ترکیب شیمیایی</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-[11px] text-slate-500 leading-relaxed mt-4">تمرین کلاسیک امتحانی: برای هر سیستمِ عامل دیگری (مثل ربات جمع‌کنندهٔ قطعات یا تاکسی‌تنها) سطر PEAS آن را خودتان بنویسید — اولین قدمِ هر طراحی عامل است.</p>
+  </div>
+
+  <!-- 7 dimensions -->
+  <div class="reveal mb-3 flex items-center gap-3"><i data-lucide="ruler" class="w-5 h-5 text-cyan-300"></i><h3 class="font-extrabold text-xl md:text-2xl">ابعاد هفت‌گانهٔ طبقه‌بندی محیط‌ها</h3></div>
+  <p class="reveal text-sm text-slate-500 mb-8 max-w-3xl leading-loose">هر محیطِ مسئله را می‌توان روی هفت محور سنجید. این ابعاد تعیین می‌کنند چه فناوری‌ها و معماری‌هایی برای عامل مناسب است.</p>
+
+  <div class="grid md:grid-cols-2 gap-4 mb-12">
+    <div class="reveal panel glow-card p-6">
+      <div class="flex items-center gap-3 mb-3"><span class="num-badge text-xs text-cyan-300" dir="ltr">01</span><i data-lucide="eye" class="w-5 h-5 text-cyan-300"></i><b>کاملاً یا نسبتاً قابل‌مشاهده</b></div>
+      <p class="text-sm text-slate-400 leading-loose mb-4">آیا حسگرهای عامل در هر لحظه به <b>تمامِ وضعیتِ محیط</b> دسترسی دارند؟ اگر هیچ‌چیزِ مرتبطی پنهان نباشد: <b>کاملاً قابل‌مشاهده</b>. اگر حسگرها ناقص، پرنویز یا بخشی از وضعیت پنهان باشد: <b>نسبتاً قابل‌مشاهده</b> (و در بدترین حالت: غیرقابل‌مشاهده).</p>
+      <div class="flex flex-wrap gap-2"><span class="badge b-easy">شطرنج: کامل</span><span class="badge b-hard">پوکر / تاکسی: ناقص</span></div>
+    </div>
+    <div class="reveal reveal-d1 panel glow-card p-6">
+      <div class="flex items-center gap-3 mb-3"><span class="num-badge text-xs text-violet-300" dir="ltr">02</span><i data-lucide="users" class="w-5 h-5 text-violet-300"></i><b>تک‌عاملی یا چندعاملی</b></div>
+      <p class="text-sm text-slate-400 leading-loose mb-4">آیا عاملِ دیگری هم در محیط هست که رفتارش را باید در نظر گرفت؟ محیط چندعاملی می‌تواند <b>رقابتی</b> (شطرنج: کارایی یکی با کمینه‌سازیِ دیگری) یا <b>همکارانه</b> (خودروها در جاده: هدف مشترکِ ایمنِ رسیدن همگان) باشد.</p>
+      <div class="flex flex-wrap gap-2"><span class="badge b-easy">کلمات متقاطع: تک‌عاملی</span><span class="badge b-hard">شطرنج: رقابتی · تاکسی: همکارانه</span></div>
+    </div>
+    <div class="reveal panel glow-card p-6">
+      <div class="flex items-center gap-3 mb-3"><span class="num-badge text-xs text-fuchsia-300" dir="ltr">03</span><i data-lucide="dices" class="w-5 h-5 text-fuchsia-300"></i><b>قطعی یا تصادفی</b></div>
+      <p class="text-sm text-slate-400 leading-loose mb-4">اگر وضعیتِ بعدی کاملاً از روی وضعیت فعلی و عملِ عامل معلوم شود: <b>قطعی</b>. اگر عدم‌قطعیت وجود داشته باشد: <b>تصادفی</b> (Stochastic)؛ و اگر خروجیِ اعمال با لیستی از نتایجِ ممکن «بدون احتمال» توصیف شود: <b>غیرقطعی</b> (Nondeterministic).</p>
+      <div class="flex flex-wrap gap-2"><span class="badge b-easy">شطرنج: قطعی</span><span class="badge b-hard">تاکسی / پوکر: تصادفی</span></div>
+    </div>
+    <div class="reveal reveal-d1 panel glow-card p-6">
+      <div class="flex items-center gap-3 mb-3"><span class="num-badge text-xs text-amber-300" dir="ltr">04</span><i data-lucide="repeat" class="w-5 h-5 text-amber-300"></i><b>اپیزودیک یا متوالی</b></div>
+      <p class="text-sm text-slate-400 leading-loose mb-4">در محیط <b>اپیزودیک</b>، تجربهٔ عامل به قسمت‌های مستقلِ «ادراک + عمل» تقسیم می‌شود و تصمیمِ فعلی بر اپیزودهای آینده اثر ندارد. در محیط <b>متوالی</b>، هر تصمیم همهٔ تصمیماتِ آینده را تحت‌الشعاع قرار می‌دهد.</p>
+      <div class="flex flex-wrap gap-2"><span class="badge b-easy">تشخیص قطعهٔ معیوب روی خط تولید</span><span class="badge b-hard">شطرنج و رانندگی</span></div>
+    </div>
+    <div class="reveal panel glow-card p-6">
+      <div class="flex items-center gap-3 mb-3"><span class="num-badge text-xs text-emerald-300" dir="ltr">05</span><i data-lucide="activity" class="w-5 h-5 text-emerald-300"></i><b>ایستا، پویا یا نیمه‌پویا</b></div>
+      <p class="text-sm text-slate-400 leading-loose mb-4">آیا محیط <b>هنگام فکر کردن عامل</b> تغییر می‌کند؟ نکرد: <b>ایستا</b>؛ کرد: <b>پویا</b>. حالت ویژهٔ <b>نیمه‌پویا</b>: خودِ محیط ثابت می‌ماند اما <b>امتیاز/سنجهٔ کارایی</b> با گذر زمان تغییر می‌کند.</p>
+      <div class="flex flex-wrap gap-2"><span class="badge b-easy">کلمات متقاطع: ایستا</span><span class="badge b-mid">شطرنج با زمان‌سنج: نیمه‌پویا</span><span class="badge b-hard">تاکسی: پویا</span></div>
+    </div>
+    <div class="reveal reveal-d1 panel glow-card p-6">
+      <div class="flex items-center gap-3 mb-3"><span class="num-badge text-xs text-sky-300" dir="ltr">06</span><i data-lucide="waves" class="w-5 h-5 text-sky-300"></i><b>گسسته یا پیوسته</b></div>
+      <p class="text-sm text-slate-400 leading-loose mb-4">آیا وضعیت‌ها، زمان‌ها، ادراکات و اعمال از تعدادِ محدودِ حالتِ مجزا تشکیل شده‌اند (<b>گسسته</b>) یا طیفی بی‌وقفه از مقادیر هستند (<b>پیوسته</b>)؟ رانندگی با سرعت و زاویهٔ فرمانِ واقعی، پیوسته است.</p>
+      <div class="flex flex-wrap gap-2"><span class="badge b-easy">شطرنج: گسسته</span><span class="badge b-hard">تاکسی: پیوسته</span></div>
+    </div>
+    <div class="reveal panel glow-card p-6 md:col-span-2">
+      <div class="flex items-center gap-3 mb-3"><span class="num-badge text-xs text-rose-300" dir="ltr">07</span><i data-lucide="help-circle" class="w-5 h-5 text-rose-300"></i><b>شناخته‌شده یا ناشناخته</b></div>
+      <p class="text-sm text-slate-400 leading-loose mb-4">آیا <b>قوانین و «فیزیکِ» محیط</b> — یعنی نتیجهٔ اعمال — از قبل برای عامل (یا طراح) روشن است؟ در محیط ناشناخته، عامل ابتدا باید با <b>یادگیری و آزمون‌وخطا</b> ماهیتِ دنیا را کشف کند و سپس تصمیم بگیرد. توجه: این بعد با قابل‌مشاهده‌بودن فرق دارد؛ می‌توان همه‌چیز را دید اما ندانست اعمال چه می‌کنند!</p>
+      <div class="flex flex-wrap gap-2"><span class="badge b-easy">شطرنج: قوانین روشن</span><span class="badge b-hard">بازی ویدیوییِ جدید بدون دفترچهٔ راهنما</span></div>
+    </div>
+  </div>
+
+  <!-- interactive environment explorer -->
+  <div class="reveal panel glow-card p-6 md:p-9 mb-10 border-cyan-400/15">
+    <div class="flex items-center gap-3 mb-2">
+      <span class="w-11 h-11 rounded-xl bg-gradient-to-br from-cyan-400 to-fuchsia-500 flex items-center justify-center text-[#05060c]"><i data-lucide="sliders-horizontal" class="w-6 h-6"></i></span>
+      <div>
+        <h3 class="font-extrabold text-xl">کاوشگر تعاملی محیط‌ها</h3>
+        <p class="text-xs text-slate-500 mt-1">هر محیط را انتخاب کنید تا اثر انگشتِ ۶بعدیِ آن نمایان شود</p>
+      </div>
+    </div>
+    <div class="flex flex-wrap gap-3 text-[11px] text-slate-500 mb-6">
+      <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>قطبِ ساده‌تر</span>
+      <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>حالتِ میانی</span>
+      <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-400"></span>قطبِ چالش‌برانگیزتر</span>
+    </div>
+    <div class="grid lg:grid-cols-[1fr_1.2fr] gap-8 items-start">
+      <div>
+        <div id="envBtns" class="flex flex-wrap gap-2.5 mb-5"></div>
+        <div id="envNote" class="flex items-start gap-2 text-sm text-slate-300 leading-loose rounded-xl bg-cyan-400/[.05] border border-cyan-400/20 p-4"></div>
+      </div>
+      <div>
+        <div class="flex items-center justify-between mb-3 px-1">
+          <b class="text-sm text-slate-300">اثر انگشتِ محیط:</b>
+          <span id="envName" class="text-sm font-extrabold grad-text"></span>
+        </div>
+        <div id="envRows" class="space-y-2.5"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- static comparison table -->
+  <div class="reveal panel p-6 md:p-8">
+    <div class="flex items-center gap-3 mb-5"><i data-lucide="git-compare" class="w-5 h-5 text-amber-300"></i><h3 class="font-extrabold text-lg">جدول مقایسه‌ای محیط‌های معروف</h3></div>
+    <div class="overflow-x-auto rounded-2xl border border-white/8">
+      <table class="tbl min-w-[820px] text-[12.5px]">
+        <thead>
+          <tr><th>محیط مسئله</th><th>مشاهده‌پذیری</th><th>عامل‌ها</th><th>قطعیت</th><th>اپیزود</th><th>پویایی</th><th>گسستگی</th></tr>
+        </thead>
+        <tbody class="text-slate-300">
+          <tr><td><b>کلمات متقاطع</b></td><td>کامل</td><td>تک‌عاملی</td><td>قطعی</td><td>متوالی</td><td>ایستا</td><td>گسسته</td></tr>
+          <tr><td><b>شطرنج با زمان‌سنج</b></td><td>کامل</td><td>چندعاملی</td><td>قطعی</td><td>متوالی</td><td><span class="text-amber-300">نیمه‌پویا</span></td><td>گسسته</td></tr>
+          <tr><td><b>پوکر</b></td><td>ناقص</td><td>چندعاملی</td><td>تصادفی</td><td>متوالی</td><td>ایستا</td><td>گسسته</td></tr>
+          <tr><td><b>تاکسی خودران</b></td><td>ناقص</td><td>چندعاملی</td><td>تصادفی</td><td>متوالی</td><td><span class="text-rose-300">پویا</span></td><td><span class="text-rose-300">پیوسته</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="mt-5 flex items-start gap-3 rounded-xl bg-rose-400/[.06] border border-rose-400/25 p-4 text-sm text-slate-300 leading-loose">
+      <i data-lucide="alert-triangle" class="w-5 h-5 text-rose-300 shrink-0 mt-0.5"></i>
+      <span><b class="text-rose-200">سخت‌ترین کلاسِ ممکن:</b> نیمه‌قابل‌مشاهده + چندعاملی + تصادفی + متوالی + پویا + پیوسته + <b>ناشناخته</b>. و حدس بزنید چه چیزی دقیقاً همین است؟ <b>دنیای واقعی!</b> همین جمله، پرکاربردترین پاسخِ امتحانیِ این فصل است.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SECTION 4 : AGENT ARCHITECTURES ══════════ -->
+<section id="s4" class="max-w-7xl mx-auto px-5 lg:px-8 py-20 md:py-28 border-t border-white/5">
+  <div class="reveal mb-4 flex items-center gap-3">
+    <span class="num-badge text-xs px-3 py-1 rounded-full bg-emerald-400/10 border border-emerald-400/25 text-emerald-300" dir="ltr">04</span>
+    <span class="kicker">AGENT PROGRAMS &amp; ARCHITECTURES</span>
+    <span class="h-px flex-1 bg-gradient-to-l from-emerald-400/40 to-transparent"></span>
+  </div>
+  <h2 class="reveal text-3xl md:text-5xl font-black mb-4">ساختار و <span class="grad-text">معماری عامل‌ها</span></h2>
+  <p class="reveal text-slate-400 text-sm md:text-base leading-loose max-w-3xl mb-12">
+    حالا که می‌دانیم «عاملِ عقلانی» یعنی چه، سؤال اصلی این است: برنامهٔ عامل را <b>چگونه بنویسیم؟</b> راسل و نورویگ چهار معماریِ پلّه‌ای معرفی می‌کنند و سپس عامل یادگیرنده را به‌عنوان چارچوب جامع می‌افزایند.
+  </p>
+
+  <!-- 1. Simple reflex -->
+  <div class="reveal panel glow-card p-6 md:p-9 mb-6">
+    <div class="grid lg:grid-cols-2 gap-8 items-start">
+      <div>
+        <div class="flex items-center gap-3 mb-4">
+          <span class="num-badge text-xs px-2.5 py-1 rounded-lg bg-cyan-400/10 border border-cyan-400/25 text-cyan-300" dir="ltr">4.1</span>
+          <h3 class="font-extrabold text-lg">عامل بازتابی ساده <span class="mono text-[10px] text-slate-500 block mt-0.5" dir="ltr">Simple Reflex Agent</span></h3>
+        </div>
+        <p class="text-sm text-slate-400 leading-loose mb-4">
+          عمل را <b>فقط بر اساس ادراکِ فعلی</b> انتخاب می‌کند؛ بدون حافظه از گذشته. موتورِ تصمیم‌گیری‌اش مجموعه‌ای از <b>قوانین شرط–عمل (Condition–Action Rules)</b> است: «اگر شرطِ X دیده شد، عملِ Y را انجام بده».
+        </p>
+        <ul class="space-y-2.5 text-sm text-slate-300 leading-loose mb-5">
+          <li class="flex gap-2.5"><i data-lucide="check" class="w-4 h-4 text-emerald-400 mt-1 shrink-0"></i>فوق‌العاده ساده و سریع؛ مناسب محیط‌های کاملاً قابل‌مشاهده.</li>
+          <li class="flex gap-2.5"><i data-lucide="alert-circle" class="w-4 h-4 text-rose-400 mt-1 shrink-0"></i><span><b>چالش بزرگ:</b> در محیط‌های <b>نسبتاً قابل‌مشاهده</b> ممکن است وارد <b>حلقه‌های بی‌نهایت</b> شود (مثل جاروبرقی‌ای که نمی‌داند کجاست و دائم چپ‌وراست می‌کند).</span></li>
+          <li class="flex gap-2.5"><i data-lucide="shuffle" class="w-4 h-4 text-amber-400 mt-1 shrink-0"></i><span><b>درمان نسبی:</b> <b>تصادفی‌سازی (Randomization)</b> — وقتی عینکِ عامل تار است، گاهی شانسی عمل کردن بهتر از گیر افتادن است.</span></li>
+        </ul>
+        <div class="codeblock" dir="ltr"><span class="kw">function</span> <span class="fn">SIMPLE-REFLEX-AGENT</span>(percept) <span class="kw">returns an action</span>
+  <span class="kw">persistent:</span> rules <span class="cm">← a set of condition–action rules</span>
+  state   <span class="cm">← INTERPRET-INPUT(percept)</span>
+  rule    <span class="cm">← RULE-MATCH(state, rules)</span>
+  <span class="kw">return</span> rule.ACTION</div>
+      </div>
+      <div class="diag rounded-2xl border border-white/8 bg-white/[.02] p-6">
+        <p class="text-[10px] mono text-slate-500 text-center mb-4" dir="ltr">SIMPLE REFLEX — SCHEMA</p>
+        <div class="flex flex-col items-center gap-2" dir="ltr">
+          <div class="dbox !border-slate-500/40 text-slate-300">Environment</div>
+          <i data-lucide="arrow-down" class="w-4 h-4 text-slate-500"></i>
+          <div class="dbox !border-cyan-400/35 text-cyan-200">Sensors</div>
+          <i data-lucide="arrow-down" class="w-4 h-4 text-slate-500"></i>
+          <div class="dbox"><b>What the world is like now</b></div>
+          <i data-lucide="arrow-down" class="w-4 h-4 text-slate-500"></i>
+          <div class="dbox !border-amber-400/35"><b class="text-amber-200">Condition–Action rules</b><span class="block text-slate-500 text-[10px]" dir="rtl">«اگر چراغ قرمز → توقف»</span></div>
+          <i data-lucide="arrow-down" class="w-4 h-4 text-slate-500"></i>
+          <div class="dbox"><b>What action I should do now</b></div>
+          <i data-lucide="arrow-down" class="w-4 h-4 text-slate-500"></i>
+          <div class="dbox !border-violet-400/35 text-violet-200">Actuators</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Model-based -->
+  <div class="reveal panel glow-card p-6 md:p-9 mb-6">
+    <div class="grid lg:grid-cols-2 gap-8 items-start">
+      <div>
+        <div class="flex items-center gap-3 mb-4">
+          <span class="num-badge text-xs px-2.5 py-1 rounded-lg bg-violet-400/10 border border-violet-400/25 text-violet-300" dir="ltr">4.2</span>
+          <h3 class="font-extrabold text-lg">عامل بازتابی مبتنی بر مدل <span class="mono text-[10px] text-slate-500 block mt-0.5" dir="ltr">Model-Based Reflex Agent</span></h3>
+        </div>
+        <p class="text-sm text-slate-400 leading-loose mb-4">
+          وقتی دنیا را کامل نمی‌بینیم، چاره این است که <b>بخش‌های نادیدنی را در مغز نگه داریم</b>. این عامل یک <b>حالتِ داخلی (Internal State)</b> دارد که با هر ادراک به‌روز می‌شود و تصویرِ کامل‌تری از دنیا می‌سازد.
+        </p>
+        <div class="rounded-xl border border-violet-400/25 bg-violet-400/[.05] p-4 mb-4">
+          <b class="text-violet-200 text-sm block mb-2">به‌روزرسانی حالت به دو «مدلِ» دنیا نیاز دارد:</b>
+          <ul class="space-y-2 text-sm text-slate-300 leading-loose">
+            <li class="flex gap-2"><span class="text-violet-300" dir="ltr">→</span>دنیا به‌خودِ خود چگونه تکامل می‌یابد؟ (مستقل از عامل)</li>
+            <li class="flex gap-2"><span class="text-violet-300" dir="ltr">→</span>اعمالِ من چه اثری بر دنیا می‌گذارند؟</li>
+          </ul>
+        </div>
+        <p class="text-sm text-slate-400 leading-loose mb-5">مثال: راننده‌ای که خودرویی را سبقت می‌گیرد، برای چند ثانیه آن را نمی‌بیند اما <b>در حالتِ داخلی‌اش می‌داند کجاست</b> و ردّیابی‌اش می‌کند.</p>
+        <div class="codeblock" dir="ltr"><span class="kw">function</span> <span class="fn">MODEL-BASED-REFLEX-AGENT</span>(percept) <span class="kw">returns an action</span>
+  <span class="kw">persistent:</span> state, model, rules, action
+  state <span class="cm">← UPDATE-STATE(state, action, percept, model)</span>
+  rule  <span class="cm">← RULE-MATCH(state, rules)</span>
+  <span class="kw">return</span> rule.ACTION</div>
+      </div>
+      <div class="diag rounded-2xl border border-white/8 bg-white/[.02] p-6">
+        <p class="text-[10px] mono text-slate-500 text-center mb-4" dir="ltr">MODEL-BASED — SCHEMA</p>
+        <div class="flex flex-col items-center gap-2" dir="ltr">
+          <div class="dbox !border-slate-500/40 text-slate-300">Environment</div>
+          <i data-lucide="arrow-down" class="w-4 h-4 text-slate-500"></i>
+          <div class="dbox !border-cyan-400/35 text-cyan-200">Sensors</div>
+          <i data-lucide="arrow-down" class="w-4 h-4 text-slate-500"></i>
+          <div class="flex items-center gap-2 w-full justify-center">
+            <div class="dbox flex-1"><b>What the world is like now</b><span class="block text-slate-400 text-[10px]">State</span></div>
+            <div class="dbox !border-violet-400/35 w-32"><b class="text-violet-200 text-[10px]">Model</b><span class="block text-slate-500 text-[9px]">How the world evolves · What my actions do</span></div>
+          </div>
+          <i data-lucide="arrow-down" class="w-4 h-4 text-slate-500"></i>
+          <div class="dbox !border-amber-400/35"><b class="text-amber-200">Condition–Action rules</b></div>
+          <i data-lucide="arrow-down" class="w-4 h-4 text-slate-500"></i>
+          <div class="dbox !border-violet-400/35 text-violet-200">Actuators</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Goal-based -->
+  <div class="reveal panel glow-card p-6 md:p-9 mb-6">
+    <div class="grid lg:grid-cols-2 gap-8 items-start">
+      <div>
+        <div class="flex items-center gap-3 mb-4">
+          <span class="num-badge text-xs px-2.5 py-1 rounded-lg bg-fuchsia-400/10 border border-fuchsia-400/25 text-fuchsia-300" dir="ltr">4.3</span>
+          <h3 class="font-extrabold text-lg">عامل مبتنی بر هدف <span class="mono text-[10px] text-slate-500 block mt-0.5" dir="ltr">Goal-Based Agent</span></h3>
+        </div>
+        <p class="text-sm text-slate-400 leading-loose mb-4">
+          دانستنِ «دنیا الان چگونه است» کافی نیست؛ عامل به یک <b>هدف (Goal)</b> نیاز دارد: وضعیتِ مطلوبِ آینده. حالا می‌تواند با ترکیبِ هدف + مدلِ محیط، دقت کند که <b>«اگر عملِ A را انجام دهم، دنیا چگونه می‌شود؟»</b> و مسیری به سوی هدف بیابد.
+        </p>
+        <ul class="space-y-2.5 text-sm text-slate-300 leading-loose mb-5">
+          <li class="flex gap-2.5"><i data-lucide="search" class="w-4 h-4 text-fuchsia-300 mt-1 shrink-0"></i>قلبِ این معماری، <b>جستجو (Search)</b> و <b>برنامه‌ریزی (Planning)</b> است — فصل‌های ۳ تا ۵ کتاب.</li>
+          <li class="flex gap-2.5"><i data-lucide="git-fork" class="w-4 h-4 text-fuchsia-300 mt-1 shrink-0"></i>برخلاف بازتابی‌ها، آینده را «شبیه‌سازیِ ذهنی» می‌کند و دنباله‌ای از اعمال را پیش‌بینی می‌کند.</li>
+          <li class="flex gap-2.5"><i data-lucide="refresh-cw" class="w-4 h-4 text-fuchsia-300 mt-1 shrink-0"></i><b>انعطاف‌پذیر:</b> با تغییرِ هدف، رفتار به‌طور خودکار تغییر می‌کند؛ قوانین بازتابی باید دستی بازنویسی شوند.</li>
+        </ul>
+        <div class="rounded-xl bg-fuchsia-400/[.05] border border-fuchsia-400/20 p-4 text-sm text-slate-300 leading-loose">
+          <b class="text-fuchsia-200">مثال:</b> تاکسیِ خودران در چهارراه: «اگر چپ بپیچم به مقصدِ مسافر نزدیک‌تر می‌شوم؟» — تصمیم بر اساس رسیدن به هدف، نه قانونِ ثابت.
+        </div>
+      </div>
+      <div class="diag rounded-2xl border border-white/8 bg-white/[.02] p-6">
+        <p class="text-[10px] mono text-slate-500 text-center mb-4" dir="ltr">GOAL-BASED — SCHEMA</p>
+        <div class="flex flex-col items-center gap-2" dir="ltr">
+          <div class="dbox !border-cyan-400/35 text-cyan-200">Sensors <span class="text-slate-500">·</span> State + Model</div>
+          <i data-lucide="arrow-down" class="w-4 h-4 text-slate-500"></i>
+          <div class="dbox"><b>What it will be like if I do action A</b><span class="block text-slate-500 text-[10px]" dir="rtl">پیش‌بینی آینده با مدل</span></div>
+          <i data-lucide="arrow-down" class="w-4 h-4 text-slate-500"></i>
+          <div class="flex items-center gap-2 w-full justify-center">
+            <div class="dbox flex-1"><b>What action I should do now</b></div>
+            <div class="dbox !border-fuchsia-400/40 w-28"><b class="text-fuchsia-200 text-[10px]">Goals</b><span class="block text-slate-500 text-[9px]" dir="rtl">وضعیتِ مطلوب</span></div>
+          </div>
+          <i data-lucide="arrow-down" class="w-4 h-4 text-slate-500"></i>
+          <div class="dbox !border-violet-400/35 text-violet-200">Actuators</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Utility-based -->
+  <div class="reveal panel glow-card p-6 md:p-9 mb-6">
+    <div class="grid lg:grid-cols-2 gap-8 items-start">
+      <div>
+        <div class="flex items-center gap-3 mb-4">
+          <span class="num-badge text-xs px-2.5 py-1 rounded-lg bg-amber-400/10 border border-amber-400/25 text-amber-300" dir="ltr">4.4</span>
+          <h3 class="font-extrabold text-lg">عامل مبتنی بر مطلوبیت <span class="mono text-[10px] text-slate-500 block mt-0.5" dir="ltr">Utility-Based Agent</span></h3>
+        </div>
+        <p class="text-sm text-slate-400 leading-loose mb-4">
+          هدف فقط می‌گوید «خوشحال / ناخوشحال» (صفر و یک). اما دنیا پیچیده‌تر است: رسیدنِ امن‌تر، ارزان‌تر، سریع‌تر! <b>تابع مطلوبیت (Utility Function)</b> به هر وضعیت یک <b>درجهٔ مطلوبیتِ پیوسته</b> نسبت می‌دهد — عینِ یک «سنجهٔ درونیِ خوشحالی».
+        </p>
+        <ul class="space-y-2.5 text-sm text-slate-300 leading-loose mb-5">
+          <li class="flex gap-2.5"><i data-lucide="scale" class="w-4 h-4 text-amber-300 mt-1 shrink-0"></i><b>مدیریت اهدافِ متضاد:</b> سرعت در برابر ایمنی؟ مطلوبیت، مصالحهٔ بهینه را پیدا می‌کند.</li>
+          <li class="flex gap-2.5"><i data-lucide="cloud-rain" class="w-4 h-4 text-amber-300 mt-1 shrink-0"></i><b>مدیریت عدم‌قطعیت:</b> وقتی هیچ هدفی قطعی نیست، عامل <b>مطلوبیتِ متوقع</b> را بیشینه می‌کند (اصل MEU).</li>
+        </ul>
+        <div class="math-box math-inline text-sm">
+          <span class="text-slate-400 mono text-[10px] block text-right mb-2" dir="rtl">اصل بیشینه‌سازی مطلوبیتِ متوقع (MEU)</span>
+          $$a^{*}=\arg\max_{a}\;\sum_{s'}\,P(s'\,|\,s,\,a)\;U(s')$$
+        </div>
+      </div>
+      <div class="diag rounded-2xl border border-white/8 bg-white/[.02] p-6">
+        <p class="text-[10px] mono text-slate-500 text-center mb-4" dir="ltr">UTILITY-BASED — SCHEMA</p>
+        <div class="flex flex-col items-center gap-2" dir="ltr">
+          <div class="dbox !border-cyan-400/35 text-cyan-200">Sensors <span class="text-slate-500">·</span> State + Model</div>
+          <i data-lucide="arrow-down" class="w-4 h-4 text-slate-500"></i>
+          <div class="dbox"><b>How happy I will be in such a state</b><span class="block text-slate-500 text-[10px]" dir="rtl">ارزیابی درجهٔ مطلوبیت</span></div>
+          <i data-lucide="arrow-down" class="w-4 h-4 text-slate-500"></i>
+          <div class="flex items-center gap-2 w-full justify-center">
+            <div class="dbox flex-1"><b>What action I should do now</b></div>
+            <div class="dbox !border-amber-400/40 w-28"><b class="text-amber-200 text-[10px]">Utility</b><span class="block text-slate-500 text-[9px]" dir="rtl">تابع خوشحالی</span></div>
+          </div>
+          <i data-lucide="arrow-down" class="w-4 h-4 text-slate-500"></i>
+          <div class="dbox !border-violet-400/35 text-violet-200">Actuators</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Learning agent -->
+  <div class="reveal panel glow-card p-6 md:p-9 mb-14 border-emerald-400/15">
+    <div class="flex items-center gap-3 mb-4">
+      <span class="num-badge text-xs px-2.5 py-1 rounded-lg bg-emerald-400/10 border border-emerald-400/25 text-emerald-300" dir="ltr">4.5</span>
+      <h3 class="font-extrabold text-lg">عامل یادگیرنده <span class="mono text-[10px] text-slate-500 block mt-0.5" dir="ltr">Learning Agent</span> <span class="text-[10px] font-normal text-emerald-300 mr-1">— چارچوب جامع نهایی</span></h3>
+    </div>
+    <p class="text-sm text-slate-400 leading-loose mb-6 max-w-4xl">
+      طراحیِ دستیِ همهٔ رفتارها برای محیط‌های <b>ناشناخته</b> غیرممکن است. راه‌حل: عاملی که <b>از تجربه یاد می‌گیرد</b> و خودمختاری واقعی می‌یابد. چهار مولفهٔ مفهومی دارد:
+    </p>
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div class="rounded-2xl border border-cyan-400/25 bg-cyan-400/[.04] p-5">
+        <div class="w-10 h-10 rounded-xl bg-cyan-400/10 border border-cyan-400/25 flex items-center justify-center mb-3"><i data-lucide="move" class="w-5 h-5 text-cyan-300"></i></div>
+        <b class="text-sm block mb-1.5">عنصر کارایی <span class="mono text-[9px] text-slate-500 block" dir="ltr">Performance Element</span></b>
+        <p class="text-[11.5px] text-slate-400 leading-loose">بدنهٔ اصلی عامل؛ مسئولِ <b>انتخاب اعمالِ بیرونی</b>. می‌تواند هر یک از معماری‌های قبلی باشد.</p>
+      </div>
+      <div class="rounded-2xl border border-emerald-400/25 bg-emerald-400/[.04] p-5">
+        <div class="w-10 h-10 rounded-xl bg-emerald-400/10 border border-emerald-400/25 flex items-center justify-center mb-3"><i data-lucide="brain" class="w-5 h-5 text-emerald-300"></i></div>
+        <b class="text-sm block mb-1.5">عنصر یادگیری <span class="mono text-[9px] text-slate-500 block" dir="ltr">Learning Element</span></b>
+        <p class="text-[11.5px] text-slate-400 leading-loose">مسئولِ <b>ایجاد بهبود</b>؛ با استفاده از بازخوردِ منتقد، تغییراتِ لازم را در عنصر کارایی اعمال می‌کند.</p>
+      </div>
+      <div class="rounded-2xl border border-amber-400/25 bg-amber-400/[.04] p-5">
+        <div class="w-10 h-10 rounded-xl bg-amber-400/10 border border-amber-400/25 flex items-center justify-center mb-3"><i data-lucide="message-square-warning" class="w-5 h-5 text-amber-300"></i></div>
+        <b class="text-sm block mb-1.5">منتقد <span class="mono text-[9px] text-slate-500 block" dir="ltr">Critic</span></b>
+        <p class="text-[11.5px] text-slate-400 leading-loose">با یک <b>استانداردِ کاراییِ ثابت و بیرونی</b> به عامل می‌گوید عملکردش چقدر خوب بوده است (مثل واکنشِ مسافر به ترمزِ ناگهانی).</p>
+      </div>
+      <div class="rounded-2xl border border-fuchsia-400/25 bg-fuchsia-400/[.04] p-5">
+        <div class="w-10 h-10 rounded-xl bg-fuchsia-400/10 border border-fuchsia-400/25 flex items-center justify-center mb-3"><i data-lucide="lightbulb" class="w-5 h-5 text-fuchsia-300"></i></div>
+        <b class="text-sm block mb-1.5">مولد مسئله <span class="mono text-[9px] text-slate-500 block" dir="ltr">Problem Generator</span></b>
+        <p class="text-[11.5px] text-slate-400 leading-loose">پیشنهادِ <b>اعمالِ اکتشافیِ نو</b>؛ تجربه‌های تازه می‌سازد تا یادگیری عمیق‌تر شود — شاید ترمزِ ملایم‌تر در پیچ بهتر باشد؟</p>
+      </div>
+    </div>
+    <div class="diag rounded-2xl border border-white/8 bg-white/[.02] p-6">
+      <p class="text-[10px] mono text-slate-500 text-center mb-4" dir="ltr">LEARNING AGENT — COMPONENTS</p>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center" dir="ltr">
+        <div class="dbox"><b class="text-[11px]">Sensors</b><span class="block text-slate-500 text-[9px]" dir="rtl">ادراک از محیط</span></div>
+        <div class="dbox !border-amber-400/35"><b class="text-[11px] text-amber-200">Critic</b><span class="block text-slate-500 text-[9px]" dir="rtl">بازخورد بر اساس استاندارد کارایی</span></div>
+        <div class="dbox !border-emerald-400/35"><b class="text-[11px] text-emerald-200">Learning Element</b><span class="block text-slate-500 text-[9px]" dir="rtl">تغییر و بهبود</span></div>
+        <div class="dbox !border-fuchsia-400/35"><b class="text-[11px] text-fuchsia-200">Problem Generator</b><span class="block text-slate-500 text-[9px]" dir="rtl">پیشنهاد اعمال اکتشافی</span></div>
+      </div>
+      <div class="flex justify-center gap-y-1 flex-col items-center py-2" dir="ltr">
+        <i data-lucide="chevrons-down-up" class="w-4 h-4 text-slate-500"></i>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-md mx-auto text-center" dir="ltr">
+        <div class="dbox !border-cyan-400/35"><b class="text-[11px] text-cyan-200">Performance Element</b><span class="block text-slate-500 text-[9px]" dir="rtl">انتخاب و اجرای عمل در محیط</span></div>
+        <div class="dbox !border-violet-400/35"><b class="text-[11px] text-violet-200">Actuators</b><span class="block text-slate-500 text-[9px]" dir="rtl">اثر بر محیط</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- state representations -->
+  <div class="reveal mb-3 flex items-center gap-3"><i data-lucide="boxes" class="w-5 h-5 text-sky-300"></i><h3 class="font-extrabold text-xl md:text-2xl">سه روش بازنمایی «وضعیتِ» محیط</h3></div>
+  <p class="reveal text-sm text-slate-500 mb-7 max-w-3xl leading-loose">«حالتِ داخلی» که عامل‌های مدرن نگه می‌دارند، می‌تواند با سه سطحِ متفاوتِ جزئیات بازنمایی شود — از ساده تا غنی:</p>
+  <div class="grid md:grid-cols-3 gap-4 mb-6">
+    <div class="reveal panel glow-card p-6">
+      <div class="flex items-center justify-between mb-4">
+        <span class="w-10 h-10 rounded-xl bg-slate-400/10 border border-slate-400/25 flex items-center justify-center"><i data-lucide="box" class="w-5 h-5 text-slate-300"></i></span>
+        <span class="badge b-mid">ساده‌ترین</span>
+      </div>
+      <b class="block mb-2">اتمی (Atomic)</b>
+      <p class="text-[12px] text-slate-400 leading-loose mb-3">هر وضعیت یک <b>جعبهٔ سیاهِ بدون ساختارِ داخلی</b> است؛ فقط می‌توان گفت «دو وضعیت یکی‌اند یا نه». در تحلیلِ مسیرها و جستجو کافی است.</p>
+      <p class="text-[11px] text-slate-500 flex items-center gap-1.5"><i data-lucide="waypoints" class="w-3.5 h-3.5 text-cyan-400"></i>مثال: الگوریتم‌های جستجوی مسیر — وضعیت فقط «نامِ شهرِ فعلی» است.</p>
+    </div>
+    <div class="reveal reveal-d1 panel glow-card p-6">
+      <div class="flex items-center justify-between mb-4">
+        <span class="w-10 h-10 rounded-xl bg-violet-400/10 border border-violet-400/25 flex items-center justify-center"><i data-lucide="list-tree" class="w-5 h-5 text-violet-300"></i></span>
+        <span class="badge b-easy">میانی</span>
+      </div>
+      <b class="block mb-2">فاکتورشده (Factored)</b>
+      <p class="text-[12px] text-slate-400 leading-loose mb-3">وضعیت به مجموعه‌ای از <b>متغیرها / ویژگی‌های مقداردار</b> شکسته می‌شود؛ دو وضعیت می‌توانند در بعضی ویژگی‌ها مشترک باشند.</p>
+      <p class="text-[11px] text-slate-500 flex items-center gap-1.5"><i data-lucide="puzzle" class="w-3.5 h-3.5 text-violet-400"></i>مثال: مسائل ارضای قیود (CSP) و منطقِ گزاره‌ای.</p>
+    </div>
+    <div class="reveal reveal-d2 panel glow-card p-6">
+      <div class="flex items-center justify-between mb-4">
+        <span class="w-10 h-10 rounded-xl bg-emerald-400/10 border border-emerald-400/25 flex items-center justify-center"><i data-lucide="network" class="w-5 h-5 text-emerald-300"></i></span>
+        <span class="badge b-hard">غنی‌ترین</span>
+      </div>
+      <b class="block mb-2">ساختاریافته (Structured)</b>
+      <p class="text-[12px] text-slate-400 leading-loose mb-3">وضعیت شامل <b>اشیاء</b> و <b>روابطِ صریحِ میانِ آن‌ها</b>ست — مثل گاو و دریا در کنارِ کشاورز با رابطهٔ «همراهِ».</p>
+      <p class="text-[11px] text-slate-500 flex items-center gap-1.5"><i data-lucide="share-2" class="w-3.5 h-3.5 text-emerald-400"></i>مثال: منطقِ مرتبهٔ اول (FOL) و پایگاه‌های دانشِ رابطه‌ای.</p>
+    </div>
+  </div>
+  <div class="reveal flex items-center gap-4 rounded-xl border border-white/8 bg-white/[.02] p-4 text-[12px] text-slate-400">
+    <span class="shrink-0 flex items-center gap-2 font-bold text-slate-300"><i data-lucide="trending-up" class="w-4 h-4 text-cyan-300"></i>محورِ فزاینده:</span>
+    <span>اتمی</span><i data-lucide="arrow-left" class="w-3.5 h-3.5 text-slate-600"></i><span>فاکتورشده</span><i data-lucide="arrow-left" class="w-3.5 h-3.5 text-slate-600"></i><span>ساختاریافته</span>
+    <span class="text-slate-600">|</span>
+    <span class="text-slate-500">قدرتِ بیان بیشتر ⟵ استدلالِ پیچیده‌تر و محاسباتِ سنگین‌تر</span>
+  </div>
+</section>
+
+
+<!-- ══════════ SECTION 5 : QUIZ & ASSESSMENT ══════════ -->
+<section id="s5" class="max-w-7xl mx-auto px-5 lg:px-8 py-20 md:py-28 border-t border-white/5">
+  <div class="reveal mb-4 flex items-center gap-3">
+    <span class="num-badge text-xs px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/25 text-amber-300" dir="ltr">05</span>
+    <span class="kicker">QUIZ &amp; ASSESSMENT</span>
+    <span class="h-px flex-1 bg-gradient-to-l from-amber-400/40 to-transparent"></span>
+  </div>
+  <h2 class="reveal text-3xl md:text-5xl font-black mb-4">خودارزیابی و <span class="grad-amber">تسلط ۱۰۰٪</span></h2>
+  <p class="reveal text-slate-400 text-sm md:text-base leading-loose max-w-3xl mb-12">
+    حالا وقت آزمون است: ابتدا پنج سؤالِ تشریحیِ تحلیلی (استانداردِ امتحان و مصاحبه) و سپس پنج تستِ چهارگزینه‌ای با بازخوردِ فوری. سؤال‌ها را بدون نگاه به پاسخ فکر کنید، بعد بازشان کنید.
+  </p>
+
+  <!-- Essay questions -->
+  <div class="reveal mb-8 flex items-center gap-3">
+    <span class="w-10 h-10 rounded-xl bg-amber-400/10 border border-amber-400/25 flex items-center justify-center"><i data-lucide="pen-line" class="w-5 h-5 text-amber-300"></i></span>
+    <h3 class="font-extrabold text-xl md:text-2xl">بخش اول · سؤالات تشریحی و تحلیلی</h3>
+  </div>
+
+  <div class="space-y-4 mb-16">
+    <!-- Q1 -->
+    <div class="reveal panel overflow-hidden">
+      <button data-acc class="open-btn-target w-full flex items-center justify-between gap-4 p-5 md:p-6 text-right hover:bg-white/[.02] transition-colors">
+        <span class="flex items-start gap-3">
+          <span class="num-badge text-xs px-2.5 py-1 rounded-lg bg-amber-400/10 border border-amber-400/25 text-amber-300 shrink-0 mt-0.5" dir="ltr">Q1</span>
+          <span class="font-bold text-sm md:text-base leading-relaxed">چهار عاملِ تعیین‌کنندهٔ عقلانیت را نام ببرید و توضیح دهید چرا «عاملِ عقلانی» لزوماً «عاملی که همیشه موفق می‌شود» نیست.</span>
+        </span>
+        <i data-lucide="chevron-down" class="chev w-5 h-5 text-slate-500 shrink-0"></i>
+      </button>
+      <div class="ans-body"><div>
+        <div class="px-5 md:px-8 pb-6 pt-1 text-sm text-slate-300 leading-loose border-t border-white/5">
+          <p class="mb-3 pt-4"><b class="text-amber-200">پاسخ تشریحی:</b> چهار عامل عبارت‌اند از: <b>(۱) سنجهٔ کارایی</b> که معیار موفقیت را تعریف می‌کند، <b>(۲) دانشِ پیش‌فرضِ</b> عامل دربارهٔ محیط، <b>(۳) مجموعهٔ اعمالِ</b> در دسترس، و <b>(۴) دنبالهٔ ادراکاتِ</b> مشاهده‌شده تا آن لحظه.</p>
+          <p class="mb-3">عقلانیت یعنی انتخابِ عملی که <b>کاراییِ متوقع</b> را با توجه به همین چهار مولفه بیشینه کند — نه تضمینِ نتیجهٔ واقعی. عامل به آینده و اجزای نادیدنیِ محیط دسترسی ندارد؛ تصمیمش بر اساس «بهترین انتظارِ آماری» است. اگر شانس بد بیاورد (مثل سقوطِ درِ هواپیما هنگام عبور از خیابانِ ظاهراً امن)، تصمیم عقلانی می‌تواند نتیجهٔ بدی بدهد بدون آنکه غیرعقلانی قلمداد شود.</p>
+          <p class="text-[12px] text-slate-500 flex items-center gap-2"><i data-lucide="key-round" class="w-3.5 h-3.5 text-amber-400"></i>کلیدِ نمره: تمایزِ «موفقیتِ متوقع» از «موفقیتِ واقعی» + ذکرِ هر چهار مولفه.</p>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="reveal panel overflow-hidden">
+      <button data-acc class="w-full flex items-center justify-between gap-4 p-5 md:p-6 text-right hover:bg-white/[.02] transition-colors">
+        <span class="flex items-start gap-3">
+          <span class="num-badge text-xs px-2.5 py-1 rounded-lg bg-amber-400/10 border border-amber-400/25 text-amber-300 shrink-0 mt-0.5" dir="ltr">Q2</span>
+          <span class="font-bold text-sm md:text-base leading-relaxed">تفاوت «تابع عامل» و «برنامهٔ عامل» چیست؟ چرا پیاده‌سازیِ مستقیمِ تابع عامل به شکلِ یک جدول (عامل جدول‌محور) در عمل غیرممکن است؟ با یک محاسبهٔ عددی توضیح دهید.</span>
+        </span>
+        <i data-lucide="chevron-down" class="chev w-5 h-5 text-slate-500 shrink-0"></i>
+      </button>
+      <div class="ans-body"><div>
+        <div class="px-5 md:px-8 pb-6 pt-1 text-sm text-slate-300 leading-loose border-t border-white/5">
+          <p class="mb-3 pt-4"><b class="text-amber-200">پاسخ تشریحی:</b> تابع عامل یک <b>نگاشتِ انتزاعیِ ریاضی</b> از هر دنبالهٔ ادراک به یک عمل است ($f: \mathcal{P}^* \to \mathcal{A}$) که رفتارِ خارجی را توصیف می‌کند؛ برنامهٔ عامل، <b>پیاده‌سازیِ ملموسِ</b> همین تابع است که روی معماریِ فیزیکیِ عامل (حسگرها و عملگرها) اجرا می‌شود ($Agent = Architecture + Program$).</p>
+          <p class="mb-3">عامل جدول‌محور می‌خواهد برای <b>هر</b> دنبالهٔ ادراکِ ممکن یک سطر در جدول داشته باشد. اگر $|\mathcal{P}|$ ادراکِ متمایز و طولِ عمرِ عامل $T$ قدم باشد، اندازهٔ جدول $\sum_{t=1}^{T}|\mathcal{P}|^{t}$ است — رشدی <b>نمایی</b>. برای شطرنج، جدولِ تقریبی حداقل $10^{150}$ سطر دارد، درحالی‌که تعداد اتم‌های جهانِ قابل‌مشاهده حدود $10^{80}$ است. نه حافظهٔ کافی داریم، نه زمانی برای ساختنِ چنین جدولی، و نه هیچ یادگیری‌ای در آن رخ می‌دهد.</p>
+          <p class="text-[12px] text-slate-500 flex items-center gap-2"><i data-lucide="key-round" class="w-3.5 h-3.5 text-amber-400"></i>کلیدِ نمره: ذکرِ انفجار نمایی + مقایسهٔ $10^{150}$ در برابر $10^{80}$.</p>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="reveal panel overflow-hidden">
+      <button data-acc class="w-full flex items-center justify-between gap-4 p-5 md:p-6 text-right hover:bg-white/[.02] transition-colors">
+        <span class="flex items-start gap-3">
+          <span class="num-badge text-xs px-2.5 py-1 rounded-lg bg-amber-400/10 border border-amber-400/25 text-amber-300 shrink-0 mt-0.5" dir="ltr">Q3</span>
+          <span class="font-bold text-sm md:text-base leading-relaxed">«قانون طلایی طراحی سنجهٔ کارایی» را بیان کنید و با مثالی نشان دهید نقضِ آن چه بلایی سر عامل می‌آورد.</span>
+        </span>
+        <i data-lucide="chevron-down" class="chev w-5 h-5 text-slate-500 shrink-0"></i>
+      </button>
+      <div class="ans-body"><div>
+        <div class="px-5 md:px-8 pb-6 pt-1 text-sm text-slate-300 leading-loose border-t border-white/5">
+          <p class="mb-3 pt-4"><b class="text-amber-200">پاسخ تشریحی:</b> قانون طلایی: سنجهٔ کارایی باید بر مبنای <b>«آنچه واقعاً در محیط می‌خواهیم»</b> طراحی شود، نه «رفتاری که تصور می‌کنیم عامل باید داشته باشد».</p>
+          <p class="mb-3">مثال: خواستهٔ واقعیِ ما «کفِ تمیز» است. اگر سنجه را «تعدادِ دفعاتِ مکش» بگذاریم، عاملِ عقلانی (بر اساس همان سنجهٔ غلط) به رفتارِ بهینهٔ خودش می‌رسد: <b>گردوخاک را بریزد، بمکد، دوباره بریزد، دوباره بمکد...</b> و امتیازِ بی‌نهایت جمع کند! عامل دقیقاً همان کاری را می‌کند که سنجه گفته — پس خطا در تعریفِ سنجه است، نه در عامل. این پدیده در عمل، منشأ بسیاری از خطاهای سیستم‌های یادگیری است.</p>
+          <p class="text-[12px] text-slate-500 flex items-center gap-2"><i data-lucide="key-round" class="w-3.5 h-3.5 text-amber-400"></i>کلیدِ نمره: تمایزِ «هدفِ واقعی» از «رفتارِ فرضی» + مثالِ مکشِ مکررِ جاروبرقی.</p>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="reveal panel overflow-hidden">
+      <button data-acc class="w-full flex items-center justify-between gap-4 p-5 md:p-6 text-right hover:bg-white/[.02] transition-colors">
+        <span class="flex items-start gap-3">
+          <span class="num-badge text-xs px-2.5 py-1 rounded-lg bg-amber-400/10 border border-amber-400/25 text-amber-300 shrink-0 mt-0.5" dir="ltr">Q4</span>
+          <span class="font-bold text-sm md:text-base leading-relaxed">عاملِ مبتنی بر هدف و عاملِ مبتنی بر مطلوبیت را مقایسه کنید. در چه شرایطی مدلِ هدف کافی نیست و چرا؟</span>
+        </span>
+        <i data-lucide="chevron-down" class="chev w-5 h-5 text-slate-500 shrink-0"></i>
+      </button>
+      <div class="ans-body"><div>
+        <div class="px-5 md:px-8 pb-6 pt-1 text-sm text-slate-300 leading-loose border-t border-white/5">
+          <p class="mb-3 pt-4"><b class="text-amber-200">پاسخ تشریحی:</b> هر두 معماری از <b>مدلِ محیط و پیش‌بینیِ آینده</b> استفاده می‌کنند. تفاوت در معیارِ ارزیابیِ آینده است: عاملِ هدف‌محور وضعیت‌ها را دودویی می‌بیند — <b>هدف حاصل شد / نشد</b>. عاملِ مطلوبیت‌محور با تابعِ $U(s)$ به هر وضعیت یک <b>درجهٔ پیوستهٔ مطلوبیت</b> می‌دهد.</p>
+          <p class="mb-3">مدلِ هدف در دو موقعیت ناتوان است: <b>(۱) اهدافِ متضاد:</b> وقتی فقط برخی اهداف محقق می‌شوند (مثل «سریع برس، اما امن باش»)، مطلوبیت مصالحهٔ بهینه را می‌سنجد؛ هدفِ دودویی هیچ ترجیحِ وزن‌داری ندارد. <b>(۲) عدم‌قطعیت:</b> وقتی هیچ مسیرِ قطعیِ رسیدن به هدف نیست، باید <b>مطلوبیتِ متوقع</b> مسیرها را مقایسه کرد (اصل MEU)؛ نه اینکه فقط «ممکن/غیرممکن» بودنِ هدف را. مثال: تاکسیِ خودران بین «مسیرِ سریعِ پرریسک» و «مسیرِ کندِ امن» با مطلوبیت تصمیم می‌گیرد، نه با هدفِ صرفِ رسیدن.</p>
+          <p class="text-[12px] text-slate-500 flex items-center gap-2"><i data-lucide="key-round" class="w-3.5 h-3.5 text-amber-400"></i>کلیدِ نمره: هدف = دودویی، مطلوبیت = پیوسته + دو کاربردِ تعارضِ اهداف و عدم‌قطعیت.</p>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="reveal panel overflow-hidden">
+      <button data-acc class="w-full flex items-center justify-between gap-4 p-5 md:p-6 text-right hover:bg-white/[.02] transition-colors">
+        <span class="flex items-start gap-3">
+          <span class="num-badge text-xs px-2.5 py-1 rounded-lg bg-amber-400/10 border border-amber-400/25 text-amber-300 shrink-0 mt-0.5" dir="ltr">Q5</span>
+          <span class="font-bold text-sm md:text-base leading-relaxed">چهار مؤلفهٔ عاملِ یادگیرنده را معرفی کنید. چرا بدون «مولد مسئله»، عاملِ یادگیرنده در بدترین حالتِ محلی گیر می‌کند؟</span>
+        </span>
+        <i data-lucide="chevron-down" class="chev w-5 h-5 text-slate-500 shrink-0"></i>
+      </button>
+      <div class="ans-body"><div>
+        <div class="px-5 md:px-8 pb-6 pt-1 text-sm text-slate-300 leading-loose border-t border-white/5">
+          <p class="mb-3 pt-4"><b class="text-amber-200">پاسخ تشریحی:</b> مؤلفه‌ها: <b>(۱) عنصرِ کارایی</b> — انتخابِ اعمالِ بیرونی (قلبِ اجراییِ عامل)؛ <b>(۲) عنصرِ یادگیری</b> — اعمالِ تغییراتِ بهبوددهنده در عنصرِ کارایی؛ <b>(۳) منتقد (Critic)</b> — داوریِ خروجی با <b>استانداردِ کاراییِ ثابتِ</b> بیرونی و تولیدِ بازخورد؛ <b>(۴) مولد مسئله (Problem Generator)</b> — پیشنهادِ اعمالِ اکتشافیِ جدید.</p>
+          <p class="mb-3">اگر عنصرِ یادگیری فقط براساسِ بازخورد به <b>افزایشِ کاراییِ کوتاه‌مدت</b> حرکت کند، عامل همان رفتارهای شناخته‌شدهٔ «به‌ظاهر خوب» را تکرار می‌کند و هرگز راه‌های بهتر را نمی‌آزماید. مولد مسئله با پیشنهادِ اعمالی که شاید <b>کوتاه‌مدتِ ضعیف‌تر</b> اما <b>آموزنده‌تر</b> باشند، عامل را به کاوشِ فضای راه‌حل وامی‌دارد؛ اثربخشیِ بلندمدت از همین آزمایش‌ها به دست می‌آید (مقایسه کنید با مفهومِ Exploration/Exploitation در یادگیری تقویتی).</p>
+          <p class="text-[12px] text-slate-500 flex items-center gap-2"><i data-lucide="key-round" class="w-3.5 h-3.5 text-amber-400"></i>کلیدِ نمره: تعریفِ دقیقِ چهار جزء + نقشِ اکتشاف در خروج از خوشهٔ محلی.</p>
+        </div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- MCQ -->
+  <div class="reveal mb-8 flex flex-wrap items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <span class="w-10 h-10 rounded-xl bg-emerald-400/10 border border-emerald-400/25 flex items-center justify-center"><i data-lucide="list-checks" class="w-5 h-5 text-emerald-300"></i></span>
+      <div>
+        <h3 class="font-extrabold text-xl md:text-2xl">بخش دوم · تست‌های چهارگزینه‌ای</h3>
+        <p class="text-[11px] text-slate-500 mt-0.5">روی گزینه کلیک کنید؛ پاسخ و تحلیل بلافاصله نمایش داده می‌شود</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="panel px-5 py-2.5 text-sm flex items-center gap-2"><i data-lucide="target" class="w-4 h-4 text-emerald-300"></i><span class="text-slate-400 text-xs">امتیاز شما:</span><b id="mcqScore" class="text-emerald-300">۰ از ۰</b></div>
+    </div>
+  </div>
+  <div id="mcqMsg" class="hidden reveal mb-8 rounded-2xl border border-emerald-400/30 bg-emerald-400/[.07] p-5 flex items-center gap-3 text-sm text-slate-200">
+    <i data-lucide="trophy" class="w-6 h-6 text-amber-300 shrink-0"></i><span></span>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-5 mb-6">
+    <!-- MCQ 1 -->
+    <div class="reveal mcq panel p-6" data-answer="1">
+      <div class="flex items-center gap-2 mb-4"><span class="num-badge text-[10px] px-2 py-1 rounded-lg bg-emerald-400/10 border border-emerald-400/25 text-emerald-300" dir="ltr">T1</span><b class="text-sm leading-relaxed">در توصیفِ PEASِ «تاکسی خودران»، کدام مورد یک <span class="text-fuchsia-300">عملگر (Actuator)</span> است؟</b></div>
+      <div class="space-y-2.5 text-[13px]">
+        <button class="opt-btn"><span class="state-ic shrink-0"><i data-lucide="circle" class="w-5 h-5 text-slate-600"></i></span>دوربینِ تصویربرداری</button>
+        <button class="opt-btn"><span class="state-ic shrink-0"><i data-lucide="circle" class="w-5 h-5 text-slate-600"></i></span>فرمانِ خودرو</button>
+        <button class="opt-btn"><span class="state-ic shrink-0"><i data-lucide="circle" class="w-5 h-5 text-slate-600"></i></span>سنجهٔ ایمنیِ سفر</button>
+        <button class="opt-btn"><span class="state-ic shrink-0"><i data-lucide="circle" class="w-5 h-5 text-slate-600"></i></span>ترافیکِ جاده‌ها</button>
+      </div>
+      <div class="mcq-why hidden mt-4 rounded-xl bg-white/[.03] border border-white/[.08] p-4 text-[12px] text-slate-300 leading-loose">
+        <b class="text-emerald-300 block mb-1.5">تحلیل گزینه‌ها:</b>
+        فرمان، ابزاری است که عامل <b>با آن بر محیط اثر می‌گذارد</b> → عملگر. دوربین ورودیِ حسی است (رد: حسگر)، ایمنیِ سفر معیارِ موفقیت است (رد: سنجهٔ کارایی)، و ترافیک بخشی از محیط است (رد: محیط).
+      </div>
+    </div>
+    <!-- MCQ 2 -->
+    <div class="reveal reveal-d1 mcq panel p-6" data-answer="2">
+      <div class="flex items-center gap-2 mb-4"><span class="num-badge text-[10px] px-2 py-1 rounded-lg bg-emerald-400/10 border border-emerald-400/25 text-emerald-300" dir="ltr">T2</span><b class="text-sm leading-relaxed">محیطِ «شطرنج با زمان‌سنجِ شطرنجی» از نظرِ بعدِ پویایی، کدام است؟</b></div>
+      <div class="space-y-2.5 text-[13px]">
+        <button class="opt-btn"><span class="state-ic shrink-0"><i data-lucide="circle" class="w-5 h-5 text-slate-600"></i></span>ایستا</button>
+        <button class="opt-btn"><span class="state-ic shrink-0"><i data-lucide="circle" class="w-5 h-5 text-slate-600"></i></span>پویا</button>
+        <button class="opt-btn"><span class="state-ic shrink-0"><i data-lucide="circle" class="w-5 h-5 text-slate-600"></i></span>نیمه‌پویا</button>
+        <button class="opt-btn"><span class="state-ic shrink-0"><i data-lucide="circle" class="w-5 h-5 text-slate-600"></i></span>اپیزودیک</button>
+      </div>
+      <div class="mcq-why hidden mt-4 rounded-xl bg-white/[.03] border border-white/[.08] p-4 text-[12px] text-slate-300 leading-loose">
+        <b class="text-emerald-300 block mb-1.5">تحلیل گزینه‌ها:</b>
+        خودِ صفحهٔ شطرنج هنگامِ فکرِ عامل تغییر نمی‌کند، اما <b>امتیاز/سنجهٔ کارایی با گذرِ زمان فرسوده می‌شود</b>؛ تعریفِ دقیقِ «نیمه‌پویا». «اپیزودیک» روی بعدِ دیگری است (شطرنج متوالی است، چون هر حرکت آینده را محدود می‌کند) و چون محیطِ فیزیکی ساکن است «پویا» نیز نادرست است.
+      </div>
+    </div>
+    <!-- MCQ 3 -->
+    <div class="reveal mcq panel p-6" data-answer="3">
+      <div class="flex items-center gap-2 mb-4"><span class="num-badge text-[10px] px-2 py-1 rounded-lg bg-emerald-400/10 border border-emerald-400/25 text-emerald-300" dir="ltr">T3</span><b class="text-sm leading-relaxed">در عاملِ یادگیرنده، مسئولیتِ «پیشنهادِ اعمالِ اکتشافیِ نو برای تجربه‌های تازه» با کدام مؤلفه است؟</b></div>
+      <div class="space-y-2.5 text-[13px]">
+        <button class="opt-btn"><span class="state-ic shrink-0"><i data-lucide="circle" class="w-5 h-5 text-slate-600"></i></span>منتقد (Critic)</button>
+        <button class="opt-btn"><span class="state-ic shrink-0"><i data-lucide="circle" class="w-5 h-5 text-slate-600"></i></span>عنصرِ کارایی</button>
+        <button class="opt-btn"><span class="state-ic shrink-0"><i data-lucide="circle" class="w-5 h-5 text-slate-600"></i></span>عنصرِ یادگیری</button>
+        <button class="opt-btn"><span class="state-ic shrink-0"><i data-lucide="circle" class="w-5 h-5 text-slate-600"></i></span>مولدِ مسئله</button>
+      </div>
+      <div class="mcq-why hidden mt-4 rounded-xl bg-white/[.03] border border-white/[.08] p-4 text-[12px] text-slate-300 leading-loose">
+        <b class="text-emerald-300 block mb-1.5">تحلیل گزینه‌ها:</b>
+        <b>مولدِ مسئله (Problem Generator)</b> دقیقاً برای همین ساخته شده: فراتر از بهره‌برداریِ دانشِ فعلی، آزمون‌های تازه پیشنهاد می‌دهد. منتقد فقط داوری می‌کند، عنصرِ کارایی فقط اجرا می‌کند و عنصرِ یادگیری بر اساسِ بازخورد <b>تغییر</b> ایجاد می‌کند — نه پیشنهادِ آزمایشِ نو.
+      </div>
+    </div>
+    <!-- MCQ 4 -->
+    <div class="reveal reveal-d1 mcq panel p-6" data-answer="1">
+      <div class="flex items-center gap-2 mb-4"><span class="num-badge text-[10px] px-2 py-1 rounded-lg bg-emerald-400/10 border border-emerald-400/25 text-emerald-300" dir="ltr">T4</span><b class="text-sm leading-relaxed">عاملِ عقلانی، در هر نقطهٔ تصمیم، دقیقاً کدام کمیت را بیشینه می‌کند؟</b></div>
+      <div class="space-y-2.5 text-[13px]">
+        <button class="opt-btn"><span class="state-ic shrink-0"><i data-lucide="circle" class="w-5 h-5 text-slate-600"></i></span>مقدارِ واقعیِ سنجهٔ کارایی</button>
+        <button class="opt-btn"><span class="state-ic shrink-0"><i data-lucide="circle" class="w-5 h-5 text-slate-600"></i></span>مقدارِ متوقعِ سنجهٔ کارایی</button>
+        <button class="opt-btn"><span class="state-ic shrink-0"><i data-lucide="circle" class="w-5 h-5 text-slate-600"></i></span>سرعتِ اجرای برنامه</button>
+        <button class="opt-btn"><span class="state-ic shrink-0"><i data-lucide="circle" class="w-5 h-5 text-slate-600"></i></span>تعدادِ قوانینِ شرط–عمل</button>
+      </div>
+      <div class="mcq-why hidden mt-4 rounded-xl bg-white/[.03] border border-white/[.08] p-4 text-[12px] text-slate-300 leading-loose">
+        <b class="text-emerald-300 block mb-1.5">تحلیل گزینه‌ها:</b>
+        تعریفِ کتاب: عاملِ عقلانی عملی را برمی‌گزیند که با توجه به ادراکات و دانشِ پیش‌فرض، <b>«مقدارِ متوقعِ» سنجهٔ کارایی</b> را بیشینه کند. بیشینه‌سازیِ مقدارِ واقعی، نیازمندِ آگاهیِ مطلق است که بنا به تعریف در دسترسِ هیچ عاملی نیست؛ دو گزینهٔ دیگر اساساً بخشی از تعریف نیستند.
+      </div>
+    </div>
+    <!-- MCQ 5 -->
+    <div class="reveal mcq panel p-6 lg:col-span-2" data-answer="2">
+      <div class="flex items-center gap-2 mb-4"><span class="num-badge text-[10px] px-2 py-1 rounded-lg bg-emerald-400/10 border border-emerald-400/25 text-emerald-300" dir="ltr">T5</span><b class="text-sm leading-relaxed">کدام روشِ بازنماییِ وضعیت، جهان را به شکلِ «اشیاء و روابطِ صریحِ میانِ آن‌ها» توصیف می‌کند؟</b></div>
+      <div class="grid sm:grid-cols-2 gap-2.5 text-[13px]">
+        <button class="opt-btn"><span class="state-ic shrink-0"><i data-lucide="circle" class="w-5 h-5 text-slate-600"></i></span>بازنماییِ اتمی</button>
+        <button class="opt-btn"><span class="state-ic shrink-0"><i data-lucide="circle" class="w-5 h-5 text-slate-600"></i></span>بازنماییِ فاکتورشده</button>
+        <button class="opt-btn"><span class="state-ic shrink-0"><i data-lucide="circle" class="w-5 h-5 text-slate-600"></i></span>بازنماییِ ساختاریافته</button>
+        <button class="opt-btn"><span class="state-ic shrink-0"><i data-lucide="circle" class="w-5 h-5 text-slate-600"></i></span>بازنماییِ جدولی</button>
+      </div>
+      <div class="mcq-why hidden mt-4 rounded-xl bg-white/[.03] border border-white/[.08] p-4 text-[12px] text-slate-300 leading-loose">
+        <b class="text-emerald-300 block mb-1.5">تحلیل گزینه‌ها:</b>
+        در بازنماییِ <b>ساختاریافته</b>، وضعیت شامل اشیاء و روابطِ بینِ آن‌هاست (مثل منطقِ مرتبهٔ اول). اتمی وضعیت را جعبهٔ سیاهِ بی‌ساختار می‌بیند و فاکتورشده فقط برداری از متغیرهای مقداردار است — بدونِ شیء و رابطهٔ مستقل. «بازنماییِ جدولی» اصلاً یکی از سه دستهٔ کتاب نیست!
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SECTION 6 : CHEATSHEET ══════════ -->
+<section id="s6" class="max-w-7xl mx-auto px-5 lg:px-8 py-20 md:py-28 border-t border-white/5">
+  <div class="reveal mb-4 flex items-center gap-3">
+    <span class="num-badge text-xs px-3 py-1 rounded-full bg-rose-400/10 border border-rose-400/25 text-rose-300" dir="ltr">06</span>
+    <span class="kicker">CHEATSHEET</span>
+    <span class="h-px flex-1 bg-gradient-to-l from-rose-400/40 to-transparent"></span>
+  </div>
+  <div class="reveal flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
+    <h2 class="text-3xl md:text-5xl font-black">خلاصهٔ <span class="grad-text">در یک نگاه</span></h2>
+    <p class="text-slate-500 text-xs flex items-center gap-2"><i data-lucide="alarm-clock" class="w-4 h-4 text-rose-300"></i>مخصوصِ مرورِ سریعِ شبِ امتحان — هر خط، یک نکتهٔ نمره‌دار</p>
+  </div>
+
+  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+    <div class="reveal panel glow-card p-6">
+      <div class="flex items-center gap-2 mb-4"><i data-lucide="bot" class="w-5 h-5 text-cyan-300"></i><b class="text-sm text-cyan-200">مفاهیم پایه</b></div>
+      <ul class="space-y-2.5 text-[12.5px] text-slate-300 leading-relaxed">
+        <li class="flex gap-2"><span class="text-cyan-400 shrink-0">◆</span>عامل = درکِ محیط با <b>حسگر</b> + عمل بر محیط با <b>عملگر</b></li>
+        <li class="flex gap-2"><span class="text-cyan-400 shrink-0">◆</span>ادراک = ورودیِ حسیِ یک لحظه · دنبالهٔ ادراکات = کلِ تاریخچه</li>
+        <li class="flex gap-2"><span class="text-cyan-400 shrink-0">◆</span>تابع عامل: نگاشتِ هر دنبالهٔ ادراک به یک عمل (انتزاعیست) · برنامهٔ عامل: پیاده‌سازیِ واقعی آن</li>
+        <li class="flex gap-2"><span class="text-cyan-400 shrink-0">◆</span><span class="mono text-[11px]" dir="ltr">Agent = Architecture + Program</span></li>
+        <li class="flex gap-2"><span class="text-cyan-400 shrink-0">◆</span>جدول‌محور → انفجارِ نمایی؛ شطرنج $10^{150}$ سطر می‌خواهد!</li>
+      </ul>
+    </div>
+    <div class="reveal reveal-d1 panel glow-card p-6">
+      <div class="flex items-center gap-2 mb-4"><i data-lucide="scale" class="w-5 h-5 text-violet-300"></i><b class="text-sm text-violet-200">عقلانیت</b></div>
+      <ul class="space-y-2.5 text-[12.5px] text-slate-300 leading-relaxed">
+        <li class="flex gap-2"><span class="text-violet-400 shrink-0">◆</span>چهار ستون: <b>سنجهٔ کارایی، دانشِ پیش‌فرض، اعمالِ ممکن، دنبالهٔ ادراکات</b></li>
+        <li class="flex gap-2"><span class="text-violet-400 shrink-0">◆</span>عقلانی = بیشینه‌سازیِ کاراییِ <b>متوقع</b>، نه نتیجهٔ قطعی</li>
+        <li class="flex gap-2"><span class="text-violet-400 shrink-0">◆</span>عقلانی ≠ همه‌دان (داستانِ درِ هواپیما) و ≠ کامل (کلِ وضعیت را نمی‌بیند)</li>
+        <li class="flex gap-2"><span class="text-violet-400 shrink-0">◆</span>قانونِ طلایی: سنجه را از جنسِ <b>هدفِ واقعی</b> بنویس، نه رفتارِ فرضی (تلهٔ مکشِ مکرر)</li>
+        <li class="flex gap-2"><span class="text-violet-400 shrink-0">◆</span>خودمختاری = جبرانِ دانشِ ناقصِ اولیه با تجربه و یادگیری</li>
+      </ul>
+    </div>
+    <div class="reveal reveal-d2 panel glow-card p-6">
+      <div class="flex items-center gap-2 mb-4"><i data-lucide="globe-2" class="w-5 h-5 text-fuchsia-300"></i><b class="text-sm text-fuchsia-200">محیط‌های مسئله</b></div>
+      <ul class="space-y-2.5 text-[12.5px] text-slate-300 leading-relaxed">
+        <li class="flex gap-2"><span class="text-fuchsia-400 shrink-0">◆</span><span class="mono text-[11px]" dir="ltr">PEAS = Performance · Environment · Actuators · Sensors</span></li>
+        <li class="flex gap-2"><span class="text-fuchsia-400 shrink-0">◆</span>هفت بعد: مشاهده‌پذیری · تعدادِ عامل · قطعیت · اپیزود · پویایی · گسستگی · شناخت</li>
+        <li class="flex gap-2"><span class="text-fuchsia-400 shrink-0">◆</span>نیمه‌پویا = محیطِ ثابت + سنجهٔ وابسته به زمان (شطرنج با زمان‌سنج)</li>
+        <li class="flex gap-2"><span class="text-fuchsia-400 shrink-0">◆</span>سخت‌ترین کلاس: نیمه‌مشاهده + چندعاملی + تصادفی + متوالی + پویا + پیوسته + ناشناخته = <b>دنیای واقعی</b></li>
+        <li class="flex gap-2"><span class="text-fuchsia-400 shrink-0">◆</span>اپیزودیک = تصمیمِ امروز، فردا را تغییر نمی‌دهد (بازرسیِ قطعاتِ خطِ تولید)</li>
+      </ul>
+    </div>
+    <div class="reveal panel glow-card p-6">
+      <div class="flex items-center gap-2 mb-4"><i data-lucide="layers" class="w-5 h-5 text-emerald-300"></i><b class="text-sm text-emerald-200">پنج معماری — نسخهٔ یک‌خطی</b></div>
+      <ul class="space-y-2.5 text-[12.5px] text-slate-300 leading-relaxed">
+        <li class="flex gap-2"><span class="text-emerald-400 shrink-0">◆</span><b>بازتابی ساده:</b> فقط ادراکِ فعلی + قواعدِ شرط–عمل (خطرِ حلقهٔ بی‌نهایت ⟵ درمان: تصادفی‌سازی)</li>
+        <li class="flex gap-2"><span class="text-emerald-400 shrink-0">◆</span><b>مبتنی بر مدل:</b> حالتِ داخلی + مدلِ «دنیا چگونه می‌چرخد و اعمالم چه می‌کنند»</li>
+        <li class="flex gap-2"><span class="text-emerald-400 shrink-0">◆</span><b>مبتنی بر هدف:</b> «اگر A کنم چه می‌شود؟» + جستجو و برنامه‌ریزی به سوی هدف</li>
+        <li class="flex gap-2"><span class="text-emerald-400 shrink-0">◆</span><b>مبتنی بر مطلوبیت:</b> درجهٔ خوشحالیِ پیوسته + دموکراسیِ اهداف و MEU</li>
+        <li class="flex gap-2"><span class="text-emerald-400 shrink-0">◆</span><b>یادگیرنده:</b> کارایی + یادگیری + منتقد + مولدِ مسئله</li>
+      </ul>
+    </div>
+    <div class="reveal reveal-d1 panel glow-card p-6">
+      <div class="flex items-center gap-2 mb-4"><i data-lucide="boxes" class="w-5 h-5 text-sky-300"></i><b class="text-sm text-sky-200">بازنماییِ وضعیت</b></div>
+      <ul class="space-y-2.5 text-[12.5px] text-slate-300 leading-relaxed">
+        <li class="flex gap-2"><span class="text-sky-400 shrink-0">◆</span><b>اتمی:</b> جعبهٔ سیاهِ بی‌ساختار (جستجوی مسیر)</li>
+        <li class="flex gap-2"><span class="text-sky-400 shrink-0">◆</span><b>فاکتورشده:</b> بردارِ متغیرهای مقداردار (CSP، منطقِ گزاره‌ای)</li>
+        <li class="flex gap-2"><span class="text-sky-400 shrink-0">◆</span><b>ساختاریافته:</b> اشیاء + روابط (منطقِ مرتبهٔ اول)</li>
+        <li class="flex gap-2"><span class="text-sky-400 shrink-0">◆</span>از چپ به راست: قدرتِ بیان بیشتر، محاسباتِ سنگین‌تر</li>
+      </ul>
+    </div>
+    <div class="reveal reveal-d2 panel glow-card p-6 border-amber-400/20">
+      <div class="flex items-center gap-2 mb-4"><i data-lucide="star" class="w-5 h-5 text-amber-300"></i><b class="text-sm text-amber-200">جملاتِ طلاییِ سرِ جلسه</b></div>
+      <ul class="space-y-2.5 text-[12.5px] text-slate-300 leading-relaxed">
+        <li class="flex gap-2"><span class="text-amber-400 shrink-0">◆</span>«عقلانیت، بیشینه‌سازیِ کاراییِ متوقع بر اساسِ شواهدِ موجود است.»</li>
+        <li class="flex gap-2"><span class="text-amber-400 shrink-0">◆</span>«هوش مصنوعی = مطالعه و ساختِ عامل‌هایی که کارِ درست را انجام می‌دهند.»</li>
+        <li class="flex gap-2"><span class="text-amber-400 shrink-0">◆</span>«اول PEAS را بنویس، بعد سراغِ طراحیِ برنامه برو.»</li>
+        <li class="flex gap-2"><span class="text-amber-400 shrink-0">◆</span>«دنیای واقعی، سخت‌ترین کلاسِ محیط‌هاست؛ به همین دلیل هیجان‌انگیز است.»</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- final formulas strip -->
+  <div class="reveal panel glow-card p-6 md:p-8">
+    <div class="flex items-center gap-2 mb-5"><i data-lucide="sigma" class="w-5 h-5 text-cyan-300"></i><b class="text-sm">فرمول‌هایی که باید از بَر باشید</b></div>
+    <div class="grid md:grid-cols-3 gap-4">
+      <div class="math-box math-inline text-sm"><span class="text-slate-500 mono text-[9px] block text-right mb-2" dir="rtl">تابع عامل</span>$$f:\mathcal{P}^{*}\to\mathcal{A}$$</div>
+      <div class="math-box math-inline text-sm"><span class="text-slate-500 mono text-[9px] block text-right mb-2" dir="rtl">برنامه در برابر معماری</span>$$Agent = Architecture + Program$$</div>
+      <div class="math-box math-inline text-sm"><span class="text-slate-500 mono text-[9px] block text-right mb-2" dir="rtl">اصل MEU</span>$$a^{*}=\arg\max_{a}\sum_{s'}P(s'|s,a)\,U(s')$$</div>
+    </div>
+  </div>
+
+  <!-- closing -->
+  <div class="reveal mt-14 text-center">
+    <div class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-emerald-400/30 bg-emerald-400/[.06] text-emerald-300 text-xs font-bold mb-5">
+      <i data-lucide="badge-check" class="w-4 h-4"></i>
+      فصل دوم تمام شد!
+    </div>
+    <h3 class="text-2xl md:text-3xl font-black mb-4">حالا زبانِ عامل‌ها را می‌دانید</h3>
+    <p class="text-slate-400 text-sm leading-loose max-w-xl mx-auto mb-8">از اینجا به بعد، هر سیستم هوشمندی — از ChatGPT تا خودروی خودران — را می‌توانید به مؤلفه‌های این فصل تجزیه کنید: ادراک، عمل، عقلانیت، محیط و معماری. قدم بعدی: فصل سوم، «حل مسئله با جستجو».</p>
+    <a href="#hero" class="inline-flex items-center gap-2 px-7 py-3.5 rounded-full border border-white/15 text-sm font-bold hover:bg-white/5 hover:border-cyan-400/40 hover:text-cyan-300 transition-all">
+      <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+      مرور دوباره از ابتدا
+    </a>
+  </div>
+</section>
+
+
+</main>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer class="relative border-t border-white/8 mt-10">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8 py-14">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-400 to-violet-500 flex items-center justify-center shadow-lg shadow-violet-500/25">
+          <i data-lucide="brain-circuit" class="w-6 h-6 text-[#05060c]"></i>
+        </div>
+        <div>
+          <div class="font-extrabold">درس‌نامه فصل دوم · عامل‌های هوشمند</div>
+          <div class="text-xs text-slate-500 mt-1">بر پایهٔ کتاب «هوش مصنوعی: رویکردی نوین» — Stuart Russell & Peter Norvig</div>
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-slate-500">
+        <span class="flex items-center gap-1.5"><i data-lucide="book-open" class="w-3.5 h-3.5 text-cyan-400"></i> فصل دوم از ۲۷ فصل</span>
+        <span class="flex items-center gap-1.5"><i data-lucide="atom" class="w-3.5 h-3.5 text-violet-400"></i> AIMA 4th Edition</span>
+        <span class="flex items-center gap-1.5"><i data-lucide="graduation-cap" class="w-3.5 h-3.5 text-amber-400"></i> آموزشی و خودآموز</span>
+      </div>
+    </div>
+    <div class="mt-10 pt-6 border-t border-white/5 text-center text-[11px] text-slate-600 leading-relaxed">
+      ساخته‌شده برای یادگیری عمیق مفاهیم عامل‌های هوشمند · عقلانی یاد بگیر، عقلایی عمل کن
+    </div>
+  </div>
+</footer>
+
+<!-- back to top -->
+<button id="toTop" class="fixed bottom-6 left-6 z-50 w-11 h-11 rounded-full bg-gradient-to-br from-cyan-400 to-violet-500 text-[#05060c] items-center justify-center shadow-xl shadow-cyan-500/30 hidden hover:scale-110 transition-transform">
+  <i data-lucide="arrow-up" class="w-5 h-5 mx-auto"></i>
+</button>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+
+  /* ---------- Lucide ---------- */
+  if (window.lucide) lucide.createIcons();
+
+  /* ---------- KaTeX ---------- */
+  if (window.renderMathInElement) {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      throwOnError: false
+    });
+  }
+
+  /* ---------- helpers ---------- */
+  const faNum = n => String(n).replace(/[0-9]/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+
+  /* ---------- navbar / progress / toTop ---------- */
+  const nav = document.getElementById('navbar');
+  const bar = document.getElementById('progressBar');
+  const toTop = document.getElementById('toTop');
+  window.addEventListener('scroll', () => {
+    const st = window.scrollY;
+    nav.classList.toggle('scrolled', st > 30);
+    const h = document.documentElement.scrollHeight - innerHeight;
+    bar.style.width = (h > 0 ? (st / h) * 100 : 0) + '%';
+    if (st > 600) { toTop.classList.remove('hidden'); toTop.classList.add('flex'); }
+    else { toTop.classList.add('hidden'); toTop.classList.remove('flex'); }
+  }, {passive: true});
+  toTop.addEventListener('click', () => window.scrollTo({top: 0, behavior: 'smooth'}));
+
+  /* ---------- mobile menu ---------- */
+  const mobBtn = document.getElementById('mobBtn'), mobPanel = document.getElementById('mobPanel');
+  mobBtn.addEventListener('click', () => mobPanel.classList.toggle('hidden'));
+  document.querySelectorAll('.mnav').forEach(a => a.addEventListener('click', () => mobPanel.classList.add('hidden')));
+
+  /* ---------- reveal on scroll ---------- */
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  }), {threshold: .12});
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  /* ---------- scrollspy ---------- */
+  const ids = ['hero','roadmap','s1','s2','s3','s4','s5','s6'];
+  const dots = document.querySelectorAll('.side-dot');
+  const menuLinks = document.querySelectorAll('#navMenu a');
+  const spy = new IntersectionObserver(es => {
+    es.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        dots.forEach(d => d.classList.toggle('active', d.dataset.spy === id));
+        menuLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+      }
+    });
+  }, {rootMargin: '-40% 0px -55% 0px'});
+  ids.forEach(id => { const el = document.getElementById(id); if (el) spy.observe(el); });
+
+  /* ══════════ VACUUM WORLD SIMULATOR ══════════ */
+  const vw = { loc: 0, dirty: [true, true], score: 0, steps: 0, timer: null };
+  const agentEl = document.getElementById('vacAgent');
+  const cells = [document.getElementById('vcell0'), document.getElementById('vcell1')];
+  const scoreEl = document.getElementById('vacScore'), stepsEl = document.getElementById('vacSteps');
+  const locEl = document.getElementById('vacLoc'), perceptEl = document.getElementById('vacPercept'), actionEl = document.getElementById('vacAction');
+  const logEl = document.getElementById('vacLog');
+  const autoBtn = document.getElementById('vacAuto');
+
+  function vwDecide() {
+    if (vw.dirty[vw.loc]) return {fa: 'مکش (Suck)', en: 'Suck', icon: 'sparkles'};
+    return vw.loc === 0 ? {fa: 'حرکت به راست (Right)', en: 'Right', icon: 'arrow-right'} : {fa: 'حرکت به چپ (Left)', en: 'Left', icon: 'arrow-left'};
+  }
+  function vwPercept() { return '[' + (vw.loc === 0 ? 'A' : 'B') + ', ' + (vw.dirty[vw.loc] ? 'کثیف' : 'تمیز') + ']'; }
+  function vwCleanCount() { return vw.dirty.filter(d => !d).length; }
+
+  function vwRender() {
+    cells.forEach((c, i) => {
+      if (!c) return;
+      c.classList.toggle('clean-state', !vw.dirty[i]);
+      const dirtWrap = c.querySelector('.dirt-wrap');
+      dirtWrap.innerHTML = '';
+      if (vw.dirty[i]) {
+        const pos = [[26,30],[58,55],[40,68],[66,26],[30,54]];
+        pos.forEach(p => {
+          const d = document.createElement('span');
+          d.className = 'dirt';
+          d.style.cssText = 'right:' + p[0] + '%;top:' + p[1] + '%;width:' + (12 + Math.floor(Math.random()*8)) + 'px;height:' + (10 + Math.floor(Math.random()*6)) + 'px;opacity:.85';
+          dirtWrap.appendChild(d);
+        });
+      } else {
+        dirtWrap.innerHTML = '<span class="absolute inset-x-0 bottom-3 text-center text-emerald-300/80 text-[10px] font-bold flex items-center justify-center gap-1"><i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>تمیز</span>';
+      }
+      const badge = c.querySelector('.state-badge');
+      badge.innerHTML = vw.dirty[i]
+        ? '<span class="badge b-hard"><i data-lucide="cloud-drizzle" class="w-3 h-3"></i>کثیف</span>'
+        : '<span class="badge b-easy" style="color:#6ee7b7;border-color:rgba(52,211,153,.4);background:rgba(52,211,153,.08)"><i data-lucide="sparkle" class="w-3 h-3"></i>تمیز</span>';
+    });
+    if (agentEl) agentEl.style.left = vw.loc === 0 ? '25%' : '75%';
+    if (scoreEl) scoreEl.textContent = faNum(vw.score);
+    if (stepsEl) stepsEl.textContent = faNum(vw.steps);
+    if (locEl) locEl.textContent = vw.loc === 0 ? 'A' : 'B';
+    if (perceptEl) perceptEl.textContent = vwPercept();
+    if (actionEl) actionEl.textContent = vwDecide().fa;
+    if (window.lucide) lucide.createIcons();
+  }
+
+  function vwLog(text, icon) {
+    if (!logEl) return;
+    const li = document.createElement('div');
+    li.className = 'log-item flex items-center gap-2 text-[11px] py-1.5 px-3 rounded-lg bg-white/[.04] border border-white/[.06]';
+    li.innerHTML = '<i data-lucide="' + icon + '" class="w-3.5 h-3.5 text-cyan-300 shrink-0"></i><span class="text-slate-300">' + text + '</span>';
+    logEl.prepend(li);
+    while (logEl.children.length > 7) logEl.removeChild(logEl.lastChild);
+    if (window.lucide) lucide.createIcons();
+  }
+
+  function vwStep(fromAuto) {
+    const a = vwDecide();
+    const p = vwPercept();
+    if (a.en === 'Suck') {
+      vw.dirty[vw.loc] = false;
+      if (agentEl) { agentEl.classList.remove('sucking'); void agentEl.offsetWidth; agentEl.classList.add('sucking'); }
+    } else if (a.en === 'Right') vw.loc = 1;
+    else if (a.en === 'Left') vw.loc = 0;
+    vw.steps++;
+    vw.score += vwCleanCount();
+    vwRender();
+    vwLog('ادراک ' + p + ' → عمل: ' + a.fa + ' · کارایی: +' + faNum(vwCleanCount()), a.icon);
+    if (fromAuto && vw.score === 0 && vw.steps > 0) { /* noop */ }
+  }
+
+  const stepBtn = document.getElementById('vacStep');
+  if (stepBtn) stepBtn.addEventListener('click', () => vwStep(false));
+
+  if (autoBtn) autoBtn.addEventListener('click', () => {
+    if (vw.timer) {
+      clearInterval(vw.timer); vw.timer = null;
+      autoBtn.innerHTML = '<i data-lucide="play" class="w-4 h-4"></i><span>اجرای خودکار</span>';
+    } else {
+      vwStep(true);
+      vw.timer = setInterval(() => vwStep(true), 1000);
+      autoBtn.innerHTML = '<i data-lucide="pause" class="w-4 h-4"></i><span>توقف</span>';
+    }
+    if (window.lucide) lucide.createIcons();
+  });
+
+  const resetBtn = document.getElementById('vacReset');
+  if (resetBtn) resetBtn.addEventListener('click', () => {
+    if (vw.timer) { clearInterval(vw.timer); vw.timer = null; autoBtn.innerHTML = '<i data-lucide="play" class="w-4 h-4"></i><span>اجرای خودکار</span>'; }
+    vw.loc = 0; vw.dirty = [true, true]; vw.score = 0; vw.steps = 0;
+    if (logEl) logEl.innerHTML = '';
+    vwRender();
+    vwLog('شبیه‌سازی بازنشانی شد', 'rotate-ccw');
+  });
+
+  const randBtn = document.getElementById('vacRand');
+  if (randBtn) randBtn.addEventListener('click', () => {
+    vw.dirty = [Math.random() < .55, Math.random() < .55];
+    vw.loc = Math.random() < .5 ? 0 : 1;
+    vwRender();
+    vwLog('قرارگیری تصادفی جدید → ادراک ' + vwPercept(), 'shuffle');
+  });
+
+  cells.forEach((c, i) => { if (c) c.addEventListener('click', () => { vw.dirty[i] = !vw.dirty[i]; vwRender(); }); });
+  if (cells[0]) vwRender();
+
+  /* ══════════ ENVIRONMENT EXPLORER ══════════ */
+  const envs = {
+    taxi:     {name: 'تاکسی خودران',        dims: [1, 1, 1, 1, 1, 1], note:'سخت‌ترین کلاس محیط: نیمه‌مشاهده، چندعاملی، تصادفی، متوالی، پویا و پیوسته.', level:'سخت'},
+    chessT:   {name: 'شطرنج با زمان‌سنج',   dims: [0, 1, 0, 1, 2, 0], note:'محیط قطعی و روشن، اما سکور با گذر زمان تغییر می‌کند: نیمه‌پویا.', level:'متوسط'},
+    poker:    {name: 'پوکر',                dims: [1, 1, 1, 1, 0, 0], note:'کارت‌های حریف پنهان است (نیمه‌مشاهده) و بازی تصادفی است.', level:'سخت'},
+    crossword:{name: 'جدول کلمات متقاطع',   dims: [0, 0, 0, 1, 0, 0], note:'ساده‌ترین کلاس: کاملاً قابل‌مشاهده، تک‌عاملی، قطعی و ایستا.', level:'آسان'},
+    image:    {name: 'تحلیل تصویر پزشکی',  dims: [0, 0, 0, 0, 2, 1], note:'هر تصویر یک اپیزود مستقل است؛ تصمیم فعلی بر آینده اثر ندارد.', level:'متوسط'},
+    robot:    {name: 'ربات انتخاب قطعه',   dims: [1, 0, 1, 0, 1, 1], note:'نوار نقاله متحرک است (پویا) اما هر قطعه اپیزودی جداگانه است.', level:'سخت'},
+    refinery: {name: 'کنترل‌کننده پالایشگاه',dims:[1, 0, 1, 1, 1, 1], note:'فرایند پیوسته و پویا با حسگرهای محدود؛ تصمیمات متوالی و پیامدگذار.', level:'سخت'},
+    tutor:    {name: 'معلم انگلیسی تعاملی', dims: [1, 1, 1, 1, 1, 0], note:'وضعیت ذهنی دانشجو قابل‌مشاهده نیست و با هر دانشجو متفاوت است.', level:'سخت'}
+  };
+  const dimMeta = [
+    {t:'مشاهده‌پذیری', poles:['کاملاً قابل‌مشاهده','نسبتاً قابل‌مشاهده'], icon:'eye'},
+    {t:'تعداد عامل',   poles:['تک‌عاملی','چندعاملی'],                      icon:'users'},
+    {t:'قطعیت',       poles:['قطعی','تصادفی'],                            icon:'dices'},
+    {t:'اپیزود',      poles:['اپیزودیک','متوالی'],                         icon:'repeat'},
+    {t:'پویایی',      poles:['ایستا','پویا'],                              icon:'activity'},
+    {t:'گسستگی',      poles:['گسسته','پیوسته'],                            icon:'waves'}
+  ];
+  const envBtns = document.getElementById('envBtns');
+  const envRows = document.getElementById('envRows');
+  const envNote = document.getElementById('envNote');
+  const envName = document.getElementById('envName');
+  let curEnv = 'taxi';
+
+  function badgeCls(v) { return v === 0 ? 'badge b-easy' : (v === 1 ? 'badge b-hard' : 'badge b-mid'); }
+
+  function renderEnv() {
+    const e = envs[curEnv];
+    if (envName) envName.textContent = e.name;
+    if (envRows) {
+      envRows.innerHTML = e.dims.map((v, i) => {
+        let label = dimMeta[i].poles[Math.min(v, 1)];
+        if (i === 4 && v === 2) label = 'نیمه‌پویا';
+        return '<div class="flex items-center justify-between gap-3 py-3 px-4 rounded-xl bg-white/[.03] border border-white/[.06]">' +
+          '<span class="flex items-center gap-2 text-[12px] text-slate-400 font-semibold"><i data-lucide="' + dimMeta[i].icon + '" class="w-4 h-4 text-slate-500"></i>' + dimMeta[i].t + '</span>' +
+          '<span class="' + badgeCls(v) + ' log-item">' + label + '</span></div>';
+      }).join('');
+    }
+    if (envNote) envNote.innerHTML = '<i data-lucide="info" class="w-4 h-4 text-cyan-300 shrink-0 mt-0.5"></i><span>' + e.note + '</span>';
+    if (envBtns) [...envBtns.children].forEach(b => {
+      const on = b.dataset.env === curEnv;
+      b.className = 'px-4 py-2 rounded-full text-xs font-bold border transition-all duration-300 ' + (on
+        ? 'bg-gradient-to-l from-cyan-400/25 to-violet-500/25 border-cyan-400/50 text-cyan-200 shadow-lg shadow-cyan-500/10'
+        : 'border-white/10 text-slate-400 hover:border-white/30 hover:text-slate-200 bg-white/[.03]');
+    });
+    if (window.lucide) lucide.createIcons();
+  }
+  if (envBtns) {
+    Object.keys(envs).forEach(k => {
+      const b = document.createElement('button');
+      b.dataset.env = k; b.textContent = envs[k].name;
+      b.addEventListener('click', () => { curEnv = k; renderEnv(); });
+      envBtns.appendChild(b);
+    });
+    renderEnv();
+  }
+
+  /* ══════════ ESSAY ACCORDIONS ══════════ */
+  document.querySelectorAll('[data-acc]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const body = btn.parentElement.querySelector('.ans-body');
+      btn.classList.toggle('open-btn');
+      body.classList.toggle('open');
+    });
+  });
+
+  /* ══════════ MCQ QUIZ ══════════ */
+  let mcqDone = 0, mcqRight = 0;
+  const mcqScore = document.getElementById('mcqScore');
+  const mcqMsg = document.getElementById('mcqMsg');
+  function updateMcqScore() {
+    if (mcqScore) mcqScore.textContent = faNum(mcqRight) + ' از ' + faNum(mcqDone);
+    if (mcqMsg && mcqDone === 5) {
+      mcqMsg.classList.remove('hidden');
+      const t = mcqRight === 5 ? 'فوق‌العاده! تسلط کامل بر فصل دوم.' : (mcqRight >= 3 ? 'خوب است! گزینه‌های اشتباه را دوباره مرور کنید.' : 'نگران نباشید؛ بخش‌های ضعیف را دوباره بخوانید و دوباره تلاش کنید.');
+      mcqMsg.querySelector('span').textContent = t;
+    }
+  }
+  document.querySelectorAll('.mcq').forEach(q => {
+    const ans = parseInt(q.dataset.answer);
+    const opts = q.querySelectorAll('.opt-btn');
+    opts.forEach((b, i) => {
+      b.addEventListener('click', () => {
+        if (q.dataset.done === '1') return;
+        q.dataset.done = '1';
+        opts.forEach(o => o.classList.add('locked'));
+        opts[ans].classList.add('correct');
+        opts[ans].querySelector('.state-ic').innerHTML = '<i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400"></i>';
+        if (i === ans) { mcqRight++; }
+        else {
+          b.classList.add('wrong');
+          b.querySelector('.state-ic').innerHTML = '<i data-lucide="x-circle" class="w-5 h-5 text-rose-400"></i>';
+        }
+        mcqDone++;
+        const why = q.querySelector('.mcq-why');
+        if (why) why.classList.remove('hidden');
+        updateMcqScore();
+        if (window.lucide) lucide.createIcons();
+      });
+    });
+  });
+  updateMcqScore();
+
+});
+</script>
+</body>
+</html>
